@@ -1,0 +1,14 @@
+{
+  "top": {
+    "title": "React Enterprise Boilerplate",
+    "description": ""
+  },
+  "globisMembers": {
+    "title": "Globis Members",
+    "description": "Here are developer members of Globis."
+  },
+  "usersSearch": {
+    "title": "Users Search",
+    "description": "You can search GitHub users with their name."
+  }
+}
