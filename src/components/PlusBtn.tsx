@@ -4,7 +4,6 @@ export interface PlusBtnProps {}
 
 const PlusBtn: React.SFC<PlusBtnProps> = ({}) => (
   <button>+</button>
-)
+);
 
-export default PlusBtn; 
-  
+export default PlusBtn;
