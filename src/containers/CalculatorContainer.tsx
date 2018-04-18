@@ -1,27 +1,29 @@
 import * as React from 'react';
 
+import NumBtn from 'components/NumBtn';
+
 export default class CalculatorContainer extends React.Component {
 
   public render() {
     return (
       <div>
         <div>
-          <button>1</button>
-          <button>2</button>
-          <button>3</button>
+          <NumBtn n={1} />
+          <NumBtn n={2} />
+          <NumBtn n={3} />
         </div>
         <div>
-          <button>4</button>
-          <button>5</button>
-          <button>6</button>
+          <NumBtn n={4} />
+          <NumBtn n={5} />
+          <NumBtn n={6} />
         </div>
         <div>
-          <button>7</button>
-          <button>8</button>
-          <button>9</button>
+          <NumBtn n={7} />
+          <NumBtn n={8} />
+          <NumBtn n={9} />
         </div>
         <div>
-          <button>0</button>
+          <NumBtn n={0} />
           <button>+</button>
         </div>
         <div>
