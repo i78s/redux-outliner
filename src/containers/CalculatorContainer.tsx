@@ -2,6 +2,7 @@ import * as React from 'react';
 
 import NumBtn from 'components/NumBtn';
 import PlusBtn from 'components/PlusBtn';
+import Result from 'components/Result';
 
 export default class CalculatorContainer extends React.Component {
 
@@ -28,7 +29,7 @@ export default class CalculatorContainer extends React.Component {
           <PlusBtn>+</PlusBtn>
         </div>
         <div>
-          Result: <span>some value44</span>
+          <Result />
         </div>
       </div>
     );
