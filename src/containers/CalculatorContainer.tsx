@@ -1,6 +1,7 @@
 import * as React from 'react';
 
 import NumBtn from 'components/NumBtn';
+import PlusBtn from 'components/PlusBtn';
 
 export default class CalculatorContainer extends React.Component {
 
@@ -24,7 +25,7 @@ export default class CalculatorContainer extends React.Component {
         </div>
         <div>
           <NumBtn n={0} />
-          <button>+</button>
+          <PlusBtn>+</PlusBtn>
         </div>
         <div>
           Result: <span>some value44</span>
