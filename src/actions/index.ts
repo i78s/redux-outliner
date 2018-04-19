@@ -1,10 +1,10 @@
 import * as actionTypes from 'constants/action-types';
+import actionCreatorFactory from 'typescript-fsa';
 
-export const onNumClick = (value: number) => ({
-  type: actionTypes.INPUT_NUMBER,
-  number: value,
-});
+const actionCreator = actionCreatorFactory('COUNTER');
 
-export const onPlusClick = () => ({
-  type: actionTypes.PLUS,
-});
+export const onNumClick = actionCreator<{
+  value: number,
+}>(actionTypes.INPUT_NUMBER);
+
+export const onPlusClick = actionCreator(actionTypes.PLUS);
