@@ -1,8 +1,12 @@
 import * as React from 'react';
 
-const Result: React.SFC = () => (
+interface ResultProps {
+  result: number;
+}
+
+const Result: React.SFC<ResultProps> = props => (
   <div>
-    Result: <span>some value</span>
+    Result: <span>{props.result}</span>
   </div>
 );
 
