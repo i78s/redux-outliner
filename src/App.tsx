@@ -1,11 +1,7 @@
 import * as React from 'react';
 
-import CalculatorContainer from 'containers/CalculatorContainer';
-
-type AppProps = {};
-
-const App: React.SFC<AppProps> = (props) => (
-  <CalculatorContainer />
+const App: React.SFC<any> = (props) => (
+  <div>App</div>
 );
 
 export default App;
