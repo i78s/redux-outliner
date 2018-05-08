@@ -66,7 +66,8 @@
     "test:e2e:remote": "testcafe remote testcafe/features/**/*.{spec,test}.ts --screenshots testcafe/screenshots --screenshots-on-fails --selection-timeout 5000 --qr-code",
     "storybook": "start-storybook -p 9001 -c .storybook",
     "storybook:build": "build-storybook --output-dir ./build/storybook",
-    "tslint-check": "tslint-config-prettier-check ./tslint.json"
+    "tslint-check": "tslint-config-prettier-check ./tslint.json",
+    "json-server": "$(npm bin)/json-server fake-server/index.js -p 8000"
   },
   "devDependencies": {
     "@storybook/addon-info": "^3.3.9",
