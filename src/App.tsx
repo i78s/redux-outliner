@@ -2,12 +2,12 @@ import * as React from 'react';
 
 import Editor from 'components/Editor';
 
-import projects from 'services/projects';
+import nodes from 'services/nodes';
 
-projects.get(1)
+nodes.get(1)
   .then(res => {
     // tslint:disable-next-line:no-console
-    console.log(res.nodes);
+    console.log(res.title);
   });
 
 const App: React.SFC<any> = (props) => (
