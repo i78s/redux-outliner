@@ -1,13 +1,13 @@
 import instance from 'services/axios-instance';
-import { Project } from 'services/models';
+import { ProjectEntity } from 'services/models';
 
 export default {
   getList() {
     return instance.get(`projects`)
-      .then(res => res.data as Project[]);
+      .then(res => res.data as ProjectEntity[]);
   },
   get(id: number) {
     return instance.get(`projects/${id}`)
-      .then(res => res.data as Project);
+      .then(res => res.data as ProjectEntity);
   },
 };

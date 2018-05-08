@@ -2,7 +2,7 @@ import Item from 'components/Editor/Item';
 import * as React from 'react';
 import { compose, lifecycle, withStateHandlers } from 'recompose';
 
-import { Node } from 'services/models';
+import { NodeEntity } from 'services/models';
 import nodes from 'services/nodes';
 
 // interface ListProps {
@@ -14,7 +14,7 @@ import nodes from 'services/nodes';
  *  ノードの子要素を非表示/表示切り替え
  */
 
-const RecursionList = (list: Node[], id = 0) => {
+const RecursionList = (list: NodeEntity[], id = 0) => {
   const child: any = list.filter((el) => el.parent_id === id);
   if (child.length === 0) {
     return <React.Fragment />;
