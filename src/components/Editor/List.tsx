@@ -1,17 +1,23 @@
-import * as React from 'react';
-
 import Item from 'components/Editor/Item';
-import mockList from 'mock/list';
+import * as React from 'react';
+import { compose, lifecycle, withStateHandlers } from 'recompose';
+
+import { Node } from 'services/models';
+import nodes from 'services/nodes';
+
+// interface ListProps {
+//   title: string;
+// }
 
 /**
  * 開閉
  *  ノードの子要素を非表示/表示切り替え
  */
 
-const List = (id: number) => {
-  const child: any = mockList.filter((el: any) => el.parent_id === id);
+const RecursionList = (list: Node[], id = 0) => {
+  const child: any = list.filter((el) => el.parent_id === id);
   if (child.length === 0) {
-    return '';
+    return <React.Fragment />;
   }
 
   return (
@@ -19,7 +25,7 @@ const List = (id: number) => {
       {child.reduce(
         (c: any, e: any) => (
           <React.Fragment>
-            {c} <li><Item title={e.title} /> {List(e.id)}</li>
+            {c} <li><Item title={e.title} /> {RecursionList(list, e.id)}</li>
           </React.Fragment>
         ),
         '',
@@ -28,4 +34,29 @@ const List = (id: number) => {
   );
 };
 
-export default List;
+const List = (props: any) => {
+
+  if (props.data.length === 0) {
+    return <div />;
+  }
+
+  return RecursionList(props.data);
+};
+
+const enhance = compose<any, any>(
+  withStateHandlers({ data: [] }, {
+    onData: state => (data) => ({
+      data,
+    }),
+  }),
+  lifecycle<any, {}, {}>({
+    componentDidMount() {
+      nodes.getList()
+        .then(res => {
+          this.props.onData(res);
+        });
+    },
+  }),
+)(List);
+
+export default enhance;

@@ -5,7 +5,7 @@ import List from 'components/Editor/List';
 export default () => {
   return (
     <div>
-      {List(0)}
+      <List />
     </div>
   );
 };
