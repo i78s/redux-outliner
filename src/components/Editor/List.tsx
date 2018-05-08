@@ -1,5 +1,6 @@
 import * as React from 'react';
 
+import Item from 'components/Editor/Item';
 import mockList from 'mock/list';
 
 const List = (id: number) => {
@@ -13,7 +14,7 @@ const List = (id: number) => {
       {child.reduce(
         (c: any, e: any) => (
           <React.Fragment>
-            {c} <li>{e.title} {List(e.id)}</li>
+            {c} <li><Item title={e.title} /> {List(e.id)}</li>
           </React.Fragment>
         ),
         '',
