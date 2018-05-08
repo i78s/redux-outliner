@@ -6,23 +6,21 @@ module.exports = () => {
     nodes: [] 
   };
   
-  const max = 50;
+  const max = 100;
   for (let i = 1; i <= max; i++) {
     data.nodes.push({
       id: i,
       title: faker.name.title(),
       parent_id: i % 3 === 0 ? 0 : faker.random.number(max),
-      project_id: faker.random.number({min: 1, max: 5}),
+      project_id: 1,
     });
   }
 
-  for (let i = 1; i <= 5; i++) {
-    data.projects.push({
-      id: i,
-      title: faker.name.title(),
-      nodes: data.nodes.filter(el => el.project_id === i),
-    });
-  }
+  data.projects.push({
+    id: 1,
+    title: faker.name.title(),
+    nodes: data.nodes,
+  });
 
   return data;
 };
