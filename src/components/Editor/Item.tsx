@@ -8,13 +8,13 @@ interface ItemProps {
 
 const Item: React.SFC<ItemProps> = ({ title, onPaste }) => {
   return (
-    <div
+    <span
       suppressContentEditableWarning={true}
       contentEditable={true}
       onPaste={onPaste}
     >
       {title}
-      </div>
+    </span>
   );
 };
 
