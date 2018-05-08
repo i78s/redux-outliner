@@ -6,7 +6,12 @@ interface ItemProps {
 
 const Item: React.SFC<ItemProps> = ({ title }) => {
   return (
-    <div>{title}</div>
+    <div
+      suppressContentEditableWarning={true}
+      contentEditable={true}
+    >
+      {title}
+      </div>
   );
 };
 
