@@ -7,6 +7,15 @@ interface ItemProps {
   onPaste: () => void;
 }
 
+/**
+ * 追加
+ *  Enterキーを押下した時
+ *  同じ親を持つノードを追加
+ *  並び順は追加元の次の番号
+ * 削除
+ *  ノードが空になる かつ ノードが子要素を持っていない
+ */
+
 const Item: React.SFC<ItemProps> = ({ title, onPaste, onKeyDown }) => {
   return (
     <span
