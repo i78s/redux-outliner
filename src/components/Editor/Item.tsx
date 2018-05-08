@@ -3,6 +3,7 @@ import { compose, withHandlers } from 'recompose';
 
 interface ItemProps {
   title: string;
+  onInput: () => void;
   onKeyDown: () => void;
   onPaste: () => void;
 }
@@ -16,11 +17,17 @@ interface ItemProps {
  *  ノードが空になる かつ ノードが子要素を持っていない
  */
 
-const Item: React.SFC<ItemProps> = ({ title, onPaste, onKeyDown }) => {
+const Item: React.SFC<ItemProps> = ({
+  title,
+  onInput,
+  onPaste,
+  onKeyDown,
+}) => {
   return (
     <span
       suppressContentEditableWarning={true}
       contentEditable={true}
+      onInput={onInput}
       onKeyDown={onKeyDown}
       onPaste={onPaste}
     >
@@ -31,6 +38,12 @@ const Item: React.SFC<ItemProps> = ({ title, onPaste, onKeyDown }) => {
 
 const enhance = compose<any, any>(
   withHandlers({
+    onInput: props => (e: InputEvent<HTMLSpanElement>) => {
+      // const value = e.target.value;
+
+      // tslint:disable-next-line:no-console
+      console.dir(e.target.innerText);
+    },
     onKeyDown: props => (e: KeyboardEvent) => {
       if (e.keyCode === 13) {
         e.preventDefault();
