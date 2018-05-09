@@ -6,6 +6,7 @@
   "author": "Yuka O'oka <i.yuka.ooka@globis.co.jp>",
   "repository": "globis-org/react-enterprise-boilerplate",
   "dependencies": {
+    "@types/redux-thunk": "^2.1.0",
     "autoprefixer": "7.1.2",
     "axios": "^0.17.1",
     "case-sensitive-paths-webpack-plugin": "2.1.1",
@@ -35,6 +36,7 @@
     "redux": "^3.7.2",
     "redux-devtools-extension": "^2.13.2",
     "redux-saga": "^0.16.0",
+    "redux-thunk": "^2.2.0",
     "semantic-ui-css": "^2.2.12",
     "semantic-ui-react": "^0.77.2",
     "source-map-loader": "^0.2.1",
