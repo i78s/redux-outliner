@@ -52,11 +52,7 @@ export default compose<any, any>(
         const { startOffset, endOffset } = selection.getRangeAt(0);
         const before = text.slice(0, startOffset);
         const after = text.slice(endOffset);
-        // tslint:disable-next-line:no-console
-        console.dir({
-          before,
-          after,
-        });
+
         props.editNode({
           ...props.node,
           title: before,
