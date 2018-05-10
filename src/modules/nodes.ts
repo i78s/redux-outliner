@@ -25,6 +25,12 @@ export const fetchNodes = actionCreator.async<
   Error
 >('FETCH');
 
+export const addNode = actionCreator.async<
+  {},
+  { data: NodeEntity },
+  Error
+>('CREATE');
+
 export default reducerWithInitialState(initialState)
   .case(
     fetchNodes.done,
@@ -33,11 +39,17 @@ export default reducerWithInitialState(initialState)
   .case(
     setNodes,
     (state, { list }) => ({ ...state, list }),
-  );
+  )
+  .case(
+    addNode.done,
+    (state, { result }) => ({ ...state }),
+  )
+  ;
 
 export function* nodesTask() {
   yield all([
     fork(watchLoadNodes),
+    fork(watchCreateNode),
   ]);
 }
 
@@ -57,6 +69,33 @@ function* loadNodes(action: any): SagaIterator {
 
   } catch (error) {
     yield put(fetchNodes.failed({
+      params: {},
+      error: error as Error,
+    }));
+  }
+}
+
+function* watchCreateNode(): SagaIterator {
+  yield takeLatest(addNode.started, createNode);
+}
+
+function* createNode(action: any): SagaIterator {
+  try {
+    const data = yield call(
+      nodesApi.post,
+      {
+        title: '',
+        parent_id: 1,
+        project_id: 1,
+      },
+    );
+    yield put(addNode.done({
+      params: {},
+      result: { data },
+    }));
+
+  } catch (error) {
+    yield put(addNode.failed({
       params: {},
       error: error as Error,
     }));
