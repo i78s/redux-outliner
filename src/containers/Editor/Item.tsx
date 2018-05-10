@@ -50,6 +50,7 @@ export default compose<any, any>(
         e.preventDefault();
         /**
          * todo
+         * 作成時にフォーカス位置を新規のところに移す
          * 更新/作成時に並び順を指定する
          */
 
