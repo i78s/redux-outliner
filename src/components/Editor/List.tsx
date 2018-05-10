@@ -4,10 +4,13 @@ import { compose } from 'recompose';
 
 import { NodeEntity } from 'services/models';
 
-export interface ListProps {
-  nodes: NodeEntity;
-  fetch: () => void;
+export interface StateFromProps {
+  list: NodeEntity[];
 }
+export interface DispatchFromProps {
+  fetchList: () => void;
+}
+export type ListProps = StateFromProps & DispatchFromProps;
 
 /**
  * 開閉
@@ -34,13 +37,13 @@ const RecursionList = (list: NodeEntity[], id = 0) => {
   );
 };
 
-const List = (props: any) => {
+const List: React.SFC<ListProps> = (props) => {
 
-  if (props.nodes.list.length === 0) {
+  if (props.list.length === 0) {
     return <div />;
   }
 
-  return RecursionList(props.nodes.list);
+  return RecursionList(props.list);
 };
 
 const enhance = compose<any, any>()(List);
