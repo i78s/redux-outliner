@@ -1,13 +1,17 @@
 import * as React from 'react';
-import { compose, withHandlers } from 'recompose';
 import { NodeEntity } from 'services/models';
 
-interface ItemProps {
+interface StateFromProps {
   node: NodeEntity;
+}
+
+export interface DispatchFromProps {
   onInput: () => void;
   onKeyDown: () => void;
   onPaste: () => void;
 }
+
+type ItemProps = StateFromProps & DispatchFromProps;
 
 /**
  * 追加
@@ -24,6 +28,7 @@ const Item: React.SFC<ItemProps> = ({
   onPaste,
   onKeyDown,
 }) => {
+
   return (
     <span
       suppressContentEditableWarning={true}
@@ -37,26 +42,4 @@ const Item: React.SFC<ItemProps> = ({
   );
 };
 
-const enhance = compose<any, any>(
-  withHandlers({
-    onInput: props => (e: InputEvent<HTMLSpanElement>) => {
-      // const value = e.target.value;
-
-      // tslint:disable-next-line:no-console
-      console.dir(e.target.innerText);
-    },
-    onKeyDown: props => (e: KeyboardEvent) => {
-      if (e.keyCode === 13) {
-        e.preventDefault();
-        // todo 兄弟ノードを新規作成
-      }
-    },
-    onPaste: props => (e: ClipboardEvent) => {
-      e.preventDefault();
-      const value: string = e.clipboardData.getData('text/plain');
-      document.execCommand('insertHTML', false, value);
-    },
-  }),
-)(Item);
-
-export default enhance;
+export default Item;

@@ -1,4 +1,4 @@
-import Item from 'components/Editor/Item';
+import Item from 'containers/Editor/Item';
 import * as React from 'react';
 import { compose } from 'recompose';
 
