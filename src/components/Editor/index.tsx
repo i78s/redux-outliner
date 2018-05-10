@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import List from 'components/Editor/List';
+import List from 'containers/Editor/List';
 
 export default () => {
   return (

@@ -1,13 +1,13 @@
 import Item from 'components/Editor/Item';
 import * as React from 'react';
-import { compose, lifecycle, withStateHandlers } from 'recompose';
+import { compose } from 'recompose';
 
 import { NodeEntity } from 'services/models';
-import nodes from 'services/nodes';
 
-// interface ListProps {
-//   title: string;
-// }
+export interface ListProps {
+  nodes: NodeEntity;
+  fetch: () => void;
+}
 
 /**
  * 開閉
@@ -36,27 +36,13 @@ const RecursionList = (list: NodeEntity[], id = 0) => {
 
 const List = (props: any) => {
 
-  if (props.data.length === 0) {
+  if (props.nodes.list.length === 0) {
     return <div />;
   }
 
-  return RecursionList(props.data);
+  return RecursionList(props.nodes.list);
 };
 
-const enhance = compose<any, any>(
-  withStateHandlers({ data: [] }, {
-    onData: state => (data) => ({
-      data,
-    }),
-  }),
-  lifecycle<any, {}, {}>({
-    componentDidMount() {
-      nodes.getList()
-        .then(res => {
-          this.props.onData(res);
-        });
-    },
-  }),
-)(List);
+const enhance = compose<any, any>()(List);
 
 export default enhance;
