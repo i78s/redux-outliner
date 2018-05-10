@@ -84,9 +84,9 @@ function* createNode(action: any): SagaIterator {
     const data = yield call(
       nodesApi.post,
       {
-        title: '',
-        parent_id: 1,
-        project_id: 1,
+        ...action.payload,
+        id: null,
+        parent_id: action.payload.id,
       },
     );
     yield put(addNode.done({

@@ -5,13 +5,13 @@ interface StateFromProps {
   node: NodeEntity;
 }
 
-export interface DispatchFromProps {
-  onInput: () => void;
-  onKeyDown: () => void;
-  onPaste: () => void;
+export interface HandlerProps {
+  onInput: (e: any) => void;
+  onKeyDown: (e: any) => void;
+  onPaste: (e: any) => void;
 }
 
-type ItemProps = StateFromProps & DispatchFromProps;
+export type ItemProps = StateFromProps & HandlerProps;
 
 /**
  * 追加

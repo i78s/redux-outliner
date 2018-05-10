@@ -1,4 +1,4 @@
-import Item from 'components/Editor/Item';
+import Item, { HandlerProps, ItemProps } from 'components/Editor/Item';
 import {
   addNode,
 } from 'modules/nodes';
@@ -6,18 +6,22 @@ import { State } from 'modules/store';
 import { connect } from 'react-redux';
 import { compose, withHandlers } from 'recompose';
 import { bindActionCreators, Dispatch } from 'redux';
+import { NodeEntity } from 'services/models';
 
 const mapDispatchToProps = (dispatch: Dispatch<State>) => (
   bindActionCreators(
     {
-      addNode: () => addNode.started({}),
+      addNode: (title, node) => addNode.started({
+        ...node,
+        title,
+      }),
     },
     dispatch,
   )
 );
 
 interface DispatchFromProps {
-  addNode: () => void;
+  addNode: (title: string, node: NodeEntity) => void;
 }
 
 export default compose<any, any>(
@@ -25,7 +29,7 @@ export default compose<any, any>(
     null, // stateを渡さないパターン
     mapDispatchToProps,
   ),
-  withHandlers<DispatchFromProps, {}>({
+  withHandlers<DispatchFromProps & ItemProps, HandlerProps>({
     onInput: props => (e: InputEvent<HTMLSpanElement>) => {
       // const value = e.target.value;
 
@@ -51,7 +55,7 @@ export default compose<any, any>(
           before,
           after,
         });
-        // props.addNode();
+        props.addNode(after, props.node);
       }
     },
     onPaste: props => (e: ClipboardEvent) => {
