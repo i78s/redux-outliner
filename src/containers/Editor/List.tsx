@@ -1,9 +1,12 @@
 import { connect } from 'react-redux';
-import { compose, lifecycle, pure } from 'recompose';
+import { compose, lifecycle, withHandlers } from 'recompose';
 import { bindActionCreators, Dispatch } from 'redux';
 
 import List, { DispatchFromProps } from 'components/Editor/List';
-import { fetchNodes } from 'modules/nodes';
+import {
+  addNode,
+  fetchNodes,
+} from 'modules/nodes';
 import { State } from 'modules/store';
 
 const mapStateToProps = (state: State) => ({
@@ -14,12 +17,13 @@ const mapDispatchToProps = (dispatch: Dispatch<State>) => (
   bindActionCreators(
     {
       fetchList: () => fetchNodes.started({}),
+      addNode: () => addNode.started({}),
     },
     dispatch,
   )
 );
 
-export default compose<any, any>(
+export default compose<DispatchFromProps, any>(
   connect(
     mapStateToProps,
     mapDispatchToProps,
@@ -29,5 +33,11 @@ export default compose<any, any>(
       this.props.fetchList();
     },
   }),
-  pure,
+  withHandlers<DispatchFromProps, {}>({
+    addNode: (props) => () => {
+      // tslint:disable-next-line:no-console
+      console.log(props);
+      props.addNode();
+    },
+  }),
 )(List);
