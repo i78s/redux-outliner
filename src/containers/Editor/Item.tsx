@@ -1,6 +1,7 @@
 import Item, { HandlerProps, ItemProps } from 'components/Editor/Item';
 import {
   addNode,
+  editNode,
 } from 'modules/nodes';
 import { State } from 'modules/store';
 import { connect } from 'react-redux';
@@ -15,6 +16,7 @@ const mapDispatchToProps = (dispatch: Dispatch<State>) => (
         ...node,
         title,
       }),
+      editNode: (node) => editNode.started(node),
     },
     dispatch,
   )
@@ -22,6 +24,7 @@ const mapDispatchToProps = (dispatch: Dispatch<State>) => (
 
 interface DispatchFromProps {
   addNode: (title: string, node: NodeEntity) => void;
+  editNode: (node: NodeEntity) => void;
 }
 
 export default compose<any, any>(
@@ -41,8 +44,7 @@ export default compose<any, any>(
         e.preventDefault();
         /**
          * todo
-         * 兄弟ノードを新規作成
-         * 改行位置が末尾でないときは既存のノードの更新処理も必要
+         * 更新/作成時に並び順を指定する
          */
 
         const text = e.target.innerText;
@@ -54,6 +56,10 @@ export default compose<any, any>(
         console.dir({
           before,
           after,
+        });
+        props.editNode({
+          ...props.node,
+          title: before,
         });
         props.addNode(after, props.node);
       }

@@ -31,6 +31,12 @@ export const addNode = actionCreator.async<
   Error
 >('CREATE');
 
+export const editNode = actionCreator.async<
+  {},
+  { data: NodeEntity },
+  Error
+>('UPDATE');
+
 export default reducerWithInitialState(initialState)
   .case(
     fetchNodes.done,
@@ -40,8 +46,13 @@ export default reducerWithInitialState(initialState)
     setNodes,
     (state, { list }) => ({ ...state, list }),
   )
+  // todo 画面に反映する
   .case(
     addNode.done,
+    (state, { result }) => ({ ...state }),
+  )
+  .case(
+    editNode.done,
     (state, { result }) => ({ ...state }),
   )
   ;
@@ -50,6 +61,7 @@ export function* nodesTask() {
   yield all([
     fork(watchLoadNodes),
     fork(watchCreateNode),
+    fork(watchUpdateNode),
   ]);
 }
 
@@ -87,6 +99,31 @@ function* createNode(action: any): SagaIterator {
         ...action.payload,
         id: null,
         parent_id: action.payload.id,
+      },
+    );
+    yield put(addNode.done({
+      params: {},
+      result: { data },
+    }));
+
+  } catch (error) {
+    yield put(addNode.failed({
+      params: {},
+      error: error as Error,
+    }));
+  }
+}
+
+function* watchUpdateNode(): SagaIterator {
+  yield takeLatest(editNode.started, updateNode);
+}
+
+function* updateNode(action: any): SagaIterator {
+  try {
+    const data = yield call(
+      nodesApi.put,
+      {
+        ...action.payload,
       },
     );
     yield put(addNode.done({
