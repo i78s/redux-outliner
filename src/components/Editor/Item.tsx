@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { compose, withHandlers } from 'recompose';
+import { NodeEntity } from 'services/models';
 
 interface ItemProps {
-  title: string;
+  node: NodeEntity;
   onInput: () => void;
   onKeyDown: () => void;
   onPaste: () => void;
@@ -18,7 +19,7 @@ interface ItemProps {
  */
 
 const Item: React.SFC<ItemProps> = ({
-  title,
+  node,
   onInput,
   onPaste,
   onKeyDown,
@@ -31,7 +32,7 @@ const Item: React.SFC<ItemProps> = ({
       onKeyDown={onKeyDown}
       onPaste={onPaste}
     >
-      {title}
+      {node.title}
     </span>
   );
 };
