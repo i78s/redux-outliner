@@ -46,7 +46,6 @@ export default reducerWithInitialState(initialState)
     setNodes,
     (state, { list }) => ({ ...state, list }),
   )
-  // todo 画面に反映する
   .case(
     addNode.done,
     (state, { result }) => {
@@ -62,7 +61,23 @@ export default reducerWithInitialState(initialState)
   )
   .case(
     editNode.done,
-    (state, { result }) => ({ ...state }),
+    (state, { result }) => {
+      const list = state.list.map(node => {
+        if (node.id === result.data.id) {
+          return {
+            ...node,
+            ...result.data,
+          };
+        }
+
+        return node;
+      });
+
+      return {
+        ...state,
+        list,
+      };
+    },
   )
   ;
 
