@@ -32,11 +32,26 @@ export default compose<any, any>(
       // tslint:disable-next-line:no-console
       console.dir(e.target.innerText);
     },
-    onKeyDown: props => (e: KeyboardEvent) => {
+    onKeyDown: props => (e: KeyboardEvent & InputEvent<HTMLSpanElement>) => {
       if (e.keyCode === 13) {
         e.preventDefault();
-        // todo 兄弟ノードを新規作成
-        props.addNode();
+        /**
+         * todo
+         * 兄弟ノードを新規作成
+         * 改行位置が末尾でないときは既存のノードの更新処理も必要
+         */
+
+        const text = e.target.innerText;
+        const selection = window.getSelection();
+        const { startOffset, endOffset } = selection.getRangeAt(0);
+        const before = text.slice(0, startOffset);
+        const after = text.slice(endOffset);
+        // tslint:disable-next-line:no-console
+        console.dir({
+          before,
+          after,
+        });
+        // props.addNode();
       }
     },
     onPaste: props => (e: ClipboardEvent) => {
