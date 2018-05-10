@@ -49,7 +49,16 @@ export default reducerWithInitialState(initialState)
   // todo 画面に反映する
   .case(
     addNode.done,
-    (state, { result }) => ({ ...state }),
+    (state, { result }) => {
+
+      return {
+        ...state,
+        list: [
+          ...state.list,
+          result.data,
+        ],
+      };
+    },
   )
   .case(
     editNode.done,
