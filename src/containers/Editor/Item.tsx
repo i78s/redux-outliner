@@ -38,6 +38,12 @@ export default compose<any, any>(
 
       // tslint:disable-next-line:no-console
       console.dir(e.target.innerText);
+
+      /**
+       * todo
+       * 変更時にアップデートする
+       * 空文字になったとき かつ 子がいなければ削除
+       */
     },
     onKeyDown: props => (e: KeyboardEvent & InputEvent<HTMLSpanElement>) => {
       if (e.keyCode === 13) {
