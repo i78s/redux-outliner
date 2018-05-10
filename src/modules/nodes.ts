@@ -135,13 +135,13 @@ function* updateNode(action: any): SagaIterator {
         ...action.payload,
       },
     );
-    yield put(addNode.done({
+    yield put(editNode.done({
       params: {},
       result: { data },
     }));
 
   } catch (error) {
-    yield put(addNode.failed({
+    yield put(editNode.failed({
       params: {},
       error: error as Error,
     }));
