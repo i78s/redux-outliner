@@ -9,7 +9,6 @@ export interface StateFromProps {
 }
 export interface DispatchFromProps {
   fetchList: () => void;
-  addNode: () => void;
 }
 export type ListProps = StateFromProps & DispatchFromProps;
 
@@ -44,11 +43,7 @@ const List: React.SFC<ListProps> = (props) => {
     return <div />;
   }
 
-  return (
-    <div onClick={props.addNode}>
-      {RecursionList(props.list)}
-    </div>
-  );
+  return RecursionList(props.list);
 };
 
 const enhance = compose<any, any>()(List);

@@ -1,10 +1,9 @@
 import { connect } from 'react-redux';
-import { compose, lifecycle, withHandlers } from 'recompose';
+import { compose, lifecycle } from 'recompose';
 import { bindActionCreators, Dispatch } from 'redux';
 
 import List, { DispatchFromProps } from 'components/Editor/List';
 import {
-  addNode,
   fetchNodes,
 } from 'modules/nodes';
 import { State } from 'modules/store';
@@ -17,7 +16,6 @@ const mapDispatchToProps = (dispatch: Dispatch<State>) => (
   bindActionCreators(
     {
       fetchList: () => fetchNodes.started({}),
-      addNode: () => addNode.started({}),
     },
     dispatch,
   )
@@ -31,13 +29,6 @@ export default compose<DispatchFromProps, any>(
   lifecycle<DispatchFromProps, {}, {}>({
     componentDidMount() {
       this.props.fetchList();
-    },
-  }),
-  withHandlers<DispatchFromProps, {}>({
-    addNode: (props) => () => {
-      // tslint:disable-next-line:no-console
-      console.log(props);
-      props.addNode();
     },
   }),
 )(List);
