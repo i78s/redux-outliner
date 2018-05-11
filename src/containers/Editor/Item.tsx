@@ -43,6 +43,7 @@ export default compose<any, any>(
        * todo
        * 変更時にアップデートする
        * 空文字になったとき かつ 子がいなければ削除
+       *  フォーカス位置を直前の兄弟 / 親に移動する
        */
     },
     onKeyDown: props => (e: KeyboardEvent & InputEvent<HTMLSpanElement>) => {
