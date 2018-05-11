@@ -113,6 +113,7 @@ function* loadNodes(action: any): SagaIterator {
 
 function* watchCreateNode(): SagaIterator {
   yield takeLatest(addNode.started, createNode);
+  yield takeLatest(addNode.done, changeNodeFocus);
 }
 
 function* createNode(action: any): SagaIterator {
@@ -135,6 +136,15 @@ function* createNode(action: any): SagaIterator {
       params: {},
       error: error as Error,
     }));
+  }
+}
+
+// 新規作成 / 削除時にフォーカスを移動する
+function* changeNodeFocus(action: any): SagaIterator {
+  const { data } = action.payload.result;
+  const node: HTMLSpanElement | null = document.querySelector(`[data-id="${data.id}"]`);
+  if (node) {
+    node.focus();
   }
 }
 
