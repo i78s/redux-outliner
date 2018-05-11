@@ -67,7 +67,7 @@
     "storybook": "start-storybook -p 9001 -c .storybook",
     "storybook:build": "build-storybook --output-dir ./build/storybook",
     "tslint-check": "tslint-config-prettier-check ./tslint.json",
-    "json-server": "$(npm bin)/json-server fake-server/index.js -p 8000"
+    "json-server": "$(npm bin)/json-server fake-server/index.js -p 8000 -d 100"
   },
   "devDependencies": {
     "@storybook/addon-info": "^3.3.9",
