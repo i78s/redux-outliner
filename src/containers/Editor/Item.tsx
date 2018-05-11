@@ -39,7 +39,8 @@ export default compose<any, any>(
     onInput: props => (e: InputEvent<HTMLSpanElement>) => {
       /**
        * todo
-       * 変更時にアップデートする
+       * 日本語入力の変換時に整合性おかしくなる
+       *  イベントの間引きが必要
        * 空文字になったとき かつ 子がいなければ削除
        *  フォーカス位置を直前の兄弟 / 親に移動する
        */
