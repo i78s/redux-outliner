@@ -34,17 +34,34 @@ export default compose<any, any>(
   ),
   withHandlers<DispatchFromProps & ItemProps, HandlerProps>({
     onInput: props => (e: InputEvent<HTMLSpanElement>) => {
-      // const value = e.target.value;
-
-      // tslint:disable-next-line:no-console
-      console.dir(e.target.innerText);
-
       /**
        * todo
        * 変更時にアップデートする
        * 空文字になったとき かつ 子がいなければ削除
        *  フォーカス位置を直前の兄弟 / 親に移動する
        */
+      const selection = window.getSelection();
+      const range = selection.getRangeAt(0);
+      const { startOffset, endOffset } = range;
+
+      const target = e.target;
+      const title = target.innerText;
+
+      props.editNode(
+        {
+          ...props.node,
+          title,
+        },
+      );
+
+      setTimeout(
+        () => {
+          if (target.firstChild) {
+            range.setStart(target.firstChild, startOffset);
+            range.setEnd(target.firstChild, endOffset);
+          }
+        },
+        16);
     },
     onKeyDown: props => (e: KeyboardEvent & InputEvent<HTMLSpanElement>) => {
       if (e.keyCode === 13) {
