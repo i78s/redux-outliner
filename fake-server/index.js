@@ -8,10 +8,13 @@ module.exports = () => {
   
   const max = 100;
   for (let i = 1; i <= max; i++) {
+    const parent_id = i % 3 === 0 ? 0 : faker.random.number(max);
+    const sibling = data.nodes.filter(el => el.parent_id === parent_id);
     data.nodes.push({
       id: i,
       title: faker.name.title(),
-      parent_id: i % 3 === 0 ? 0 : faker.random.number(max),
+      order: sibling.length,
+      parent_id,
       project_id: 1,
     });
   }

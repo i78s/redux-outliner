@@ -37,6 +37,7 @@ const Item: React.SFC<ItemProps> = ({
       onKeyDown={onKeyDown}
       onPaste={onPaste}
       data-id={node.id}
+      data-order={node.order}
     >
       {node.title}
     </span>
