@@ -1,5 +1,5 @@
 import { SagaIterator } from 'redux-saga';
-import { all, call, fork, put, takeLatest } from 'redux-saga/effects';
+import { all, call, fork, put, take, takeLatest } from 'redux-saga/effects';
 import { NodeEntity } from 'services/models';
 import nodesApi from 'services/nodes';
 import actionCreatorFactory from 'typescript-fsa';
@@ -36,6 +36,8 @@ export const editNode = actionCreator.async<
   { data: NodeEntity },
   Error
 >('UPDATE');
+
+export const updateCaret = actionCreator<{}>('UPDATE_CARET');
 
 export default reducerWithInitialState(initialState)
   .case(
@@ -150,6 +152,7 @@ function* changeNodeFocus(action: any): SagaIterator {
 
 function* watchUpdateNode(): SagaIterator {
   yield takeLatest(editNode.started, updateNode);
+  yield takeLatest(updateCaret, onUpdatedOnlyNode);
 }
 
 function* updateNode(action: any): SagaIterator {
@@ -160,6 +163,8 @@ function* updateNode(action: any): SagaIterator {
         ...action.payload,
       },
     );
+    // tslint:disable-next-line:no-console
+    console.log('editNode.done');
     yield put(editNode.done({
       params: {},
       result: { data },
@@ -170,5 +175,18 @@ function* updateNode(action: any): SagaIterator {
       params: {},
       error: error as Error,
     }));
+  }
+}
+
+// nodeの変更のみ（Enterキー押下やで新規作成やdeleteキーでの削除を伴わない時）
+// 更新後のAPIのデータが反映された後本来の位置にキャレットを移動する
+function* onUpdatedOnlyNode(action: any): SagaIterator {
+  yield take(editNode.done);
+
+  const { target, range, startOffset, endOffset } = action.payload;
+
+  if (target.firstChild) {
+    range.setStart(target.firstChild, startOffset);
+    range.setEnd(target.firstChild, endOffset);
   }
 }

@@ -2,6 +2,7 @@ import Item, { HandlerProps, ItemProps } from 'components/Editor/Item';
 import {
   addNode,
   editNode,
+  updateCaret,
 } from 'modules/nodes';
 import { State } from 'modules/store';
 import { connect } from 'react-redux';
@@ -17,6 +18,7 @@ const mapDispatchToProps = (dispatch: Dispatch<State>) => (
         title,
       }),
       editNode: (node) => editNode.started(node),
+      updateCaret: (data) => updateCaret(data),
     },
     dispatch,
   )
@@ -25,6 +27,7 @@ const mapDispatchToProps = (dispatch: Dispatch<State>) => (
 interface DispatchFromProps {
   addNode: (title: string, node: NodeEntity) => void;
   editNode: (node: NodeEntity) => void;
+  updateCaret: (data: any) => void;
 }
 
 export default compose<any, any>(
@@ -53,15 +56,12 @@ export default compose<any, any>(
           title,
         },
       );
-
-      setTimeout(
-        () => {
-          if (target.firstChild) {
-            range.setStart(target.firstChild, startOffset);
-            range.setEnd(target.firstChild, endOffset);
-          }
-        },
-        16);
+      props.updateCaret({
+        target,
+        range,
+        startOffset,
+        endOffset,
+      });
     },
     onKeyDown: props => (e: KeyboardEvent & InputEvent<HTMLSpanElement>) => {
       if (e.keyCode === 13) {
