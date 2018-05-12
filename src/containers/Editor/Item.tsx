@@ -49,6 +49,11 @@ export default compose<any, any>(
     onKeyDown: props => (e: KeyboardEvent & InputEvent<HTMLSpanElement>) => {
       props.setComposing(e.keyCode === 229);
 
+      /**
+       * todo
+       * tabキー押下時
+       * shift + tabキー押下時
+       */
       if (e.keyCode === 13) {
         e.preventDefault();
         /**
