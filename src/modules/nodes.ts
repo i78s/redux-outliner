@@ -163,8 +163,6 @@ function* updateNode(action: any): SagaIterator {
         ...action.payload,
       },
     );
-    // tslint:disable-next-line:no-console
-    console.log('editNode.done');
     yield put(editNode.done({
       params: {},
       result: { data },
