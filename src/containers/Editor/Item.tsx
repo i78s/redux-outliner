@@ -53,6 +53,12 @@ export default compose<any, any>(
        * todo
        * tabキー押下時
        * shift + tabキー押下時
+       * ===
+       * deleteキー押下時: 削除
+       *  キャレットが先頭
+       *    フォーカス位置を直前の兄弟 / 親に移動する
+       *    キャレットより右に文字がある / ない
+       *    子がいる / いない
        */
       if (e.keyCode === 13) {
         e.preventDefault();
@@ -88,12 +94,6 @@ export default compose<any, any>(
 )(Item);
 
 const update = (props: WithHandlersProp, target: any) => {
-  /**
-   * todo
-   * 空文字になったとき かつ 子がいなければ削除
-   *  フォーカス位置を直前の兄弟 / 親に移動する
-   */
-
   const selection = window.getSelection();
   const range = selection.getRangeAt(0);
   const { startOffset, endOffset } = range;
