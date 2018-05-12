@@ -1,4 +1,4 @@
-import { SagaIterator } from 'redux-saga';
+import { delay, SagaIterator } from 'redux-saga';
 import { all, call, fork, put, take, takeLatest } from 'redux-saga/effects';
 import { NodeEntity } from 'services/models';
 import nodesApi from 'services/nodes';
@@ -156,6 +156,8 @@ function* watchUpdateNode(): SagaIterator {
 }
 
 function* updateNode(action: any): SagaIterator {
+  yield call(delay, 500);
+
   try {
     const data = yield call(
       nodesApi.put,

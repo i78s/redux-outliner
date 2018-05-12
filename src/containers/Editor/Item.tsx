@@ -85,7 +85,6 @@ export default compose<any, any>(
 const update = (props: WithHandlersProp, target: any) => {
   /**
    * todo
-   * イベントの間引きが必要
    * 空文字になったとき かつ 子がいなければ削除
    *  フォーカス位置を直前の兄弟 / 親に移動する
    */
