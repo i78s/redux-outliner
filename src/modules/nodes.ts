@@ -125,7 +125,6 @@ function* createNode(action: any): SagaIterator {
       {
         ...action.payload,
         id: null,
-        parent_id: action.payload.id,
       },
     );
     yield put(addNode.done({
