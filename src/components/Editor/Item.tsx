@@ -8,6 +8,7 @@ interface StateFromProps {
 export interface HandlerProps {
   onInput: (e: any) => void;
   onKeyDown: (e: any) => void;
+  onKeyUp: (e: any) => void;
   onPaste: (e: any) => void;
 }
 
@@ -27,6 +28,7 @@ const Item: React.SFC<ItemProps> = ({
   onInput,
   onPaste,
   onKeyDown,
+  onKeyUp,
 }) => {
 
   return (
@@ -35,6 +37,7 @@ const Item: React.SFC<ItemProps> = ({
       contentEditable={true}
       onInput={onInput}
       onKeyDown={onKeyDown}
+      onKeyUp={onKeyUp}
       onPaste={onPaste}
       data-id={node.id}
       data-order={node.order}
