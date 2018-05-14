@@ -1,3 +1,4 @@
+import { getNodesList, selectState } from 'modules/selectors';
 import { delay, SagaIterator } from 'redux-saga';
 import { all, call, fork, put, take, takeLatest } from 'redux-saga/effects';
 import { NodeEntity } from 'services/models';
@@ -126,6 +127,9 @@ function* watchCreateNode(): SagaIterator {
 }
 
 function* createNode(action: any): SagaIterator {
+  const list: NodeEntity[] = yield selectState<NodeEntity[]>(getNodesList);
+  // tslint:disable-next-line:no-console
+  console.log(list);
   try {
     const data = yield call(
       nodesApi.post,
