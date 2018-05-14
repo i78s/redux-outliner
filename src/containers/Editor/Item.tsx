@@ -48,7 +48,6 @@ export default compose<any, any>(
     },
     onKeyDown: props => (e: KeyboardEvent & InputEvent<HTMLDivElement>) => {
       props.setComposing(e.keyCode === 229);
-
       /**
        * todo
        * tabキー押下時
@@ -60,9 +59,20 @@ export default compose<any, any>(
        *    キャレットより右に文字がある / ない
        *    子がいる / いない
        */
-      if (e.keyCode === 13) {
-        e.preventDefault();
-        onEnter(props, e.target);
+      switch (e.keyCode) {
+        case 8:
+          onKeyDownDelete(props, e.target);
+          break;
+        case 9:
+          e.preventDefault();
+          e.shiftKey ? onKeyDownShiftTab(props, e.target) : onKeyDownTab(props, e.target);
+          break;
+        case 13:
+          e.preventDefault();
+          onKeyDownEnter(props, e.target);
+          break;
+        default:
+          break;
       }
     },
     onKeyUp: props => (e: KeyboardEvent) => {
@@ -99,7 +109,7 @@ const update = (props: WithHandlersProp, target: any) => {
   });
 };
 
-const onEnter = (props: WithHandlersProp, target: HTMLDivElement) => {
+const onKeyDownEnter = (props: WithHandlersProp, target: HTMLDivElement) => {
   /**
    * todo
    * 更新/作成時に並び順を指定する
@@ -116,4 +126,19 @@ const onEnter = (props: WithHandlersProp, target: HTMLDivElement) => {
     title: before,
   });
   props.addNode(after, props.node);
+};
+
+const onKeyDownDelete = (props: WithHandlersProp, target: HTMLDivElement) => {
+  // tslint:disable-next-line:no-console
+  console.log('del');
+};
+
+const onKeyDownTab = (props: WithHandlersProp, target: HTMLDivElement) => {
+  // tslint:disable-next-line:no-console
+  console.log('tab');
+};
+
+const onKeyDownShiftTab = (props: WithHandlersProp, target: HTMLDivElement) => {
+  // tslint:disable-next-line:no-console
+  console.log('shift + tab');
 };
