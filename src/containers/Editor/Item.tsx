@@ -40,13 +40,13 @@ export default compose<any, any>(
   ),
   withState('isComposing', 'setComposing', false),
   withHandlers<WithHandlersProp, HandlerProps>({
-    onInput: props => (e: InputEvent<HTMLSpanElement>) => {
+    onInput: props => (e: InputEvent<HTMLDivElement>) => {
       if (props.isComposing) {
         return;
       }
       update(props, e.target);
     },
-    onKeyDown: props => (e: KeyboardEvent & InputEvent<HTMLSpanElement>) => {
+    onKeyDown: props => (e: KeyboardEvent & InputEvent<HTMLDivElement>) => {
       props.setComposing(e.keyCode === 229);
 
       /**

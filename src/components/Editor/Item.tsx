@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { NodeEntity } from 'services/models';
+import styled from 'styled-components';
 
 interface StateFromProps {
   node: NodeEntity;
@@ -32,7 +33,7 @@ const Item: React.SFC<ItemProps> = ({
 }) => {
 
   return (
-    <span
+    <Content
       suppressContentEditableWarning={true}
       contentEditable={true}
       onInput={onInput}
@@ -43,8 +44,12 @@ const Item: React.SFC<ItemProps> = ({
       data-order={node.order}
     >
       {node.title}
-    </span>
+    </Content>
   );
 };
 
 export default Item;
+
+const Content = styled.div`
+  min-height: 20px;
+`;
