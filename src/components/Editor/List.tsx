@@ -1,7 +1,6 @@
 import Item from 'containers/Editor/Item';
 import * as React from 'react';
 import { compose } from 'recompose';
-import styled from 'styled-components';
 
 import { NodeEntity } from 'services/models';
 
@@ -25,7 +24,7 @@ const RecursionList = (list: NodeEntity[], id = 0) => {
   }
 
   return (
-    <StyledList>
+    <ul>
       {child.reduce(
         (c: any, e: any) => (
           <React.Fragment>
@@ -34,7 +33,7 @@ const RecursionList = (list: NodeEntity[], id = 0) => {
         ),
         '',
       )}
-    </StyledList>
+    </ul>
   );
 };
 
@@ -50,9 +49,3 @@ const List: React.SFC<ListProps> = (props) => {
 const enhance = compose<any, any>()(List);
 
 export default enhance;
-
-const StyledList = styled.ul`
-  li {
-    margin-left: 20px;
-  }
-`;
