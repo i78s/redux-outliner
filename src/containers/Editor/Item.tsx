@@ -62,22 +62,7 @@ export default compose<any, any>(
        */
       if (e.keyCode === 13) {
         e.preventDefault();
-        /**
-         * todo
-         * 更新/作成時に並び順を指定する
-         */
-
-        const text = e.target.innerText;
-        const selection = window.getSelection();
-        const { startOffset, endOffset } = selection.getRangeAt(0);
-        const before = text.slice(0, startOffset);
-        const after = text.slice(endOffset);
-
-        props.editNode({
-          ...props.node,
-          title: before,
-        });
-        props.addNode(after, props.node);
+        onEnter(props, e.target);
       }
     },
     onKeyUp: props => (e: KeyboardEvent) => {
@@ -112,4 +97,23 @@ const update = (props: WithHandlersProp, target: any) => {
     startOffset,
     endOffset,
   });
+};
+
+const onEnter = (props: WithHandlersProp, target: HTMLDivElement) => {
+  /**
+   * todo
+   * 更新/作成時に並び順を指定する
+   */
+
+  const text = target.innerText;
+  const selection = window.getSelection();
+  const { startOffset, endOffset } = selection.getRangeAt(0);
+  const before = text.slice(0, startOffset);
+  const after = text.slice(endOffset);
+
+  props.editNode({
+    ...props.node,
+    title: before,
+  });
+  props.addNode(after, props.node);
 };

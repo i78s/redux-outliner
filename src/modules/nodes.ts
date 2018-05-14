@@ -37,6 +37,12 @@ export const editNode = actionCreator.async<
   Error
 >('UPDATE');
 
+export const removeNode = actionCreator.async<
+  {},
+  {},
+  Error
+>('DELETE');
+
 export const updateCaret = actionCreator<{}>('UPDATE_CARET');
 
 export default reducerWithInitialState(initialState)
@@ -88,6 +94,7 @@ export function* nodesTask() {
     fork(watchLoadNodes),
     fork(watchCreateNode),
     fork(watchUpdateNode),
+    fork(watchDeleteNode),
   ]);
 }
 
@@ -187,5 +194,30 @@ function* onUpdatedOnlyNode(action: any): SagaIterator {
   if (target.firstChild) {
     range.setStart(target.firstChild, startOffset);
     range.setEnd(target.firstChild, endOffset);
+  }
+}
+
+function* watchDeleteNode(): SagaIterator {
+  yield takeLatest(removeNode.started, deleteNode);
+}
+
+function* deleteNode(action: any): SagaIterator {
+  try {
+    const data = yield call(
+      nodesApi.delete,
+      {
+        ...action.payload,
+      },
+    );
+    yield put(removeNode.done({
+      params: {},
+      result: { data },
+    }));
+
+  } catch (error) {
+    yield put(removeNode.failed({
+      params: {},
+      error: error as Error,
+    }));
   }
 }
