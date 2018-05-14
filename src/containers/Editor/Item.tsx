@@ -102,7 +102,7 @@ const update = (props: WithHandlersProp, target: any) => {
 const onKeyDownEnter = (props: WithHandlersProp, target: HTMLDivElement) => {
   /**
    * todo
-   * 更新/作成時に並び順を指定する
+   * 並び順を指定する
    */
 
   const text = target.innerText;
