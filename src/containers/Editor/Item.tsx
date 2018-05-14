@@ -48,17 +48,7 @@ export default compose<any, any>(
     },
     onKeyDown: props => (e: KeyboardEvent & InputEvent<HTMLDivElement>) => {
       props.setComposing(e.keyCode === 229);
-      /**
-       * todo
-       * tabキー押下時
-       * shift + tabキー押下時
-       * ===
-       * deleteキー押下時: 削除
-       *  キャレットが先頭
-       *    フォーカス位置を直前の兄弟 / 親に移動する
-       *    キャレットより右に文字がある / ない
-       *    子がいる / いない
-       */
+
       switch (e.keyCode) {
         case 8:
           onKeyDownDelete(props, e.target);
@@ -129,16 +119,32 @@ const onKeyDownEnter = (props: WithHandlersProp, target: HTMLDivElement) => {
 };
 
 const onKeyDownDelete = (props: WithHandlersProp, target: HTMLDivElement) => {
+  /**
+   * todo
+   * deleteキー押下時: 削除
+   *  キャレットが先頭
+   *    フォーカス位置を直前の兄弟 / 親に移動する
+   *    キャレットより右に文字がある / ない
+   *    子がいる / いない
+   */
   // tslint:disable-next-line:no-console
   console.log('del');
 };
 
 const onKeyDownTab = (props: WithHandlersProp, target: HTMLDivElement) => {
+  /**
+   * todo
+   * 直前の兄弟が存在すればparent_idを直前の兄弟のidに変更
+   */
   // tslint:disable-next-line:no-console
   console.log('tab');
 };
 
 const onKeyDownShiftTab = (props: WithHandlersProp, target: HTMLDivElement) => {
+  /**
+   * todo
+   * 親が存在すればparent_idを親のidに変更
+   */
   // tslint:disable-next-line:no-console
   console.log('shift + tab');
 };
