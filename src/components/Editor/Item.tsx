@@ -51,5 +51,22 @@ const Item: React.SFC<ItemProps> = ({
 export default Item;
 
 const Content = styled.div`
-  min-height: 20px;
+  position: relative;
+  margin-bottom: 8px;
+  padding-left: 15px;
+  outline: none;
+
+  &:before {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    margin: auto;
+    width: 5px;
+    height: 5px;
+    background-color: #333;
+    border-radius: 50%;
+  }
 `;
