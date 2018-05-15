@@ -24,7 +24,7 @@ export const fetchNodes = actionCreator.async<
 
 export const addNode = actionCreator.async<
   {},
-  { data: NodeEntity },
+  { list: NodeEntity[] },
   Error
 >('CREATE');
 
@@ -49,16 +49,7 @@ export default reducerWithInitialState(initialState)
   )
   .case(
     addNode.done,
-    (state, { result }) => {
-
-      return {
-        ...state,
-        list: [
-          ...state.list,
-          result.data,
-        ],
-      };
-    },
+    (state, { result }) => ({ ...state, list: result.list }),
   )
   .case(
     editNode.done,
@@ -119,22 +110,51 @@ function* watchCreateNode(): SagaIterator {
 }
 
 function* createNode(action: any): SagaIterator {
-  const list: NodeEntity[] = yield selectState<NodeEntity[]>(getNodesList);
-  // tslint:disable-next-line:no-console
-  console.log(list);
-  try {
-    const data = yield call(
-      nodesApi.post,
-      {
-        ...action.payload,
-        id: null,
-      },
-    );
-    yield put(addNode.done({
-      params: {},
-      result: { data },
-    }));
+  const payload = action.payload;
 
+  try {
+    const request: NodeEntity[] = yield all([
+      // 新規作成
+      call(
+        nodesApi.post,
+        {
+          ...payload.node,
+          title: payload.after,
+          id: null,
+        },
+      ),
+      // 既存nodeの更新
+      // todo 末尾で改行された場合 (beforeが空文字なら処理が不要)
+      call(
+        nodesApi.put,
+        {
+          ...action.payload.node,
+          title: payload.before,
+        },
+      ),
+    ]);
+
+    const tmp: NodeEntity[] = yield selectState<NodeEntity[]>(getNodesList);
+    const list = tmp
+      .map(el => {
+        if (el.parent_id !== action.payload.parent_id) {
+          return el;
+        }
+
+        return { ...el, order: el.order + 1 };
+      });
+
+    yield put(addNode.done({
+      params: {
+        id: request[0].id,
+      },
+      result: {
+        list: [
+          ...list,
+          ...request,
+        ],
+      },
+    }));
   } catch (error) {
     yield put(addNode.failed({
       params: {},
@@ -145,8 +165,8 @@ function* createNode(action: any): SagaIterator {
 
 // 新規作成 / 削除時にフォーカスを移動する
 function* changeNodeFocus(action: any): SagaIterator {
-  const { data } = action.payload.result;
-  const node: HTMLSpanElement | null = document.querySelector(`[data-id="${data.id}"]`);
+  const { id } = action.payload.params;
+  const node: HTMLSpanElement | null = document.querySelector(`[data-id="${id}"]`);
   if (node) {
     node.focus();
   }

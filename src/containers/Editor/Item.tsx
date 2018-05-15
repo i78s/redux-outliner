@@ -9,10 +9,11 @@ import { NodeEntity } from 'services/models';
 const mapDispatchToProps = (dispatch: Dispatch<State>) =>
   bindActionCreators(
     {
-      addNode: (title, node) =>
+      addNode: (before, after, node) =>
         addNode.started({
-          ...node,
-          title,
+          before,
+          after,
+          node,
         }),
       editNode: node => editNode.started(node),
       updateCaret: data => updateCaret(data),
@@ -21,7 +22,7 @@ const mapDispatchToProps = (dispatch: Dispatch<State>) =>
   );
 
 interface DispatchFromProps {
-  addNode: (title: string, node: NodeEntity) => void;
+  addNode: (before: string, after: string, node: NodeEntity) => void;
   editNode: (node: NodeEntity) => void;
   updateCaret: (data: any) => void;
 }
@@ -100,23 +101,13 @@ const update = (props: WithHandlersProp, target: any) => {
 };
 
 const onKeyDownEnter = (props: WithHandlersProp, target: HTMLDivElement) => {
-  /**
-   * todo
-   * 並び順を指定する
-   */
-
   const text = target.innerText;
   const selection = window.getSelection();
   const { startOffset, endOffset } = selection.getRangeAt(0);
   const before = text.slice(0, startOffset);
   const after = text.slice(endOffset);
 
-  // todo Enter押下時の編集アクションはaddNodeに含める
-  props.editNode({
-    ...props.node,
-    title: before,
-  });
-  props.addNode(after, props.node);
+  props.addNode(before, after, props.node);
 };
 
 const onKeyDownDelete = (props: WithHandlersProp, target: HTMLDivElement) => {
