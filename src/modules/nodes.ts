@@ -135,8 +135,9 @@ function* createNode(action: any): SagaIterator {
 
     const tmp: NodeEntity[] = yield selectState<NodeEntity[]>(getNodesList);
     const list = tmp
+      .filter(el => el.id !== payload.node.id)
       .map(el => {
-        if (el.parent_id !== action.payload.parent_id) {
+        if (el.parent_id !== payload.node.parent_id) {
           return el;
         }
 
