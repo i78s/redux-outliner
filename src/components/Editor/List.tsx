@@ -19,7 +19,12 @@ export type ListProps = StateFromProps & DispatchFromProps;
  */
 
 const RecursionList = (list: NodeEntity[], id = 0) => {
-  const child: any = list.filter((el) => el.parent_id === id);
+  const child: any = list
+    .filter((el) => el.parent_id === id)
+    .sort((a, b) => {
+      return a.order - b.order;
+    });
+
   if (child.length === 0) {
     return <React.Fragment />;
   }
