@@ -141,6 +141,8 @@ function* createNode(action: any): SagaIterator {
           return el;
         }
 
+        // todo 並び替え処理がバグってる
+        // 編集元のnodeのorderより前か後ろかを考慮する
         return { ...el, order: el.order + 1 };
       });
 
