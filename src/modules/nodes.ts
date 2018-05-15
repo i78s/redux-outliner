@@ -43,12 +43,11 @@ export const removeNode = actionCreator.async<
 export const updateCaret = actionCreator<{}>('UPDATE_CARET');
 
 export default reducerWithInitialState(initialState)
-  .case(
-    fetchNodes.done,
-    (state, { result }) => ({ ...state, list: result.list }),
-  )
-  .case(
-    addNode.done,
+  .cases(
+    [
+      fetchNodes.done,
+      addNode.done,
+    ],
     (state, { result }) => ({ ...state, list: result.list }),
   )
   .case(
