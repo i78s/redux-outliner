@@ -16,10 +16,6 @@ const initialState: NodesState = {
 
 const actionCreator = actionCreatorFactory('NODES');
 
-export const setNodes = actionCreator<{
-  list: NodeEntity[],
-}>('SET');
-
 export const fetchNodes = actionCreator.async<
   {},
   { list: NodeEntity[] },
@@ -50,10 +46,6 @@ export default reducerWithInitialState(initialState)
   .case(
     fetchNodes.done,
     (state, { result }) => ({ ...state, list: result.list }),
-  )
-  .case(
-    setNodes,
-    (state, { list }) => ({ ...state, list }),
   )
   .case(
     addNode.done,
