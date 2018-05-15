@@ -145,6 +145,9 @@ function* createNode(action: any): SagaIterator {
         // 編集元のnodeのorderより前か後ろかを考慮する
         return { ...el, order: el.order + 1 };
       });
+    // todo
+    // 並び替えはAPI側でやるようにする
+    // 新規作成と更新が終わった後リストを取りなおすようにする
 
     yield put(addNode.done({
       params: {
