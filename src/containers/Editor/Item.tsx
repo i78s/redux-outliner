@@ -111,6 +111,7 @@ const onKeyDownEnter = (props: WithHandlersProp, target: HTMLDivElement) => {
   const before = text.slice(0, startOffset);
   const after = text.slice(endOffset);
 
+  // todo Enter押下時の編集アクションはaddNodeに含める
   props.editNode({
     ...props.node,
     title: before,
