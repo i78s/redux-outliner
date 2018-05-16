@@ -115,6 +115,10 @@ function* createNode(action: any): SagaIterator {
   try {
     const request: NodeEntity[] = yield all([
       // 新規作成
+      // todo
+      // 子がいる場合
+      //  parent_idをpayload.nodeから取る
+      //  orderの並び替えも子の中でやる
       call(
         nodesApi.post,
         {
