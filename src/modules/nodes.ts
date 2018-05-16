@@ -48,7 +48,7 @@ export default reducerWithInitialState(initialState)
       fetchNodes.done,
       addNode.done,
     ],
-    (state, { result }) => ({ ...state, list: result.list }),
+    (state, { result }) => ({ ...state, list: [ ...result.list ] }),
   )
   .case(
     editNode.done,
