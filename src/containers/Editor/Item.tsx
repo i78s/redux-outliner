@@ -87,12 +87,10 @@ const update = (props: WithHandlersProp, target: any) => {
 
   const title = target.innerText;
 
-  props.editNode(
-    {
+  props.editNode({
       ...props.node,
       title,
-    },
-  );
+  });
   props.updateCaret({
     target,
     range,
