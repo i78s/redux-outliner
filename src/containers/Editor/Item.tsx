@@ -1,5 +1,5 @@
 import Item, { HandlerProps, ItemProps } from 'components/Editor/Item';
-import { addNode, editNode, updateCaret } from 'modules/nodes';
+import { addNode, editNode, removeNode, updateCaret } from 'modules/nodes';
 import { State } from 'modules/store';
 import { connect } from 'react-redux';
 import { compose, withHandlers, withState } from 'recompose';
@@ -17,6 +17,12 @@ const mapDispatchToProps = (dispatch: Dispatch<State>) =>
         }),
       editNode: node => editNode.started(node),
       updateCaret: data => updateCaret(data),
+      removeNode: (before, after, node) =>
+        removeNode.started({
+          before,
+          after,
+          node,
+        }),
     },
     dispatch,
   );
@@ -25,6 +31,7 @@ interface DispatchFromProps {
   addNode: (before: string, after: string, node: NodeEntity) => void;
   editNode: (node: NodeEntity) => void;
   updateCaret: (data: any) => void;
+  removeNode: (before: string, after: string, node: NodeEntity) => void;
 }
 
 interface WithStateProps {
@@ -88,8 +95,8 @@ const update = (props: WithHandlersProp, target: any) => {
   const title = target.innerText;
 
   props.editNode({
-      ...props.node,
-      title,
+    ...props.node,
+    title,
   });
   props.updateCaret({
     target,
@@ -118,8 +125,17 @@ const onKeyDownDelete = (props: WithHandlersProp, target: HTMLDivElement) => {
    *    キャレットより右に文字がある / ない
    *    子がいる / いない
    */
-  // tslint:disable-next-line:no-console
-  console.log('del');
+  const text = target.innerText;
+  const selection = window.getSelection();
+  const { startOffset, endOffset } = selection.getRangeAt(0);
+  const before = text.slice(0, startOffset);
+  const after = text.slice(endOffset);
+
+  if (before && text) {
+    return;
+  }
+
+  props.removeNode(before, after, props.node);
 };
 
 const onKeyDownTab = (props: WithHandlersProp, target: HTMLDivElement) => {

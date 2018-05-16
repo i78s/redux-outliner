@@ -230,12 +230,12 @@ function* watchDeleteNode(): SagaIterator {
 }
 
 function* deleteNode(action: any): SagaIterator {
+  const payload = action.payload;
+
   try {
     const data = yield call(
       nodesApi.delete,
-      {
-        ...action.payload,
-      },
+      payload.node.id,
     );
     yield put(removeNode.done({
       params: {},
