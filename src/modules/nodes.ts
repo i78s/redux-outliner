@@ -36,7 +36,7 @@ export const editNode = actionCreator.async<
 
 export const removeNode = actionCreator.async<
   {},
-  {},
+  { list: NodeEntity[] },
   Error
 >('DELETE');
 
@@ -47,6 +47,7 @@ export default reducerWithInitialState(initialState)
     [
       fetchNodes.done,
       addNode.done,
+      removeNode.done,
     ],
     (state, { result }) => ({ ...state, list: [ ...result.list ] }),
   )
@@ -231,15 +232,20 @@ function* watchDeleteNode(): SagaIterator {
 
 function* deleteNode(action: any): SagaIterator {
   const payload = action.payload;
-
+  const tmp: NodeEntity[] = yield selectState<NodeEntity[]>(getNodesList);
+  const list = tmp.filter(el => el.id !== payload.node.id);
   try {
-    const data = yield call(
+    yield call(
       nodesApi.delete,
       payload.node.id,
     );
     yield put(removeNode.done({
       params: {},
-      result: { data },
+      result: {
+        list: [
+          ...list,
+        ],
+      },
     }));
 
   } catch (error) {

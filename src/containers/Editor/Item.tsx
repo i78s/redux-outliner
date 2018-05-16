@@ -131,6 +131,7 @@ const onKeyDownDelete = (props: WithHandlersProp, target: HTMLDivElement) => {
   const before = text.slice(0, startOffset);
   const after = text.slice(endOffset);
 
+  // todo nodeのテキスト全選択 -> delした時意図しない挙動
   if (before && text) {
     return;
   }
