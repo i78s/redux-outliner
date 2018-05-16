@@ -34,7 +34,7 @@ const RecursionList = (list: NodeEntity[], id = 0) => {
       {child.reduce(
         (c: any, e: any) => (
           <React.Fragment>
-            {c} <li><Item node={e} /> {RecursionList(list, e.id)}</li>
+            {c} <li><Item key={e.id} node={e} /> {RecursionList(list, e.id)}</li>
           </React.Fragment>
         ),
         '',
