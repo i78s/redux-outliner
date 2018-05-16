@@ -14,7 +14,7 @@ React で業務用 Web アプリケーションを作るためのボイラープ
 バ API には  Swagger のモックサーバである https://glopla-enterprise.herokuapp.com/api/v2/ を使用します。
 - `yarn build` …  `./build/dist/` ディレクトリにコンパイルビルドされた本番アプリ
 用のファイル群が出力されます。
-- `yarn test` …  ユニットテストが [Jest](https://facebook.github.io/jest/) によ>って即時実行されます。
+- `yarn test` …  ユニットテストが [Jest](https://facebook.github.io/jest/) によって即時実行されます。
 - `yarn test:open` …  ユニットテストが [Jest](https://facebook.github.io/jest/) によって対話型環境で実行されます。
 - `yarn test:e2e` …  E2Eテストが [TestCafe](https://devexpress.github.io/testcafe/) によって実行されます。実行環境は Headless Crhome です。
 - `yarn test:e2e:chrome` …  E2Eテストが [TestCafe](https://devexpress.github.io/testcafe/) によって実行されます。実行環境は Crhome ブラウザです。
