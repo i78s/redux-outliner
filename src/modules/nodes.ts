@@ -186,7 +186,10 @@ function* watchUpdateNode(): SagaIterator {
 }
 
 function* updateNode(action: any): SagaIterator {
-  yield call(delay, 500);
+  // todo
+  // 待たせすぎると編集 -> Enterキー押下の感覚が短いとデータ不整合に見える
+  // 値は即時でstateに反映してしまい通信は裏で投げっぱなしでも良さそう？
+  yield call(delay, 100);
 
   try {
     const data = yield call(
