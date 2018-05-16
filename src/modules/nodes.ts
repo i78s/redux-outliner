@@ -134,6 +134,7 @@ function* createNode(action: any): SagaIterator {
       ),
     ]);
 
+    // todo order重複バグが存在している
     const tmp: NodeEntity[] = yield selectState<NodeEntity[]>(getNodesList);
     const list = tmp
       .filter(el => el.id !== payload.node.id)
