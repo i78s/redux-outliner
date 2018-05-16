@@ -62,6 +62,7 @@ export default compose<any, any>(
           e.preventDefault();
           onKeyDownEnter(props, e.target);
           break;
+        // todo 矢印キーでの移動
         default:
           break;
       }
