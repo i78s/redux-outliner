@@ -119,6 +119,7 @@ function* createNode(action: any): SagaIterator {
         {
           ...payload.node,
           title: payload.after,
+          order: payload.node.order + 1,
           id: null,
         },
       ),
@@ -137,13 +138,14 @@ function* createNode(action: any): SagaIterator {
     const list = tmp
       .filter(el => el.id !== payload.node.id)
       .map(el => {
-        if (el.parent_id !== payload.node.parent_id) {
-          return el;
+        if (
+          el.parent_id === payload.node.parent_id &&
+          request[0].order <= el.order
+        ) {
+          return { ...el, order: el.order + 1 };
         }
 
-        // todo 並び替え処理がバグってる
-        // 編集元のnodeのorderより前か後ろかを考慮する
-        return { ...el, order: el.order + 1 };
+        return el;
       });
     // todo
     // 並び替えはAPI側でやるようにする
