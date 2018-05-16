@@ -59,7 +59,7 @@ export default compose<any, any>(
 
       switch (e.keyCode) {
         case 8:
-          onKeyDownDelete(props, e.target);
+          onKeyDownDelete(props, e.target, e);
           break;
         case 9:
           e.preventDefault();
@@ -116,7 +116,7 @@ const onKeyDownEnter = (props: WithHandlersProp, target: HTMLDivElement) => {
   props.addNode(before, after, props.node);
 };
 
-const onKeyDownDelete = (props: WithHandlersProp, target: HTMLDivElement) => {
+const onKeyDownDelete = (props: WithHandlersProp, target: HTMLDivElement, e: KeyboardEvent) => {
   /**
    * todo
    * deleteキー押下時: 削除
@@ -131,11 +131,18 @@ const onKeyDownDelete = (props: WithHandlersProp, target: HTMLDivElement) => {
   const before = text.slice(0, startOffset);
   const after = text.slice(endOffset);
 
-  // todo nodeのテキスト全選択 -> delした時意図しない挙動
+  // 末尾でdeleteじゃないなら止める
   if (before && text) {
     return;
   }
 
+  // nodeのテキスト全選択 -> delした時は一旦止める
+  if (startOffset === 0 && endOffset === text.length && text) {
+    return;
+  }
+
+  // updateのリクエストさせたくないのでinputイベントを発火させないようにする
+  e.preventDefault();
   props.removeNode(before, after, props.node);
 };
 
