@@ -238,6 +238,15 @@ function* deleteNode(action: any): SagaIterator {
   const payload = action.payload;
   const tmp: NodeEntity[] = yield selectState<NodeEntity[]>(getNodesList);
   const list = tmp.filter(el => el.id !== payload.node.id);
+  /**
+   * todo
+   * 削除されたnodeに
+   *  兄弟がいない => 親のid
+   *  兄弟がいる => 自身の手前にいる兄弟のid
+   *
+   * 子がいる
+   *  focus移動先のnodeの子を引き継がせる
+   */
   try {
     yield call(
       nodesApi.delete,
