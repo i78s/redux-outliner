@@ -139,7 +139,6 @@ function* createNode(action: any): SagaIterator {
       ),
     ]);
 
-    // todo order重複バグが存在している
     const tmp: NodeEntity[] = yield selectState<NodeEntity[]>(getNodesList);
     const list = tmp
       .filter(el => el.id !== payload.node.id)
@@ -156,6 +155,11 @@ function* createNode(action: any): SagaIterator {
     // todo
     // 並び替えはAPI側でやるようにする
     // 新規作成と更新が終わった後リストを取りなおすようにする
+    Promise.all(
+      list
+        .filter(el => el.parent_id === payload.node.parent_id)
+        .map(el => nodesApi.put(el)),
+    );
 
     yield put(addNode.done({
       params: {
