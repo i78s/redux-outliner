@@ -181,6 +181,9 @@ function* createNode(action: any): SagaIterator {
 }
 
 // 新規作成 / 削除時にフォーカスを移動する
+// todo
+// フォーカス / キャレットの移動をstateの変更でできるか
+//  stateの変更でNodeコンポーネントのメソッドを発火？
 function* changeNodeFocus(action: any): SagaIterator {
   const { id } = action.payload.params;
   const node: HTMLSpanElement | null = document.querySelector(`[data-id="${id}"]`);
