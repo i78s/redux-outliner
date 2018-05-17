@@ -246,6 +246,7 @@ function* deleteNode(action: any): SagaIterator {
    * todo
    * 削除されたnodeに
    *  兄弟がいない => 親のid
+   *    親がいない => 削除できない
    *  兄弟がいる => 自身の手前にいる兄弟のid
    *
    * 子がいる
