@@ -242,16 +242,17 @@ function* deleteNode(action: any): SagaIterator {
   const payload = action.payload;
   const tmp: NodeEntity[] = yield selectState<NodeEntity[]>(getNodesList);
   const list = tmp.filter(el => el.id !== payload.node.id);
+
   /**
-   * todo
    * 削除されたnodeに
    *  兄弟がいない
    *    親がいる
-   *      親に子がいる => 末尾の子のid
+   *      親に自身を除いて子がいる => 自身の手前にいる兄弟のid
    *      親に子がいない => 親のid
    *    親がいない => 削除できない
    *  兄弟がいる => 自身の手前にいる兄弟のid
-   *
+   */
+  let focusId = 0;
    * 子がいる
    *  focus移動先のnodeの子を引き継がせる
    */
