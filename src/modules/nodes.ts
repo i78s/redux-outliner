@@ -239,6 +239,7 @@ function* onUpdatedOnlyNode(action: any): SagaIterator {
 
 function* watchDeleteNode(): SagaIterator {
   yield takeLatest(removeNode.started, deleteNode);
+  yield takeLatest(removeNode.done, changeNodeFocus);
 }
 
 function* deleteNode(action: any): SagaIterator {
@@ -260,8 +261,52 @@ function* deleteNode(action: any): SagaIterator {
    *    自身が兄弟の先頭じゃない => 自身の手前にいる兄弟のid
    */
   let focusId = 0;
+  const parent = list.filter(el => el.id === payload.node.parent_id)[0];
+  const sibling = list
+    .filter(el => el.parent_id === payload.node.parent_id)
+    .sort((a, b) => a.order - b.order);
+
+  if (sibling.length === 0 ) {
+    focusId = parent.id || 0;
+
+    if (parent.parent_id !== 0) {
+      const child = list
+        .filter(el => el.parent_id === parent.id)
+        .sort((a, b) => a.order - b.order);
+      focusId = parent.id || 0;
+
+      if (child.length !== 0) {
+        const index = tmp
+          .filter(el => el.parent_id === parent.id)
+          .sort((a, b) => a.order - b.order)
+          .findIndex(el => el.id === payload.node.id);
+
+        if (index !== 0) {
+          focusId = child[index - 1].id || 0;
+        }
+      }
+    }
+
+  } else {
+    const index = tmp
+      .filter(el => el.parent_id === payload.node.parent_id)
+      .sort((a, b) => a.order - b.order)
+      .findIndex(el => el.id === payload.node.id);
+
+    focusId = parent.id || 0;
+    if (index !== 0) {
+      focusId = sibling[index - 1].id || 0;
+    }
+  }
+
+  if (focusId === 0) {
+    return;
+  }
+
+  /**
+   * todo
    * 子がいる
-   *  focus移動先のnodeの子を引き継がせる
+   *  focus移動先のnodeに子を引き継がせる
    */
   try {
     yield call(
@@ -269,7 +314,9 @@ function* deleteNode(action: any): SagaIterator {
       payload.node.id,
     );
     yield put(removeNode.done({
-      params: {},
+      params: {
+        id: focusId,
+      },
       result: {
         list: [
           ...list,
