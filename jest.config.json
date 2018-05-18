@@ -13,7 +13,8 @@
     "ts",
     "tsx",
     "js",
-    "jsx"
+    "jsx",
+    "json"
   ],
   "testEnvironment": "node",
   "testMatch": [
