@@ -79,6 +79,10 @@ describe('findFocusIdAfterDelete', () => {
         },
       };
 
+      /*
+      - 1: hoge
+        - 2: foo
+      */
       it('いる', () => {
         const target = list[1];
         const id = findFocusIdAfterDelete(state, target);
@@ -125,7 +129,7 @@ describe('findFocusIdAfterDelete', () => {
       },
       {
         id: 5,
-        title: 'baz',
+        title: 'boo',
         order: 2,
         parent_id: 0,
         project_id: 1,
@@ -136,6 +140,14 @@ describe('findFocusIdAfterDelete', () => {
         list,
       },
     };
+
+    /*
+    - 1: hoge
+    - 2: foo
+      - 3: foo
+      - 4: baz
+    - 5: boo
+    */
     describe('自身が兄弟の先頭', () => {
       it('親がいる', () => {
         const target = list[2];
@@ -148,6 +160,7 @@ describe('findFocusIdAfterDelete', () => {
         expect(id).toBe(0);
       });
     });
+
     describe('自身が兄弟の先頭じゃない', () => {
       it('前の兄弟に子がいない', () => {
         const target = list[3];
