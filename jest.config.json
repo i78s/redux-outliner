@@ -7,7 +7,6 @@
       "tsConfigFile": "./tsconfig.test.json"
     }
   },
-  "mapCoverage": true,
   "moduleDirectories": ["node_modules", "src"],
   "moduleFileExtensions": [
     "ts",
