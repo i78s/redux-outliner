@@ -12,13 +12,7 @@ export const findFocusIdAfterDelete = (state: State, target: NodeEntity): number
   /**
    * 削除されたnodeに
    *  兄弟がいない
-   *    親がいる
-   *      親に自身を除いて子がいる
-   *        自身が兄弟の先頭 => 親のid
-   *        自身が兄弟の先頭じゃない
-   *          前にいる兄弟に子がいる => 自身の手前にいる兄弟のid
-   *          前にいる兄弟に子がいない => 前にいる兄弟の末尾の子のid
-   *      親に子がいない => 親のid
+   *    親がいる => 親のid
    *    親がいない => 削除できない
    *  兄弟がいる
    *    自身が兄弟の先頭 => 親のid
@@ -40,24 +34,6 @@ export const findFocusIdAfterDelete = (state: State, target: NodeEntity): number
 
     if (parent) {
       focusId = parent.id || 0;
-
-      if (parent.parent_id !== 0) {
-        const child = list
-          .filter(el => el.parent_id === parent.id)
-          .sort((a, b) => a.order - b.order);
-        focusId = parent.id || 0;
-
-        if (child.length !== 0) {
-          const index = tmp
-            .filter(el => el.parent_id === parent.id)
-            .sort((a, b) => a.order - b.order)
-            .findIndex(el => el.id === target.id);
-
-          if (index !== 0) {
-            focusId = child[index - 1].id || 0;
-          }
-        }
-      }
     }
 
   } else {
