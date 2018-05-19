@@ -92,4 +92,75 @@ describe('findFocusIdAfterDelete', () => {
       });
     });
   });
+
+  describe('兄弟がいる', () => {
+    const list = [
+      {
+        id: 1,
+        title: 'hoge',
+        order: 0,
+        parent_id: 0,
+        project_id: 1,
+      },
+      {
+        id: 2,
+        title: 'foo',
+        order: 1,
+        parent_id: 0,
+        project_id: 1,
+      },
+      {
+        id: 3,
+        title: 'bar',
+        order: 0,
+        parent_id: 2,
+        project_id: 1,
+      },
+      {
+        id: 4,
+        title: 'baz',
+        order: 1,
+        parent_id: 2,
+        project_id: 1,
+      },
+      {
+        id: 5,
+        title: 'baz',
+        order: 2,
+        parent_id: 0,
+        project_id: 1,
+      },
+    ];
+    const state = {
+      nodes: {
+        list,
+      },
+    };
+    describe('自身が兄弟の先頭', () => {
+      it('親がいる', () => {
+        const target = list[2];
+        const id = findFocusIdAfterDelete(state, target);
+        expect(id).toBe(2);
+      });
+      it('親がいない', () => {
+        const target = list[0];
+        const id = findFocusIdAfterDelete(state, target);
+        expect(id).toBe(0);
+      });
+    });
+    describe('自身が兄弟の先頭じゃない', () => {
+      it('前の兄弟に子がいない', () => {
+        const target = list[3];
+        const id = findFocusIdAfterDelete(state, target);
+        expect(id).toBe(3);
+      });
+
+      // todo 未実装
+      it('前の兄弟に子がいる', () => {
+        const target = list[4];
+        const id = findFocusIdAfterDelete(state, target);
+        expect(id).toBe(3);
+      });
+    });
+  });
 });

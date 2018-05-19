@@ -22,11 +22,11 @@ export const findFocusIdAfterDelete = (state: State, target: NodeEntity): number
    */
   let focusId = 0;
 
-  const tmp = getNodesList(state);
-  const list = tmp.filter(el => el.id !== target.id);
+  const list = getNodesList(state);
+  const others = list.filter(el => el.id !== target.id);
 
-  const parent = list.filter(el => el.id === target.parent_id)[0];
-  const sibling = list
+  const parent = others.filter(el => el.id === target.parent_id)[0];
+  const sibling = others
     .filter(el => el.parent_id === target.parent_id)
     .sort((a, b) => a.order - b.order);
 
@@ -37,14 +37,19 @@ export const findFocusIdAfterDelete = (state: State, target: NodeEntity): number
     }
 
   } else {
-    const index = tmp
+
+    // todo バックエンドで削除後にorderの更新しないと不整合が起きる
+    // const index = target.order;
+    const index = list
       .filter(el => el.parent_id === target.parent_id)
       .sort((a, b) => a.order - b.order)
       .findIndex(el => el.id === target.id);
-
-    focusId = parent.id || 0;
     if (index !== 0) {
       focusId = sibling[index - 1].id || 0;
+    } else {
+      if (parent) {
+        focusId = parent.id || 0;
+      }
     }
   }
 
