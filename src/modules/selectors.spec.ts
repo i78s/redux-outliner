@@ -1,5 +1,12 @@
-describe('hello', () => {
-  it('hello("jest") to be "Hello Jest!!"', () => {
-    expect(1).toBe(1);
+import { getNodesList } from 'modules/selectors';
+
+describe('getNodesList', () => {
+  it('initial', () => {
+    const list = getNodesList({
+      nodes: {
+        list: [],
+      },
+    });
+    expect(list).toEqual([]);
   });
 });
