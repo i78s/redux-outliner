@@ -248,8 +248,8 @@ function* watchDeleteNode(): SagaIterator {
 
 function* deleteNode(action: any): SagaIterator {
   const payload = action.payload;
-  const tmp: NodeEntity[] = yield selectState<NodeEntity[]>(getNodesList);
-  const list = tmp.filter(el => el.id !== payload.node.id);
+  const list: NodeEntity[] = yield selectState<NodeEntity[]>(getNodesList);
+  const others = list.filter(el => el.id !== payload.node.id);
   const state = yield select();
   const focusId = findFocusIdAfterDelete(state, payload.node);
 
@@ -273,7 +273,7 @@ function* deleteNode(action: any): SagaIterator {
       },
       result: {
         list: [
-          ...list,
+          ...others,
         ],
       },
     }));
