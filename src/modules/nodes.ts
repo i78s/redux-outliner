@@ -255,6 +255,7 @@ function* watchDeleteNode(): SagaIterator {
 function* deleteNode(action: any): SagaIterator {
   const payload = action.payload;
   const state = yield select();
+  // todo findFocusIdAfterDeleteはgetter(state, payload.node)でいいのでは疑惑
   const focusId = findFocusIdAfterDelete(state, payload.node);
 
   if (focusId === 0) {
