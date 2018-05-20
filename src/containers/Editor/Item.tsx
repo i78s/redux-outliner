@@ -122,8 +122,6 @@ const onKeyDownDelete = (props: WithHandlersProp, target: HTMLDivElement, e: Key
    * フォーカス移動時にキャレットを末尾に
    * キャレットより右に文字がある / ない
    *  異動先にキャレットより右の文字を引き継がせる
-   * 子がいる
-   *  異動先に子を引き継がせる
    */
   const text = target.innerText;
   const selection = window.getSelection();
