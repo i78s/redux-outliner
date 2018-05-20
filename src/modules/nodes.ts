@@ -143,8 +143,11 @@ function* createNode(action: any): SagaIterator {
       ),
     ]);
 
-    const tmp: NodeEntity[] = yield selectState<NodeEntity[]>(getNodesList);
-    const list = tmp
+    // todo
+    // 並び替えはAPI側でやるようにする
+    // 新規作成と更新が終わった後リストを取りなおすようにする
+    const list: NodeEntity[] = yield selectState<NodeEntity[]>(getNodesList);
+    const others = list
       .filter(el => el.id !== payload.node.id)
       .map(el => {
         if (
@@ -156,11 +159,8 @@ function* createNode(action: any): SagaIterator {
 
         return el;
       });
-    // todo
-    // 並び替えはAPI側でやるようにする
-    // 新規作成と更新が終わった後リストを取りなおすようにする
     Promise.all(
-      list
+      others
         .filter(el => el.parent_id === payload.node.parent_id)
         .map(el => nodesApi.put(el)),
     );
@@ -171,7 +171,7 @@ function* createNode(action: any): SagaIterator {
       },
       result: {
         list: [
-          ...list,
+          ...others,
           ...request,
         ],
       },
