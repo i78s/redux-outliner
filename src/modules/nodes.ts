@@ -235,7 +235,6 @@ function* onUpdatedOnlyNode(action: any): SagaIterator {
   const { target, range, startOffset, endOffset } = action.payload;
 
   if (target.firstChild) {
-    // todo なんかエラー出るようになった
     range.setStart(target.firstChild, startOffset);
     range.setEnd(target.firstChild, endOffset);
   }
