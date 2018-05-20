@@ -115,64 +115,69 @@ function* watchCreateNode(): SagaIterator {
 
 function* createNode(action: any): SagaIterator {
   const payload = action.payload;
+  const order = payload.node.order + 1;
+
+  const request = [
+    // 新規作成
+    call(
+      nodesApi.post,
+      {
+        ...payload.node,
+        title: payload.after,
+        order,
+        id: null,
+      },
+    ),
+    // 既存nodeの更新
+    // todo 末尾で改行された場合 (beforeが空文字なら処理が不要)
+    call(
+      nodesApi.put,
+      {
+        ...action.payload.node,
+        title: payload.before,
+      },
+    ),
+  ];
+
+  const list: NodeEntity[] = yield selectState<NodeEntity[]>(getNodesList);
+  const others = list
+    // Enterキーの起点のnodeを除外
+    .filter(el => el.id !== payload.node.id)
+    // 新規作成されたnodeの後ろにあるnodeの順番を更新
+    .map(el => {
+      if (
+        el.parent_id === payload.node.parent_id &&
+        order <= el.order
+      ) {
+        return { ...el, order: el.order + 1 };
+      }
+
+      return el;
+    });
+
+  // todo
+  // 並び替えはAPI側でやるようにする
+  const sibling = others
+    .filter(el => el.parent_id === payload.node.parent_id);
+  request.push(...sibling.map(el => {
+    return call(
+      nodesApi.put,
+      el,
+    );
+  }));
 
   try {
-    const request: NodeEntity[] = yield all([
-      // 新規作成
-      // todo
-      // 子がいる場合
-      //  parent_idをpayload.nodeから取る
-      //  orderの並び替えも子の中でやる
-      call(
-        nodesApi.post,
-        {
-          ...payload.node,
-          title: payload.after,
-          order: payload.node.order + 1,
-          id: null,
-        },
-      ),
-      // 既存nodeの更新
-      // todo 末尾で改行された場合 (beforeが空文字なら処理が不要)
-      call(
-        nodesApi.put,
-        {
-          ...action.payload.node,
-          title: payload.before,
-        },
-      ),
-    ]);
-
-    // todo
-    // 並び替えはAPI側でやるようにする
-    // 新規作成と更新が終わった後リストを取りなおすようにする
-    const list: NodeEntity[] = yield selectState<NodeEntity[]>(getNodesList);
-    const others = list
-      .filter(el => el.id !== payload.node.id)
-      .map(el => {
-        if (
-          el.parent_id === payload.node.parent_id &&
-          request[0].order <= el.order
-        ) {
-          return { ...el, order: el.order + 1 };
-        }
-
-        return el;
-      });
-    Promise.all(
-      others
-        .filter(el => el.parent_id === payload.node.parent_id)
-        .map(el => nodesApi.put(el)),
-    );
+    const res = yield all(request);
 
     yield put(addNode.done({
       params: {
-        id: request[0].id,
+        id: res[0].id,
       },
       result: {
         list: [
           ...others,
-          ...request,
+          ...res[0],
+          ...res[1],
         ],
       },
     }));
