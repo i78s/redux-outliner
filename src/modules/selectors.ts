@@ -45,7 +45,16 @@ export const findFocusIdAfterDelete = (state: State, target: NodeEntity): number
       .sort((a, b) => a.order - b.order)
       .findIndex(el => el.id === target.id);
     if (index !== 0) {
-      focusId = sibling[index - 1].id || 0;
+      const elder = sibling[index - 1];
+      const cousin = others
+        .filter(el => el.parent_id === elder.id)
+        .sort((a, b) => a.order - b.order);
+
+      focusId = elder.id || 0;
+
+      if (cousin.length !== 0) {
+        focusId = cousin[cousin.length - 1].id || 0;
+      }
     } else {
       if (parent) {
         focusId = parent.id || 0;
