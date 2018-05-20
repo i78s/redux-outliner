@@ -128,16 +128,18 @@ function* createNode(action: any): SagaIterator {
         id: null,
       },
     ),
-    // 既存nodeの更新
-    // todo 末尾で改行された場合 (beforeが空文字なら処理が不要)
-    call(
+  ];
+
+  // nodeの末尾でEnterでなければ既存nodeの更新
+  if (payload.before) {
+    request.push(call(
       nodesApi.put,
       {
         ...action.payload.node,
         title: payload.before,
       },
-    ),
-  ];
+    ));
+  }
 
   const list: NodeEntity[] = yield selectState<NodeEntity[]>(getNodesList);
   const others = list
