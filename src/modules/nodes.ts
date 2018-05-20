@@ -191,18 +191,6 @@ function* createNode(action: any): SagaIterator {
   }
 }
 
-// 新規作成 / 削除時にフォーカスを移動する
-// todo
-// フォーカス / キャレットの移動をstateの変更でできるか
-//  stateの変更でNodeコンポーネントのメソッドを発火？
-function* changeNodeFocus(action: any): SagaIterator {
-  const { id } = action.payload.params;
-  const node: HTMLSpanElement | null = document.querySelector(`[data-id="${id}"]`);
-  if (node) {
-    node.focus();
-  }
-}
-
 function* watchUpdateNode(): SagaIterator {
   yield takeLatest(editNode.started, updateNode);
   yield takeLatest(updateCaret, onUpdatedOnlyNode);
@@ -231,19 +219,6 @@ function* updateNode(action: any): SagaIterator {
       params: {},
       error: error as Error,
     }));
-  }
-}
-
-// nodeの変更のみ（Enterキー押下やで新規作成やdeleteキーでの削除を伴わない時）
-// 更新後のAPIのデータが反映された後本来の位置にキャレットを移動する
-function* onUpdatedOnlyNode(action: any): SagaIterator {
-  yield take(editNode.done);
-
-  const { target, range, startOffset, endOffset } = action.payload;
-
-  if (target.firstChild) {
-    range.setStart(target.firstChild, startOffset);
-    range.setEnd(target.firstChild, endOffset);
   }
 }
 
@@ -315,5 +290,31 @@ function* deleteNode(action: any): SagaIterator {
       params: {},
       error: error as Error,
     }));
+  }
+}
+
+// todo
+// フォーカス / キャレットの移動をstateの変更で行いテスト可能にする
+// changeNodeFocusとonUpdatedOnlyNodeを1つにまとめられそう？
+
+// 新規作成 / 削除時にフォーカスを移動する
+//  stateの変更でNodeコンポーネントのメソッドを発火？
+function* changeNodeFocus(action: any): SagaIterator {
+  const { id } = action.payload.params;
+  const node: HTMLSpanElement | null = document.querySelector(`[data-id="${id}"]`);
+  if (node) {
+    node.focus();
+  }
+}
+// nodeの変更のみ（Enterキー押下やで新規作成やdeleteキーでの削除を伴わない時）
+// 更新後のAPIのデータが反映された後本来の位置にキャレットを移動する
+function* onUpdatedOnlyNode(action: any): SagaIterator {
+  yield take(editNode.done);
+
+  const { target, range, startOffset, endOffset } = action.payload;
+
+  if (target.firstChild) {
+    range.setStart(target.firstChild, startOffset);
+    range.setEnd(target.firstChild, endOffset);
   }
 }
