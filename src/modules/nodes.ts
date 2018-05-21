@@ -4,7 +4,7 @@ import {
   selectState,
 } from 'modules/selectors';
 import { delay, SagaIterator } from 'redux-saga';
-import { all, call, fork, put, select, takeLatest } from 'redux-saga/effects';
+import { all, call, fork, put, takeLatest } from 'redux-saga/effects';
 import { NodeEntity } from 'services/models';
 import nodesApi from 'services/nodes';
 import actionCreatorFactory from 'typescript-fsa';
@@ -208,15 +208,13 @@ function* watchDeleteNode(): SagaIterator {
 
 function* deleteNode(action: any): SagaIterator {
   const payload = action.payload;
-  const state = yield select();
-  // todo findFocusIdAfterDeleteはgetter(state, payload.node)でいいのでは疑惑
-  const focusId = findFocusIdAfterDelete(state, payload.node);
+  const list: NodeEntity[] = yield selectState<NodeEntity[]>(getNodesList);
+  const focusId = findFocusIdAfterDelete(list, payload.node);
 
   if (focusId === 0) {
     return;
   }
 
-  const list: NodeEntity[] = yield selectState<NodeEntity[]>(getNodesList);
   const others = list
     // 削除されるnodeを弾き
     .filter(el => el.id !== payload.node.id)

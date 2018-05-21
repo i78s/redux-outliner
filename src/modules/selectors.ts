@@ -8,7 +8,7 @@ export function selectState<T>(selector: (s: State) => T): SelectEffect {
 
 export const getNodesList = (state: State) => state.nodes.list;
 
-export const findFocusIdAfterDelete = (state: State, target: NodeEntity): number => {
+export const findFocusIdAfterDelete = (list: NodeEntity[], target: NodeEntity): number => {
   /**
    * 削除されたnodeに
    *  兄弟がいない
@@ -22,9 +22,7 @@ export const findFocusIdAfterDelete = (state: State, target: NodeEntity): number
    */
   let focusId = 0;
 
-  const list = getNodesList(state);
   const others = list.filter(el => el.id !== target.id);
-
   const parent = others.filter(el => el.id === target.parent_id)[0];
   const sibling = others
     .filter(el => el.parent_id === target.parent_id)
