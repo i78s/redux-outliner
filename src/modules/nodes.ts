@@ -4,7 +4,7 @@ import {
   selectState,
 } from 'modules/selectors';
 import { delay, SagaIterator } from 'redux-saga';
-import { all, call, fork, put, select, take, takeLatest } from 'redux-saga/effects';
+import { all, call, fork, put, select, takeLatest } from 'redux-saga/effects';
 import { NodeEntity } from 'services/models';
 import nodesApi from 'services/nodes';
 import actionCreatorFactory from 'typescript-fsa';
@@ -34,7 +34,7 @@ export const addNode = actionCreator.async<
 
 export const editNode = actionCreator.async<
   {},
-  { data: NodeEntity },
+  {},
   Error
 >('UPDATE');
 
@@ -44,8 +44,6 @@ export const removeNode = actionCreator.async<
   Error
 >('DELETE');
 
-export const updateCaret = actionCreator<{}>('UPDATE_CARET');
-
 export default reducerWithInitialState(initialState)
   .cases(
     [
@@ -54,26 +52,6 @@ export default reducerWithInitialState(initialState)
       removeNode.done,
     ],
     (state, { result }) => ({ ...state, list: [ ...result.list ] }),
-  )
-  .case(
-    editNode.done,
-    (state, { result }) => {
-      const list = state.list.map(node => {
-        if (node.id === result.data.id) {
-          return {
-            ...node,
-            ...result.data,
-          };
-        }
-
-        return node;
-      });
-
-      return {
-        ...state,
-        list,
-      };
-    },
   )
   ;
 
@@ -193,25 +171,26 @@ function* createNode(action: any): SagaIterator {
 
 function* watchUpdateNode(): SagaIterator {
   yield takeLatest(editNode.started, updateNode);
-  yield takeLatest(updateCaret, onUpdatedOnlyNode);
 }
 
 function* updateNode(action: any): SagaIterator {
-  // todo
-  // 待たせすぎると編集 -> Enterキー押下の感覚が短いとデータ不整合に見える
-  // 値は即時でstateに反映してしまい通信は裏で投げっぱなしでも良さそう？
   yield call(delay, 100);
 
   try {
-    const data = yield call(
+    yield call(
       nodesApi.put,
       {
         ...action.payload,
       },
     );
+    /**
+     * 変更時ajaxは投げっぱなしに
+     * 状態はDOMに持たせるのでreducerでは何もしない
+     * 結果キャレットの移動処理もブラウザに任せられる
+     */
     yield put(editNode.done({
       params: {},
-      result: { data },
+      result: {},
     }));
 
   } catch (error) {
@@ -304,17 +283,5 @@ function* changeNodeFocus(action: any): SagaIterator {
   const node: HTMLSpanElement | null = document.querySelector(`[data-id="${id}"]`);
   if (node) {
     node.focus();
-  }
-}
-// nodeの変更のみ（Enterキー押下やで新規作成やdeleteキーでの削除を伴わない時）
-// 更新後のAPIのデータが反映された後本来の位置にキャレットを移動する
-function* onUpdatedOnlyNode(action: any): SagaIterator {
-  yield take(editNode.done);
-
-  const { target, range, startOffset, endOffset } = action.payload;
-
-  if (target.firstChild) {
-    range.setStart(target.firstChild, startOffset);
-    range.setEnd(target.firstChild, endOffset);
   }
 }

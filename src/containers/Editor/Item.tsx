@@ -1,5 +1,5 @@
 import Item, { HandlerProps, ItemProps } from 'components/Editor/Item';
-import { addNode, editNode, removeNode, updateCaret } from 'modules/nodes';
+import { addNode, editNode, removeNode } from 'modules/nodes';
 import { State } from 'modules/store';
 import { connect } from 'react-redux';
 import { compose, withHandlers, withState } from 'recompose';
@@ -16,7 +16,6 @@ const mapDispatchToProps = (dispatch: Dispatch<State>) =>
           node,
         }),
       editNode: node => editNode.started(node),
-      updateCaret: data => updateCaret(data),
       removeNode: (before, after, node) =>
         removeNode.started({
           before,
@@ -30,7 +29,6 @@ const mapDispatchToProps = (dispatch: Dispatch<State>) =>
 interface DispatchFromProps {
   addNode: (before: string, after: string, node: NodeEntity) => void;
   editNode: (node: NodeEntity) => void;
-  updateCaret: (data: any) => void;
   removeNode: (before: string, after: string, node: NodeEntity) => void;
 }
 
@@ -88,21 +86,11 @@ export default compose<any, any>(
 )(Item);
 
 const update = (props: WithHandlersProp, target: any) => {
-  const selection = window.getSelection();
-  const range = selection.getRangeAt(0);
-  const { startOffset, endOffset } = range;
-
   const title = target.innerText;
 
   props.editNode({
     ...props.node,
     title,
-  });
-  props.updateCaret({
-    target,
-    range,
-    startOffset,
-    endOffset,
   });
 };
 
