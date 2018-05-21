@@ -10,11 +10,23 @@ import nodesApi from 'services/nodes';
 import actionCreatorFactory from 'typescript-fsa';
 import { reducerWithInitialState } from 'typescript-fsa-reducers';
 
+interface NodeFocus {
+  id: number;
+  start: number;
+  end: number;
+}
+
 export interface NodesState {
+  focus: NodeFocus;
   list: NodeEntity[];
 }
 
 const initialState: NodesState = {
+  focus: {
+    id: 0,
+    start: 0,
+    end: 0,
+  },
   list: [],
 };
 

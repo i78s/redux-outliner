@@ -25,6 +25,11 @@ describe('getNodesList', () => {
     for (let i = 0, len = patterns.length; i < len; i++) {
       const list = getNodesList({
         nodes: {
+          focus: {
+            id: 0,
+            start: 0,
+            end: 0,
+          },
           list: patterns[i].args,
         },
       });
