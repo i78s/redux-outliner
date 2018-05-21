@@ -6,6 +6,10 @@ import { compose, lifecycle, withHandlers, withState } from 'recompose';
 import { bindActionCreators, Dispatch } from 'redux';
 import { NodeEntity } from 'services/models';
 
+const mapStateToProps = (state: State) => ({
+  focus: state.nodes.focus,
+});
+
 const mapDispatchToProps = (dispatch: Dispatch<State>) =>
   bindActionCreators(
     {
@@ -41,7 +45,7 @@ type WithHandlersProp = DispatchFromProps & WithStateProps & ItemProps;
 
 export default compose<any, any>(
   connect(
-    null, // stateを渡さないパターン
+    mapStateToProps,
     mapDispatchToProps,
   ),
   withState('isComposing', 'setComposing', false),
@@ -90,8 +94,21 @@ export default compose<any, any>(
   }),
   lifecycle<ItemProps, {}, {}>({
     componentDidUpdate(prevProps: ItemProps) {
+      const ref = prevProps.getRef();
+
       // tslint:disable-next-line:no-console
-      console.dir(prevProps.getRef());
+      console.dir(ref);
+      // tslint:disable-next-line:no-console
+      console.dir(prevProps);
+
+      // todo innerTextが体とfirstChildがnullになる
+      // todo 変更後のstate.focusを取得する
+      // const selection = window.getSelection();
+      // const range = selection.getRangeAt(0);
+      // range.setStart(ref.firstChild!, 0);
+      // range.setEnd(ref.firstChild!, 0);
+      // selection.removeAllRanges();
+      // selection.addRange(range);
     },
   }),
 )(Item);
