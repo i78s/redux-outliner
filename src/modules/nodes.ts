@@ -39,7 +39,7 @@ export const fetchNodes = actionCreator.async<
 >('FETCH');
 
 export const addNode = actionCreator.async<
-  {},
+  { before?: string; after?: string; node?: NodeEntity },
   { list: NodeEntity[] },
   Error
 >('CREATE');
@@ -51,7 +51,7 @@ export const editNode = actionCreator.async<
 >('UPDATE');
 
 export const removeNode = actionCreator.async<
-  {},
+  { before?: string; after?: string; node?: NodeEntity },
   { list: NodeEntity[] },
   Error
 >('DELETE');
