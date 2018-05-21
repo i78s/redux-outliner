@@ -273,10 +273,8 @@ function* deleteNode(action: any): SagaIterator {
 }
 
 // todo
-// フォーカス / キャレットの移動をstateの変更で行いテスト可能にする
-// changeNodeFocusとonUpdatedOnlyNodeを1つにまとめられそう？
-
-// 新規作成 / 削除時にフォーカスを移動する
+// フォーカス / キャレットの移動
+//  stateの変更で行いテスト可能にする
 //  stateの変更でNodeコンポーネントのメソッドを発火？
 function* changeNodeFocus(action: any): SagaIterator {
   const { id } = action.payload.params;
