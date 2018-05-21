@@ -11,6 +11,8 @@ export interface HandlerProps {
   onKeyDown: (e: any) => void;
   onKeyUp: (e: any) => void;
   onPaste: (e: any) => void;
+  setRef: (e: any) => void;
+  getRef: () => React.RefObject<HTMLDivElement>;
 }
 
 export type ItemProps = StateFromProps & HandlerProps;
@@ -30,43 +32,49 @@ const Item: React.SFC<ItemProps> = ({
   onPaste,
   onKeyDown,
   onKeyUp,
+  setRef,
 }) => {
 
   return (
-    <Content
-      suppressContentEditableWarning={true}
-      contentEditable={true}
-      onInput={onInput}
-      onKeyDown={onKeyDown}
-      onKeyUp={onKeyUp}
-      onPaste={onPaste}
-      data-id={node.id}
-      data-order={node.order}
-    >
-      {node.title}
-    </Content>
+    <Style>
+      <div
+        suppressContentEditableWarning={true}
+        contentEditable={true}
+        onInput={onInput}
+        onKeyDown={onKeyDown}
+        onKeyUp={onKeyUp}
+        onPaste={onPaste}
+        data-id={node.id}
+        data-order={node.order}
+        ref={setRef}
+      >
+        {node.title}
+      </div>
+    </Style>
   );
 };
 
 export default Item;
 
-const Content = styled.div`
-  position: relative;
-  margin-bottom: 8px;
-  padding-left: 15px;
-  outline: none;
+const Style = styled.div`
+  div {
+    position: relative;
+    margin-bottom: 8px;
+    padding-left: 15px;
+    outline: none;
 
-  &:before {
-    content: '';
-    display: block;
-    position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    margin: auto;
-    width: 5px;
-    height: 5px;
-    background-color: #333;
-    border-radius: 50%;
+    &:before {
+      content: '';
+      display: block;
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      margin: auto;
+      width: 5px;
+      height: 5px;
+      background-color: #333;
+      border-radius: 50%;
+    }
   }
 `;

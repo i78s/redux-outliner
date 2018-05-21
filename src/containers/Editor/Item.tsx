@@ -45,48 +45,53 @@ export default compose<any, any>(
     mapDispatchToProps,
   ),
   withState('isComposing', 'setComposing', false),
-  withHandlers<WithHandlersProp, HandlerProps>({
-    onInput: props => (e: InputEvent<HTMLDivElement>) => {
-      if (props.isComposing) {
-        return;
-      }
-      update(props, e.target);
-    },
-    onKeyDown: props => (e: KeyboardEvent & InputEvent<HTMLDivElement>) => {
-      props.setComposing(e.keyCode === 229);
+  withHandlers<WithHandlersProp, HandlerProps>(() => {
+    const refs: any = {};
 
-      switch (e.keyCode) {
-        case 8:
-          onKeyDownDelete(props, e.target, e);
-          break;
-        case 9:
-          e.preventDefault();
-          e.shiftKey ? onKeyDownShiftTab(props, e.target) : onKeyDownTab(props, e.target);
-          break;
-        case 13:
-          e.preventDefault();
-          onKeyDownEnter(props, e.target);
-          break;
-        // todo 矢印キーでの移動
-        default:
-          break;
-      }
-    },
-    onKeyUp: props => (e: KeyboardEvent) => {
-      if (props.isComposing && e.keyCode === 13) {
+    return {
+      onInput: props => (e: InputEvent<HTMLDivElement>) => {
+        if (props.isComposing) {
+          return;
+        }
         update(props, e.target);
-      }
-    },
-    onPaste: props => (e: ClipboardEvent) => {
-      e.preventDefault();
-      const value: string = e.clipboardData.getData('text/plain');
-      document.execCommand('insertHTML', false, value);
-    },
+      },
+      onKeyDown: props => (e: KeyboardEvent & InputEvent<HTMLDivElement>) => {
+        props.setComposing(e.keyCode === 229);
+        switch (e.keyCode) {
+          case 8:
+            onKeyDownDelete(props, e.target, e);
+            break;
+          case 9:
+            e.preventDefault();
+            e.shiftKey ? onKeyDownShiftTab(props, e.target) : onKeyDownTab(props, e.target);
+            break;
+          case 13:
+            e.preventDefault();
+            onKeyDownEnter(props, e.target);
+            break;
+          // todo 矢印キーでの移動
+          default:
+            break;
+        }
+      },
+      onKeyUp: props => (e: KeyboardEvent) => {
+        if (props.isComposing && e.keyCode === 13) {
+          update(props, e.target);
+        }
+      },
+      onPaste: props => (e: ClipboardEvent) => {
+        e.preventDefault();
+        const value: string = e.clipboardData.getData('text/plain');
+        document.execCommand('insertHTML', false, value);
+      },
+      setRef: props => content => (refs.content = content),
+      getRef: props => () => refs.content,
+    };
   }),
   lifecycle<ItemProps, {}, {}>({
     componentDidUpdate(prevProps: ItemProps) {
       // tslint:disable-next-line:no-console
-      console.log(prevProps);
+      console.dir(prevProps.getRef());
     },
   }),
 )(Item);
