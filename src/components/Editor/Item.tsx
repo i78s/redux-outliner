@@ -12,7 +12,7 @@ export interface HandlerProps {
   onKeyUp: (e: any) => void;
   onPaste: (e: any) => void;
   setRef: (e: any) => void;
-  getRef: () => React.RefObject<HTMLDivElement>;
+  getRef: () => HTMLDivElement;
 }
 
 export type ItemProps = StateFromProps & HandlerProps;
