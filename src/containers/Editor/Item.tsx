@@ -2,7 +2,7 @@ import Item, { HandlerProps, ItemProps } from 'components/Editor/Item';
 import { addNode, editNode, removeNode } from 'modules/nodes';
 import { State } from 'modules/store';
 import { connect } from 'react-redux';
-import { compose, withHandlers, withState } from 'recompose';
+import { compose, lifecycle, withHandlers, withState } from 'recompose';
 import { bindActionCreators, Dispatch } from 'redux';
 import { NodeEntity } from 'services/models';
 
@@ -81,6 +81,12 @@ export default compose<any, any>(
       e.preventDefault();
       const value: string = e.clipboardData.getData('text/plain');
       document.execCommand('insertHTML', false, value);
+    },
+  }),
+  lifecycle<ItemProps, {}, {}>({
+    componentDidUpdate(prevProps: ItemProps) {
+      // tslint:disable-next-line:no-console
+      console.log(prevProps);
     },
   }),
 )(Item);
