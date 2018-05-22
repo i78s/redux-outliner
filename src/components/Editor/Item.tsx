@@ -1,8 +1,10 @@
+import { NodesFocus } from 'modules/nodes';
 import * as React from 'react';
 import { NodeEntity } from 'services/models';
 import styled from 'styled-components';
 
 interface Props {
+  focus: NodesFocus;
   node: NodeEntity;
 }
 

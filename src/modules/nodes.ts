@@ -259,6 +259,8 @@ function* deleteNode(action: any): SagaIterator {
       },
     }));
     // フォーカス/キャレット位置を変更
+    // todo 待たせないとうまく動かなかった
+    yield call(delay, 16);
     // todo startとendの位置を取る
     yield put(setFocus({
       focus: {

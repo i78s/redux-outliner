@@ -1,14 +1,10 @@
 import Item, { HandlerProps, ItemProps, RefProps } from 'components/Editor/Item';
-import { addNode, editNode, NodesFocus, removeNode } from 'modules/nodes';
+import { addNode, editNode, removeNode } from 'modules/nodes';
 import { State } from 'modules/store';
 import { connect } from 'react-redux';
 import { compose, lifecycle, withHandlers, withState } from 'recompose';
 import { bindActionCreators, Dispatch } from 'redux';
 import { NodeEntity } from 'services/models';
-
-interface StateFromProps {
-  focus: NodesFocus;
-}
 
 interface DispatchFromProps {
   addNode: (before: string, after: string, node: NodeEntity) => void;
@@ -21,7 +17,7 @@ interface WithStateProps {
   setComposing: (isComposing: boolean) => boolean;
 }
 
-type WithHandlersProp = StateFromProps & DispatchFromProps & WithStateProps & ItemProps;
+type WithHandlersProp = DispatchFromProps & WithStateProps & ItemProps;
 
 const mapStateToProps = (state: State) => ({
   focus: state.nodes.focus,
