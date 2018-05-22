@@ -110,31 +110,6 @@ function* watchCreateNode(): SagaIterator {
 function* createNode(action: any): SagaIterator {
   const payload = action.payload;
   const order = payload.node.order + 1;
-
-  const request = [
-    // 新規作成
-    call(
-      nodesApi.post,
-      {
-        ...payload.node,
-        title: payload.after,
-        order,
-        id: null,
-      },
-    ),
-  ];
-
-  // nodeの末尾でEnterでなければ既存nodeの更新
-  if (payload.before) {
-    request.push(call(
-      nodesApi.put,
-      {
-        ...action.payload.node,
-        title: payload.before,
-      },
-    ));
-  }
-
   const list: NodeEntity[] = yield selectState<NodeEntity[]>(getNodesList);
   const others = list
     .map(el => {
@@ -157,37 +132,54 @@ function* createNode(action: any): SagaIterator {
       return el;
     });
 
-  // todo
-  // 並び替えはAPI側でやるようにする
-  const sibling = others
-    .filter(el => el.parent_id === payload.node.parent_id);
-  request.push(...sibling.map(el => {
-    return call(
-      nodesApi.put,
-      el,
-    );
-  }));
-
   try {
-    const res = yield all(request);
+    const res: NodeEntity = yield call(
+      nodesApi.post,
+      {
+        ...payload.node,
+        title: payload.after,
+        order,
+        id: null,
+      },
+    );
 
     yield put(addNode.done({
       params: {},
       result: {
         list: [
           ...others,
-          ...res[0],
+          res,
         ],
       },
     }));
     // フォーカス/キャレット位置を変更
     yield put(setFocus({
       focus: {
-        id: res[0].id,
+        id: res.id!,
         start: 0,
         end: 0,
       },
     }));
+    // キャレット移動が終わってからその他のnodeの更新を開始
+    const requests = [];
+    // nodeの末尾でEnterでなければ既存nodeの更新
+    if (payload.before) {
+      requests.push(
+        nodesApi.put({
+          ...action.payload.node,
+          title: payload.before,
+        }),
+      );
+    }
+
+    // todo
+    // 並び替えはAPI側でやるようにする
+    const sibling = others
+      .filter(el => el.parent_id === payload.node.parent_id);
+    requests.push(...sibling.map(el => {
+      return nodesApi.put(el);
+    }));
+
   } catch (error) {
     yield put(addNode.failed({
       params: {},
