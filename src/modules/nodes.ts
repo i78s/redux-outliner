@@ -249,26 +249,7 @@ function* deleteNode(action: any): SagaIterator {
       return el;
     });
 
-  const request = [
-    call(
-      nodesApi.delete,
-      payload.node.id,
-    ),
-  ];
-
-  // todo バックエンド側でやりたい
-  const child = others.filter(el => el.parent_id === focusId);
-  if (child.length !== 0) {
-    request.push(...child.map(el => {
-      return call(
-        nodesApi.put,
-        el,
-      );
-    }));
-  }
-
   try {
-    yield all(request);
     yield put(removeNode.done({
       params: {},
       result: {
@@ -286,6 +267,18 @@ function* deleteNode(action: any): SagaIterator {
         end: 0,
       },
     }));
+    // キャレット移動が終わってからその他のnodeの更新を開始
+    const request = [
+      nodesApi.delete(payload.node.id),
+    ];
+    // todo バックエンド側でやりたい
+    const child = others.filter(el => el.parent_id === focusId);
+    if (child.length !== 0) {
+      request.push(...child.map(el => {
+        return nodesApi.put(el);
+      }));
+    }
+
   } catch (error) {
     yield put(removeNode.failed({
       params: {},
