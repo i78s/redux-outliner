@@ -1,12 +1,11 @@
-import { connect } from 'react-redux';
-import { compose, lifecycle } from 'recompose';
-import { bindActionCreators, Dispatch } from 'redux';
-
-import List, { DispatchFromProps } from 'components/Editor/List';
+import List, { ListProps } from 'components/Editor/List';
 import {
   fetchNodes,
 } from 'modules/nodes';
 import { State } from 'modules/store';
+import { connect } from 'react-redux';
+import { compose, lifecycle } from 'recompose';
+import { bindActionCreators, Dispatch } from 'redux';
 
 const mapStateToProps = (state: State) => ({
   list: state.nodes.list,
@@ -21,12 +20,12 @@ const mapDispatchToProps = (dispatch: Dispatch<State>) => (
   )
 );
 
-export default compose<DispatchFromProps, any>(
+export default compose<ListProps, any>(
   connect(
     mapStateToProps,
     mapDispatchToProps,
   ),
-  lifecycle<DispatchFromProps, {}, {}>({
+  lifecycle<ListProps, {}, {}>({
     componentDidMount() {
       this.props.fetchList();
     },

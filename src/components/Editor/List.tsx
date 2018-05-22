@@ -1,17 +1,16 @@
 import Item from 'containers/Editor/Item';
 import * as React from 'react';
-import { compose } from 'recompose';
 import styled from 'styled-components';
 
 import { NodeEntity } from 'services/models';
 
-export interface StateFromProps {
+export interface Props {
   list: NodeEntity[];
 }
 export interface DispatchFromProps {
   fetchList: () => void;
 }
-export type ListProps = StateFromProps & DispatchFromProps;
+export type ListProps = Props & DispatchFromProps;
 
 /**
  * 開閉
@@ -52,9 +51,7 @@ const List: React.SFC<ListProps> = (props) => {
   return RecursionList(props.list);
 };
 
-const enhance = compose<any, any>()(List);
-
-export default enhance;
+export default List;
 
 const Wrapper = styled.ul`
   margin-left: 20px;
