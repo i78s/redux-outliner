@@ -286,6 +286,7 @@ function* deleteNode(action: any): SagaIterator {
       },
     }));
     // フォーカス/キャレット位置を変更
+    // todo startとendの位置を取る
     yield put(setFocus({
       focus: {
         id: focusId,
