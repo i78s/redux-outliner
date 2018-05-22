@@ -56,6 +56,10 @@ export const removeNode = actionCreator.async<
   Error
 >('DELETE');
 
+const setFocus = actionCreator<{
+  focus: NodeFocus,
+}>('SET_FOCUS');
+
 export default reducerWithInitialState(initialState)
   .cases(
     [
@@ -65,6 +69,7 @@ export default reducerWithInitialState(initialState)
     ],
     (state, { result }) => ({ ...state, list: [ ...result.list ] }),
   )
+  .case(setFocus, (state, { focus }) => ({ ...state, focus: { ...focus } }))
   ;
 
 export function* nodesTask() {
