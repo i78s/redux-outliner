@@ -16,7 +16,7 @@ export interface HandlerProps {
   onKeyDown: (e: any) => void;
   onKeyUp: (e: any) => void;
   onPaste: (e: any) => void;
-  moveCaret: () => void;
+  moveCaret: (props: any) => void;
 }
 
 export type ItemProps = Props & RefProps & HandlerProps;

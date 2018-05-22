@@ -97,8 +97,13 @@ export default compose<any, any>(
       const value: string = e.clipboardData.getData('text/plain');
       document.execCommand('insertHTML', false, value);
     },
-    moveCaret: props => () => {
+    moveCaret: props => (prevProps: WithHandlersProp) => {
       const { focus, node } = props;
+      // focusに変更がない時は何もしない
+      if (prevProps.focus.id === focus.id) {
+        return;
+      }
+      // 対象のnodeでなければ何もしない
       if (focus.id !== node.id) {
         return;
       }
@@ -121,7 +126,7 @@ export default compose<any, any>(
   }),
   lifecycle<WithHandlersProp, {}, {}>({
     componentDidUpdate(prevProps: WithHandlersProp) {
-      prevProps.moveCaret();
+      prevProps.moveCaret(prevProps);
     },
   }),
 )(Item);
