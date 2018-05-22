@@ -10,14 +10,14 @@ import nodesApi from 'services/nodes';
 import actionCreatorFactory from 'typescript-fsa';
 import { reducerWithInitialState } from 'typescript-fsa-reducers';
 
-interface NodeFocus {
+export interface NodesFocus {
   id: number;
   start: number;
   end: number;
 }
 
 export interface NodesState {
-  focus: NodeFocus;
+  focus: NodesFocus;
   list: NodeEntity[];
 }
 
@@ -57,7 +57,7 @@ export const removeNode = actionCreator.async<
 >('DELETE');
 
 const setFocus = actionCreator<{
-  focus: NodeFocus,
+  focus: NodesFocus,
 }>('SET_FOCUS');
 
 export default reducerWithInitialState(initialState)
@@ -105,7 +105,6 @@ function* loadNodes(action: any): SagaIterator {
 
 function* watchCreateNode(): SagaIterator {
   yield takeLatest(addNode.started, createNode);
-  yield takeLatest(addNode.done, changeNodeFocus);
 }
 
 function* createNode(action: any): SagaIterator {
@@ -167,15 +166,21 @@ function* createNode(action: any): SagaIterator {
     const res = yield all(request);
 
     yield put(addNode.done({
-      params: {
-        id: res[0].id,
-      },
+      params: {},
       result: {
         list: [
           ...others,
           ...res[0],
           ...res[1],
         ],
+      },
+    }));
+    // フォーカス/キャレット位置を変更
+    yield put(setFocus({
+      focus: {
+        id: res[0].id,
+        start: 0,
+        end: 0,
       },
     }));
   } catch (error) {
@@ -220,7 +225,6 @@ function* updateNode(action: any): SagaIterator {
 
 function* watchDeleteNode(): SagaIterator {
   yield takeLatest(removeNode.started, deleteNode);
-  yield takeLatest(removeNode.done, changeNodeFocus);
 }
 
 function* deleteNode(action: any): SagaIterator {
@@ -269,16 +273,21 @@ function* deleteNode(action: any): SagaIterator {
   try {
     yield all(request);
     yield put(removeNode.done({
-      params: {
-        id: focusId,
-      },
+      params: {},
       result: {
         list: [
           ...others,
         ],
       },
     }));
-
+    // フォーカス/キャレット位置を変更
+    yield put(setFocus({
+      focus: {
+        id: focusId,
+        start: 0,
+        end: 0,
+      },
+    }));
   } catch (error) {
     yield put(removeNode.failed({
       params: {},
@@ -287,14 +296,3 @@ function* deleteNode(action: any): SagaIterator {
   }
 }
 
-// todo
-// フォーカス / キャレットの移動
-//  stateの変更で行いテスト可能にする
-//  stateの変更でNodeコンポーネントのメソッドを発火？
-function* changeNodeFocus(action: any): SagaIterator {
-  const { id } = action.payload.params;
-  const node: HTMLSpanElement | null = document.querySelector(`[data-id="${id}"]`);
-  if (node) {
-    node.focus();
-  }
-}

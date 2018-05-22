@@ -1,10 +1,27 @@
-import Item, { HandlerProps, ItemProps } from 'components/Editor/Item';
-import { addNode, editNode, removeNode } from 'modules/nodes';
+import Item, { HandlerProps, ItemProps, RefProps } from 'components/Editor/Item';
+import { addNode, editNode, NodesFocus, removeNode } from 'modules/nodes';
 import { State } from 'modules/store';
 import { connect } from 'react-redux';
 import { compose, lifecycle, withHandlers, withState } from 'recompose';
 import { bindActionCreators, Dispatch } from 'redux';
 import { NodeEntity } from 'services/models';
+
+interface StateFromProps {
+  focus: NodesFocus;
+}
+
+interface DispatchFromProps {
+  addNode: (before: string, after: string, node: NodeEntity) => void;
+  editNode: (node: NodeEntity) => void;
+  removeNode: (before: string, after: string, node: NodeEntity) => void;
+}
+
+interface WithStateProps {
+  isComposing: boolean;
+  setComposing: (isComposing: boolean) => boolean;
+}
+
+type WithHandlersProp = StateFromProps & DispatchFromProps & WithStateProps & ItemProps;
 
 const mapStateToProps = (state: State) => ({
   focus: state.nodes.focus,
@@ -30,85 +47,81 @@ const mapDispatchToProps = (dispatch: Dispatch<State>) =>
     dispatch,
   );
 
-interface DispatchFromProps {
-  addNode: (before: string, after: string, node: NodeEntity) => void;
-  editNode: (node: NodeEntity) => void;
-  removeNode: (before: string, after: string, node: NodeEntity) => void;
-}
-
-interface WithStateProps {
-  isComposing: boolean;
-  setComposing: (isComposing: boolean) => boolean;
-}
-
-type WithHandlersProp = DispatchFromProps & WithStateProps & ItemProps;
-
 export default compose<any, any>(
   connect(
     mapStateToProps,
     mapDispatchToProps,
   ),
   withState('isComposing', 'setComposing', false),
-  withHandlers<WithHandlersProp, HandlerProps>(() => {
+  withHandlers<WithHandlersProp, RefProps>(() => {
     const refs: any = {};
 
     return {
-      onInput: props => (e: InputEvent<HTMLDivElement>) => {
-        if (props.isComposing) {
-          return;
-        }
-        update(props, e.target);
-      },
-      onKeyDown: props => (e: KeyboardEvent & InputEvent<HTMLDivElement>) => {
-        props.setComposing(e.keyCode === 229);
-        switch (e.keyCode) {
-          case 8:
-            onKeyDownDelete(props, e.target, e);
-            break;
-          case 9:
-            e.preventDefault();
-            e.shiftKey ? onKeyDownShiftTab(props, e.target) : onKeyDownTab(props, e.target);
-            break;
-          case 13:
-            e.preventDefault();
-            onKeyDownEnter(props, e.target);
-            break;
-          // todo 矢印キーでの移動
-          default:
-            break;
-        }
-      },
-      onKeyUp: props => (e: KeyboardEvent) => {
-        if (props.isComposing && e.keyCode === 13) {
-          update(props, e.target);
-        }
-      },
-      onPaste: props => (e: ClipboardEvent) => {
-        e.preventDefault();
-        const value: string = e.clipboardData.getData('text/plain');
-        document.execCommand('insertHTML', false, value);
-      },
       setRef: props => content => (refs.content = content),
       getRef: props => () => refs.content,
     };
   }),
-  lifecycle<ItemProps, {}, {}>({
-    componentDidUpdate(prevProps: ItemProps) {
-      const ref = prevProps.getRef();
+  withHandlers<WithHandlersProp, HandlerProps>({
+    onInput: props => (e: InputEvent<HTMLDivElement>) => {
+      if (props.isComposing) {
+        return;
+      }
+      update(props, e.target);
+    },
+    onKeyDown: props => (e: KeyboardEvent & InputEvent<HTMLDivElement>) => {
+      props.setComposing(e.keyCode === 229);
+      switch (e.keyCode) {
+        case 8:
+          onKeyDownDelete(props, e.target, e);
+          break;
+        case 9:
+          e.preventDefault();
+          e.shiftKey ? onKeyDownShiftTab(props, e.target) : onKeyDownTab(props, e.target);
+          break;
+        case 13:
+          e.preventDefault();
+          onKeyDownEnter(props, e.target);
+          break;
+        // todo 矢印キーでの移動
+        default:
+          break;
+      }
+    },
+    onKeyUp: props => (e: KeyboardEvent) => {
+      if (props.isComposing && e.keyCode === 13) {
+        update(props, e.target);
+      }
+    },
+    onPaste: props => (e: ClipboardEvent) => {
+      e.preventDefault();
+      const value: string = e.clipboardData.getData('text/plain');
+      document.execCommand('insertHTML', false, value);
+    },
+    moveCaret: props => () => {
+      const { focus, node } = props;
+      if (focus.id !== node.id) {
+        return;
+      }
 
-      // tslint:disable-next-line:no-console
-      console.dir(ref);
-      // tslint:disable-next-line:no-console
-      console.dir(prevProps);
+      const ref = props.getRef();
+      const firstChild = ref.firstChild;
+      const selection = window.getSelection();
+      const range = selection.getRangeAt(0);
+      // innerTextが体とfirstChildがnullなのでフォーカス変更のみ
+      if (!firstChild) {
+        ref.focus();
 
-      // todo innerTextが体とfirstChildがnullになる
-      // todo 変更後のstate.focusを取得する
-      // const selection = window.getSelection();
-      // const range = selection.getRangeAt(0);
-      // range.setStart(ref.firstChild!, 0);
-      // range.setEnd(ref.firstChild!, 0);
-      // selection.removeAllRanges();
-      // selection.addRange(range);
+        return;
+      }
+      range.setStart(firstChild, focus.start);
+      range.setEnd(firstChild, focus.end);
+      selection.removeAllRanges();
+      selection.addRange(range);
+    },
+  }),
+  lifecycle<WithHandlersProp, {}, {}>({
+    componentDidUpdate(prevProps: WithHandlersProp) {
+      prevProps.moveCaret();
     },
   }),
 )(Item);

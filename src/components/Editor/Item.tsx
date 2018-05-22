@@ -2,8 +2,13 @@ import * as React from 'react';
 import { NodeEntity } from 'services/models';
 import styled from 'styled-components';
 
-interface StateFromProps {
+interface Props {
   node: NodeEntity;
+}
+
+export interface RefProps {
+  setRef: (e: any) => void;
+  getRef: () => HTMLDivElement;
 }
 
 export interface HandlerProps {
@@ -11,11 +16,10 @@ export interface HandlerProps {
   onKeyDown: (e: any) => void;
   onKeyUp: (e: any) => void;
   onPaste: (e: any) => void;
-  setRef: (e: any) => void;
-  getRef: () => HTMLDivElement;
+  moveCaret: () => void;
 }
 
-export type ItemProps = StateFromProps & HandlerProps;
+export type ItemProps = Props & RefProps & HandlerProps;
 
 /**
  * 追加
