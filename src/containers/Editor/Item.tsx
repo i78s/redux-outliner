@@ -147,12 +147,6 @@ const onKeyDownEnter = (props: WithHandlersProp, target: HTMLDivElement) => {
 };
 
 const onKeyDownDelete = (props: WithHandlersProp, target: HTMLDivElement, e: KeyboardEvent) => {
-  /**
-   * todo
-   * フォーカス移動時にキャレットを末尾に
-   * キャレットより右に文字がある / ない
-   *  異動先にキャレットより右の文字を引き継がせる
-   */
   const text = target.innerText;
   const selection = window.getSelection();
   const { startOffset, endOffset } = selection.getRangeAt(0);
