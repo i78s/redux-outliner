@@ -261,12 +261,14 @@ function* deleteNode(action: any): SagaIterator {
     // フォーカス/キャレット位置を変更
     // todo 待たせないとうまく動かなかった
     yield call(delay, 16);
-    // todo startとendの位置を取る
+
+    const t = others.find(el => el.id === focusId)!;
+    const len = t.title.length;
     yield put(setFocus({
       focus: {
         id: focusId,
-        start: 0,
-        end: 0,
+        start: len,
+        end: len,
       },
     }));
     // キャレット移動が終わってからその他のnodeの更新を開始
