@@ -137,10 +137,16 @@ function* createNode(action: any): SagaIterator {
 
   const list: NodeEntity[] = yield selectState<NodeEntity[]>(getNodesList);
   const others = list
-    // Enterキーの起点のnodeを除外
-    .filter(el => el.id !== payload.node.id)
-    // 新規作成されたnodeの後ろにあるnodeの順番を更新
     .map(el => {
+      // Enterキーの起点のnodeを更新
+      if (el.id === payload.node.id) {
+        return {
+          ...el,
+          title: payload.before,
+        };
+      }
+
+      // 新規作成されたnodeの後ろにあるnodeの順番を更新
       if (
         el.parent_id === payload.node.parent_id &&
         order <= el.order
@@ -171,7 +177,6 @@ function* createNode(action: any): SagaIterator {
         list: [
           ...others,
           ...res[0],
-          ...res[1],
         ],
       },
     }));
@@ -295,4 +300,3 @@ function* deleteNode(action: any): SagaIterator {
     }));
   }
 }
-
