@@ -1,5 +1,5 @@
 import {
-  findFocusIdAfterDelete,
+  findFocusNodeAfterDelete,
   getNodesList,
   selectState,
 } from 'modules/selectors';
@@ -227,33 +227,33 @@ function* watchDeleteNode(): SagaIterator {
 function* deleteNode(action: any): SagaIterator {
   const payload = action.payload;
   const list: NodeEntity[] = yield selectState<NodeEntity[]>(getNodesList);
-  const focusId = findFocusIdAfterDelete(list, payload.node);
+  const focus = findFocusNodeAfterDelete(list, payload.node);
 
-  if (focusId === 0) {
+  if (focus && focus.id === 0) {
     return;
   }
+  const to = focus!;
 
   const others = list
     // フォーカス移動先と削除されるnodeを弾き
     .filter(el => el.id !== payload.node.id)
-    .filter(el => el.id !== focusId)
+    .filter(el => el.id !== to.id)
     .map(el => {
       // todo workflowyとは仕様が異なる どうするかあとで検討
       // 削除されるnodeに子がいる場合は引き継ぐ
       if (el.parent_id === payload.node.id) {
         return {
           ...el,
-          parent_id: focusId,
+          parent_id: to.id!,
         };
       }
 
       return el;
     });
 
-  const old = list.filter(el => el.id === focusId)[0]!;
   const target = {
-    ...old,
-    title: old.title + payload.after,
+    ...to,
+    title: to.title + payload.after,
   };
 
   try {
@@ -270,10 +270,10 @@ function* deleteNode(action: any): SagaIterator {
     // todo 待たせないとうまく動かなかった
     yield call(delay, 16);
 
-    const len = old.title.length;
+    const len = to.title.length;
     yield put(setFocus({
       focus: {
-        id: focusId,
+        id: to.id!,
         start: len,
         end: len,
       },
@@ -289,7 +289,7 @@ function* deleteNode(action: any): SagaIterator {
       );
     }
     // todo バックエンド側でやりたい
-    const child = others.filter(el => el.parent_id === focusId);
+    const child = others.filter(el => el.parent_id === to.id);
     if (child.length !== 0) {
       requests.push(...child.map(el => {
         return nodesApi.put(el);

@@ -1,5 +1,5 @@
 import {
-  findFocusIdAfterDelete,
+  findFocusNodeAfterDelete,
   getNodesList,
 } from 'modules/selectors';
 
@@ -38,7 +38,7 @@ describe('getNodesList', () => {
   });
 });
 
-describe('findFocusIdAfterDelete', () => {
+describe('findFocusNodeAfterDelete', () => {
   it('nodeが最後の1つで削除できない', () => {
     const list = [
       {
@@ -51,8 +51,8 @@ describe('findFocusIdAfterDelete', () => {
     ];
     const target = list[0];
 
-    const id = findFocusIdAfterDelete(list, target);
-    expect(id).toBe(0);
+    const node = findFocusNodeAfterDelete(list, target);
+    expect(node).toBe(null);
   });
 
   describe('兄弟がいない', () => {
@@ -80,14 +80,14 @@ describe('findFocusIdAfterDelete', () => {
       */
       it('いる', () => {
         const target = list[1];
-        const id = findFocusIdAfterDelete(list, target);
-        expect(id).toBe(1);
+        const node = findFocusNodeAfterDelete(list, target);
+        expect(node).toEqual(list[0]);
       });
 
       it('いない', () => {
         const target = list[0];
-        const id = findFocusIdAfterDelete(list, target);
-        expect(id).toBe(0);
+        const node = findFocusNodeAfterDelete(list, target);
+        expect(node).toBe(null);
       });
     });
   });
@@ -141,28 +141,28 @@ describe('findFocusIdAfterDelete', () => {
     describe('自身が兄弟の先頭じゃない', () => {
       it('前の兄弟に子がいない', () => {
         const target = list[3];
-        const id = findFocusIdAfterDelete(list, target);
-        expect(id).toBe(3);
+        const node = findFocusNodeAfterDelete(list, target);
+        expect(node).toEqual(list[2]);
       });
 
       // todo 未実装
       it('前の兄弟に子がいる', () => {
         const target = list[4];
-        const id = findFocusIdAfterDelete(list, target);
-        expect(id).toBe(4);
+        const node = findFocusNodeAfterDelete(list, target);
+        expect(node).toEqual(list[3]);
       });
     });
 
     describe('自身が兄弟の先頭', () => {
       it('親がいる', () => {
         const target = list[2];
-        const id = findFocusIdAfterDelete(list, target);
-        expect(id).toBe(2);
+        const node = findFocusNodeAfterDelete(list, target);
+        expect(node).toEqual(list[1]);
       });
       it('親がいない', () => {
         const target = list[0];
-        const id = findFocusIdAfterDelete(list, target);
-        expect(id).toBe(0);
+        const node = findFocusNodeAfterDelete(list, target);
+        expect(node).toBe(null);
       });
     });
   });

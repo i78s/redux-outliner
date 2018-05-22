@@ -8,7 +8,7 @@ export function selectState<T>(selector: (s: State) => T): SelectEffect {
 
 export const getNodesList = (state: State) => state.nodes.list;
 
-export const findFocusIdAfterDelete = (list: NodeEntity[], target: NodeEntity): number => {
+export const findFocusNodeAfterDelete = (list: NodeEntity[], target: NodeEntity): NodeEntity | null => {
   /**
    * 削除されたnodeに
    *  兄弟がいない
@@ -20,7 +20,7 @@ export const findFocusIdAfterDelete = (list: NodeEntity[], target: NodeEntity): 
    *      前にいる兄弟に子がいる => 自身の手前にいる兄弟のid
    *      前にいる兄弟に子がいない => 前にいる兄弟の末尾の子のid
    */
-  let focusId = 0;
+  let node: NodeEntity | null = null;
 
   const others = list.filter(el => el.id !== target.id);
   const parent = others.filter(el => el.id === target.parent_id)[0];
@@ -31,7 +31,7 @@ export const findFocusIdAfterDelete = (list: NodeEntity[], target: NodeEntity): 
   if (sibling.length === 0) {
 
     if (parent) {
-      focusId = parent.id || 0;
+      node = { ...parent };
     }
 
   } else {
@@ -48,17 +48,17 @@ export const findFocusIdAfterDelete = (list: NodeEntity[], target: NodeEntity): 
         .filter(el => el.parent_id === elder.id)
         .sort((a, b) => a.order - b.order);
 
-      focusId = elder.id || 0;
+      node = { ...elder };
 
       if (cousin.length !== 0) {
-        focusId = cousin[cousin.length - 1].id || 0;
+        node = { ...cousin[cousin.length - 1] };
       }
     } else {
       if (parent) {
-        focusId = parent.id || 0;
+        node = { ...parent };
       }
     }
   }
 
-  return focusId;
+  return node;
 };
