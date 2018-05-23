@@ -1,5 +1,7 @@
 import {
   findFocusNodeAfterDelete,
+} from 'modules/getters';
+import {
   getNodesList,
   selectState,
 } from 'modules/selectors';
