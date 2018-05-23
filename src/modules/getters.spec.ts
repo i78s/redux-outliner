@@ -1,5 +1,7 @@
 import {
   findFocusNodeAfterDelete,
+  getNodesAfterPromotedNode,
+  getNodesAfterRelegateNode,
 } from 'modules/getters';
 
 describe('findFocusNodeAfterDelete', () => {
@@ -129,5 +131,41 @@ describe('findFocusNodeAfterDelete', () => {
         expect(node).toBe(null);
       });
     });
+  });
+});
+
+describe('getNodesAfterPromotedNode', () => {
+  xit('xx', () => {
+    const list = [
+      {
+        id: 1,
+        title: 'hoge',
+        order: 0,
+        parent_id: 0,
+        project_id: 1,
+      },
+    ];
+    const target = list[0];
+
+    const node = getNodesAfterPromotedNode(list, target);
+    expect(node).toEqual(list);
+  });
+});
+
+describe('getNodesAfterRelegateNode', () => {
+  xit('xx', () => {
+    const list = [
+      {
+        id: 1,
+        title: 'hoge',
+        order: 0,
+        parent_id: 0,
+        project_id: 1,
+      },
+    ];
+    const target = list[0];
+
+    const node = getNodesAfterRelegateNode(list, target);
+    expect(node).toEqual(list);
   });
 });

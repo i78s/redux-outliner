@@ -1,5 +1,6 @@
 import { NodeEntity } from 'services/models';
 
+// node削除後の次のフォーカスをあてるnodeを返す
 export const findFocusNodeAfterDelete = (list: NodeEntity[], target: NodeEntity): NodeEntity | null => {
   /**
    * 削除されたnodeに
@@ -53,4 +54,12 @@ export const findFocusNodeAfterDelete = (list: NodeEntity[], target: NodeEntity)
   }
 
   return node;
+};
+// 該当nodeの階層を一段上げた後のnode一覧を返す
+export const getNodesAfterPromotedNode = (list: NodeEntity[], target: NodeEntity): NodeEntity[] => {
+  return list;
+};
+// 該当nodeの階層を一段下げた後のnode一覧を返す
+export const getNodesAfterRelegateNode = (list: NodeEntity[], target: NodeEntity): NodeEntity[] => {
+  return list;
 };
