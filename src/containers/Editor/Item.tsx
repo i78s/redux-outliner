@@ -108,7 +108,7 @@ export default compose<any, any>(
       const firstChild = ref.firstChild;
       const selection = window.getSelection();
       const range = selection.getRangeAt(0);
-      // innerTextが体とfirstChildがnullなのでフォーカス変更のみ
+      // innerTextが空だとfirstChildがnullなのでフォーカス変更のみ
       if (!firstChild) {
         ref.focus();
 
