@@ -100,7 +100,7 @@ describe('findFocusNodeAfterDelete', () => {
     /*
     - 1: hoge
     - 2: foo
-      - 3: foo
+      - 3: bar
       - 4: baz
     - 5: boo
     */
@@ -176,7 +176,7 @@ describe('getNodesAfterRelegateNode', () => {
   /*
   - 1: hoge
   - 2: foo
-    - 3: foo
+    - 3: bar
     - 4: baz
   - 5: boo
   */
@@ -315,7 +315,7 @@ describe('getNodesAfterPromotedNode', () => {
   /*
   - 1: hoge
   - 2: foo
-    - 3: foo
+    - 3: bar
       - 4: baz
     - 5: boo
   */
