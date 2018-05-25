@@ -191,10 +191,84 @@ describe('getNodesAfterRelegateNode', () => {
 
   describe('兄に子が', () => {
     it('いる', () => {
-      // 4: baz
+      const result = getNodesAfterRelegateNode(list, list[4]);
+      expect(result).toEqual([
+        {
+          id: 1,
+          title: 'hoge',
+          order: 0,
+          parent_id: 0,
+          project_id: 1,
+        },
+        {
+          id: 2,
+          title: 'foo',
+          order: 1,
+          parent_id: 0,
+          project_id: 1,
+        },
+        {
+          id: 3,
+          title: 'bar',
+          order: 0,
+          parent_id: 2,
+          project_id: 1,
+        },
+        {
+          id: 4,
+          title: 'baz',
+          order: 1,
+          parent_id: 2,
+          project_id: 1,
+        },
+        {
+          id: 5,
+          title: 'boo',
+          order: 2,
+          parent_id: 2,
+          project_id: 1,
+        },
+      ]);
     });
     it('いない', () => {
-      // 2: foo
+      const result = getNodesAfterRelegateNode(list, list[1]);
+      expect(result).toEqual([
+        {
+          id: 1,
+          title: 'hoge',
+          order: 0,
+          parent_id: 0,
+          project_id: 1,
+        },
+        {
+          id: 2,
+          title: 'foo',
+          order: 0,
+          parent_id: 1,
+          project_id: 1,
+        },
+        {
+          id: 3,
+          title: 'bar',
+          order: 0,
+          parent_id: 2,
+          project_id: 1,
+        },
+        {
+          id: 4,
+          title: 'baz',
+          order: 1,
+          parent_id: 2,
+          project_id: 1,
+        },
+        {
+          id: 5,
+          title: 'boo',
+          order: 2,
+          parent_id: 0,
+          project_id: 1,
+        },
+      ]);
     });
   });
 });

@@ -69,6 +69,22 @@ export const getNodesAfterRelegateNode = (list: NodeEntity[], target: NodeEntity
   if (target.order === 0) {
     return list;
   }
+  const sibling = list
+    .filter(el => el.parent_id === target.parent_id)
+    .sort((a, b) => a.order - b.order);
+  const elder = sibling[target.order - 1];
+  const cousin = list.filter(el => el.parent_id === elder.id);
 
-  return list;
+  return list
+    .map(el => {
+      if (el.id === target.id) {
+        return {
+          ...el,
+          order: cousin.length,
+          parent_id: elder.id!,
+        };
+      }
+
+      return el;
+    });
 };
