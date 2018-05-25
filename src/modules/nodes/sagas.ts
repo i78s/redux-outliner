@@ -270,7 +270,7 @@ function* watchPromoteNode(): SagaIterator {
 function* promoteNode(action: any): SagaIterator {
   const payload = action.payload;
   const tmp: NodeEntity[] = yield selectState<NodeEntity[]>(getNodesList);
-  const { list } = getNodesAndDiffsAfterPromoted(tmp, payload.node);
+  const { list, diff } = getNodesAndDiffsAfterPromoted(tmp, payload.node);
 
   try {
     yield put(actions.promoteNode.done({
@@ -279,7 +279,11 @@ function* promoteNode(action: any): SagaIterator {
         list,
       },
     }));
-    // todo 変更をバックエンドにも反映する
+    Promise.all([ // 変更をバックエンドにも反映
+      ...diff.map(el => {
+        return nodesApi.put(el);
+      }),
+    ]);
     // todo キャレットの位置の変更
   } catch (error) {
     yield put(actions.promoteNode.failed({
