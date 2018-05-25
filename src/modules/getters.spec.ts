@@ -134,7 +134,7 @@ describe('findFocusNodeAfterDelete', () => {
   });
 });
 
-describe('getNodesAfterPromotedNode', () => {
+describe('getNodesAfterRelegateNode', () => {
   const list = [
     {
       id: 1,
@@ -183,12 +183,12 @@ describe('getNodesAfterPromotedNode', () => {
   it('一番先頭のnodeは変更できない', () => {
     const target = list[0];
 
-    const result = getNodesAfterPromotedNode(list, target);
+    const result = getNodesAfterRelegateNode(list, target);
     expect(result).toEqual(list);
   });
 });
 
-describe('getNodesAfterRelegateNode', () => {
+describe('getNodesAfterPromotedNode', () => {
   xit('xx', () => {
     const list = [
       {
@@ -201,7 +201,7 @@ describe('getNodesAfterRelegateNode', () => {
     ];
     const target = list[0];
 
-    const result = getNodesAfterRelegateNode(list, target);
+    const result = getNodesAfterPromotedNode(list, target);
     expect(result).toEqual([]);
   });
 });

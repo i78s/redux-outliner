@@ -57,6 +57,10 @@ export const findFocusNodeAfterDelete = (list: NodeEntity[], target: NodeEntity)
 };
 // 該当nodeの階層を一段上げた後のnode一覧を返す
 export const getNodesAfterPromotedNode = (list: NodeEntity[], target: NodeEntity): NodeEntity[] => {
+  return list;
+};
+// 該当nodeの階層を一段下げた後のnode一覧を返す
+export const getNodesAfterRelegateNode = (list: NodeEntity[], target: NodeEntity): NodeEntity[] => {
   /**
    * todo
    * 子がいない
@@ -67,9 +71,5 @@ export const getNodesAfterPromotedNode = (list: NodeEntity[], target: NodeEntity
     return list;
   }
 
-  return list;
-};
-// 該当nodeの階層を一段下げた後のnode一覧を返す
-export const getNodesAfterRelegateNode = (list: NodeEntity[], target: NodeEntity): NodeEntity[] => {
   return list;
 };
