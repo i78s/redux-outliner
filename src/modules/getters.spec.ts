@@ -181,10 +181,12 @@ describe('getNodesAfterRelegateNode', () => {
   - 5: boo
   */
   it('一番先頭のnodeは変更できない', () => {
-    const target = list[0];
+    const targets = [0, 2];
 
-    const result = getNodesAfterRelegateNode(list, target);
-    expect(result).toEqual(list);
+    targets.forEach(el => {
+      const result = getNodesAfterRelegateNode(list, list[el]);
+      expect(result).toEqual(list);
+    });
   });
 });
 
