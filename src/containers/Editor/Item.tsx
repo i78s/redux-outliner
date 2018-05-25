@@ -32,7 +32,7 @@ const mapDispatchToProps = (dispatch: Dispatch<State>) =>
           after,
           node,
         }),
-      editNode: node => editNode.started(node),
+      editNode: node => editNode.started({ node }),
       removeNode: (before, after, node) =>
         removeNode.started({
           before,

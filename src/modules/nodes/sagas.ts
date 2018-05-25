@@ -138,7 +138,7 @@ function* updateNode(action: any): SagaIterator {
     yield call(
       nodesApi.put,
       {
-        ...action.payload,
+        ...action.payload.node,
       },
     );
     /**
