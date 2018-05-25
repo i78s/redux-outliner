@@ -57,7 +57,50 @@ export const findFocusNodeAfterDelete = (list: NodeEntity[], target: NodeEntity)
 };
 // 該当nodeの階層を一段上げた後のnode一覧を返す
 export const getNodesAfterPromotedNode = (list: NodeEntity[], target: NodeEntity): NodeEntity[] => {
-  return list;
+  // すでに一番上の階層なら変更不可
+  if (target.parent_id === 0) {
+    return list;
+  }
+
+  const parent = list.find(el => el.id === target.parent_id)!;
+  const child = list
+    .filter(el => el.parent_id === target.id);
+
+  return list
+    .map(el => {
+      // 自身は親のindexの次に割り込み
+      if (el.id === target.id) {
+        return {
+          ...el,
+          order: parent.order + 1,
+          parent_id: parent.parent_id,
+        };
+      }
+      // 割り込んだので後ろにいた旧親のorderをずらす
+      if (
+        el.parent_id === parent.parent_id &&
+        el.order > parent.order
+      ) {
+        return {
+          ...el,
+          order: el.order + 1,
+        };
+      }
+      // 自身より後ろにいる兄弟を自分の子にする
+      if (
+        el.parent_id === target.parent_id &&
+        el.order > target.order
+      ) {
+        return {
+          ...el,
+          // orderを自分の子に連結した形にする
+          order: el.order + child.length - 1,
+          parent_id: target.id!,
+        };
+      }
+
+      return el;
+    });
 };
 // 該当nodeの階層を一段下げた後のnode一覧を返す
 export const getNodesAfterRelegateNode = (list: NodeEntity[], target: NodeEntity): NodeEntity[] => {
