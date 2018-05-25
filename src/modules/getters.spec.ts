@@ -180,12 +180,21 @@ describe('getNodesAfterRelegateNode', () => {
     - 4: baz
   - 5: boo
   */
-  it('一番先頭のnodeは変更できない', () => {
+  it('一番先頭のnodeは変更できない (兄がいない)', () => {
     const targets = [0, 2];
 
     targets.forEach(el => {
       const result = getNodesAfterRelegateNode(list, list[el]);
       expect(result).toEqual(list);
+    });
+  });
+
+  describe('兄に子が', () => {
+    it('いる', () => {
+      // 2: foo
+    });
+    it('いない', () => {
+      // 4: baz
     });
   });
 });

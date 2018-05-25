@@ -63,8 +63,7 @@ export const getNodesAfterPromotedNode = (list: NodeEntity[], target: NodeEntity
 export const getNodesAfterRelegateNode = (list: NodeEntity[], target: NodeEntity): NodeEntity[] => {
   /**
    * todo
-   * 子がいない
-   * 子がいる
+   * 兄に子が いる / いない
    */
   // 一番先頭のnodeは変更できない
   if (target.order === 0) {
