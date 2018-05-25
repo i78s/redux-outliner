@@ -224,6 +224,7 @@ function* deleteNode(action: any): SagaIterator {
     yield call(delay, 16);
 
     const len = to.title.length;
+    // todo 削除時にtitleが空になるバグがあるっぽい
     yield put(actions.setFocus({
       focus: {
         id: to.id!,
@@ -231,7 +232,7 @@ function* deleteNode(action: any): SagaIterator {
         end: len,
       },
     }));
-    // キャレット移動が終わってからその他のnodeの更新を開始
+    // 画面反映のラグを作らない為バックグランドで通信を行う
     const requests = [
       nodesApi.delete(node.id),
     ];
@@ -242,13 +243,13 @@ function* deleteNode(action: any): SagaIterator {
       );
     }
     // todo バックエンド側でやりたい
-    requests.push(
+    requests.push(  // 並び順の更新
       ...others
         .filter(el => el.parent_id === node.parent_id && el.order > to.order)
         .map(el => nodesApi.put(el)),
     );
     const child = others.filter(el => el.parent_id === to.id);
-    if (child.length !== 0) {
+    if (child.length !== 0) { // 子の引き継ぎ
       requests.push(...child.map(el => {
         return nodesApi.put(el);
       }));
