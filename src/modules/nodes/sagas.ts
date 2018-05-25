@@ -1,7 +1,7 @@
 import {
   findFocusNodeAfterDelete,
   getNodesAfterPromotedNode,
-  getNodesAfterRelegateNode,
+  getNodesAndDiffsAfterRelegate,
 } from 'modules/getters';
 import * as actions from 'modules/nodes/actions';
 import {
@@ -296,7 +296,7 @@ function* watchRelegateNode(): SagaIterator {
 function* relegateNode(action: any): SagaIterator {
   const payload = action.payload;
   const tmp: NodeEntity[] = yield selectState<NodeEntity[]>(getNodesList);
-  const list = getNodesAfterRelegateNode(tmp, payload.node);
+  const { list, diff } = getNodesAndDiffsAfterRelegate(tmp, payload.node);
 
   try {
     yield put(actions.relegateNode.done({

@@ -1,7 +1,7 @@
 import {
   findFocusNodeAfterDelete,
   getNodesAfterPromotedNode,
-  getNodesAfterRelegateNode,
+  getNodesAndDiffsAfterRelegate,
 } from 'modules/getters';
 
 describe('findFocusNodeAfterDelete', () => {
@@ -134,7 +134,7 @@ describe('findFocusNodeAfterDelete', () => {
   });
 });
 
-describe('getNodesAfterRelegateNode', () => {
+describe('getNodesAndDiffsAfterRelegate', () => {
   const list = [
     {
       id: 1,
@@ -184,91 +184,123 @@ describe('getNodesAfterRelegateNode', () => {
     const targets = [0, 2];
 
     targets.forEach(el => {
-      const result = getNodesAfterRelegateNode(list, list[el]);
-      expect(result).toEqual(list);
+      const result = getNodesAndDiffsAfterRelegate(list, list[el]);
+      expect(result).toEqual({
+        list,
+        diff: [],
+      });
     });
   });
 
   describe('兄に子が', () => {
     it('いる', () => {
-      const result = getNodesAfterRelegateNode(list, list[4]);
-      expect(result).toEqual([
-        {
-          id: 1,
-          title: 'hoge',
-          order: 0,
-          parent_id: 0,
-          project_id: 1,
-        },
-        {
-          id: 2,
-          title: 'foo',
-          order: 1,
-          parent_id: 0,
-          project_id: 1,
-        },
-        {
-          id: 3,
-          title: 'bar',
-          order: 0,
-          parent_id: 2,
-          project_id: 1,
-        },
-        {
-          id: 4,
-          title: 'baz',
-          order: 1,
-          parent_id: 2,
-          project_id: 1,
-        },
-        {
-          id: 5,
-          title: 'boo',
-          order: 2,
-          parent_id: 2,
-          project_id: 1,
-        },
-      ]);
+      const result = getNodesAndDiffsAfterRelegate(list, list[4]);
+      expect(result).toEqual({
+        list: [
+          {
+            id: 1,
+            title: 'hoge',
+            order: 0,
+            parent_id: 0,
+            project_id: 1,
+          },
+          {
+            id: 2,
+            title: 'foo',
+            order: 1,
+            parent_id: 0,
+            project_id: 1,
+          },
+          {
+            id: 3,
+            title: 'bar',
+            order: 0,
+            parent_id: 2,
+            project_id: 1,
+          },
+          {
+            id: 4,
+            title: 'baz',
+            order: 1,
+            parent_id: 2,
+            project_id: 1,
+          },
+          {
+            id: 5,
+            title: 'boo',
+            order: 2,
+            parent_id: 2,
+            project_id: 1,
+          },
+        ],
+        diff: [
+          {
+            id: 5,
+            title: 'boo',
+            order: 2,
+            parent_id: 2,
+            project_id: 1,
+          },
+        ],
+      });
     });
     it('いない', () => {
-      const result = getNodesAfterRelegateNode(list, list[1]);
-      expect(result).toEqual([
-        {
-          id: 1,
-          title: 'hoge',
-          order: 0,
-          parent_id: 0,
-          project_id: 1,
-        },
-        {
-          id: 2,
-          title: 'foo',
-          order: 0,
-          parent_id: 1,
-          project_id: 1,
-        },
-        {
-          id: 3,
-          title: 'bar',
-          order: 0,
-          parent_id: 2,
-          project_id: 1,
-        },
-        {
-          id: 4,
-          title: 'baz',
-          order: 1,
-          parent_id: 2,
-          project_id: 1,
-        },
-        {
-          id: 5,
-          title: 'boo',
-          order: 2,
-          parent_id: 0,
-          project_id: 1,
-        },
-      ]);
+      const result = getNodesAndDiffsAfterRelegate(list, list[1]);
+      expect(result).toEqual({
+        list: [
+          {
+            id: 1,
+            title: 'hoge',
+            order: 0,
+            parent_id: 0,
+            project_id: 1,
+          },
+          {
+            id: 2,
+            title: 'foo',
+            order: 0,
+            parent_id: 1,
+            project_id: 1,
+          },
+          {
+            id: 3,
+            title: 'bar',
+            order: 0,
+            parent_id: 2,
+            project_id: 1,
+          },
+          {
+            id: 4,
+            title: 'baz',
+            order: 1,
+            parent_id: 2,
+            project_id: 1,
+          },
+          {
+            id: 5,
+            title: 'boo',
+            order: 1,
+            parent_id: 0,
+            project_id: 1,
+          },
+        ],
+        diff: [
+          {
+            id: 2,
+            title: 'foo',
+            order: 0,
+            parent_id: 1,
+            project_id: 1,
+          },
+          {
+            id: 5,
+            title: 'boo',
+            order: 1,
+            parent_id: 0,
+            project_id: 1,
+          },
+        ],
+      });
     });
   });
 });

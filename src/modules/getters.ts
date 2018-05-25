@@ -1,5 +1,10 @@
 import { NodeEntity } from 'services/models';
 
+interface NodesAndDiffs {
+  list: NodeEntity[];
+  diff: NodeEntity[];
+}
+
 // node削除後の次のフォーカスをあてるnodeを返す
 export const findFocusNodeAfterDelete = (list: NodeEntity[], target: NodeEntity): NodeEntity | null => {
   /**
@@ -103,10 +108,13 @@ export const getNodesAfterPromotedNode = (list: NodeEntity[], target: NodeEntity
     });
 };
 // 該当nodeの階層を一段下げた後のnode一覧を返す
-export const getNodesAfterRelegateNode = (list: NodeEntity[], target: NodeEntity): NodeEntity[] => {
+export const getNodesAndDiffsAfterRelegate = (list: NodeEntity[], target: NodeEntity): NodesAndDiffs => {
   // 一番先頭のnodeは変更できない
   if (target.order === 0) {
-    return list;
+    return {
+      list,
+      diff: [],
+    };
   }
   const sibling = list
     .filter(el => el.parent_id === target.parent_id)
@@ -114,16 +122,33 @@ export const getNodesAfterRelegateNode = (list: NodeEntity[], target: NodeEntity
   const elder = sibling[target.order - 1];
   const cousin = list.filter(el => el.parent_id === elder.id);
 
-  return list
-    .map(el => {
-      if (el.id === target.id) {
-        return {
-          ...el,
-          order: cousin.length,
-          parent_id: elder.id!,
-        };
-      }
+  const result = [];
+  const diff = [];
+  for (let i = 0, len = list.length; i < len; i++) {
+    let el = list[i];
+    if (el.id === target.id) {
+      el = {
+        ...el,
+        order: cousin.length,
+        parent_id: elder.id!,
+      };
+      diff.push(el);
+    }
+    if (  // 弟がいる時
+      el.parent_id === target.parent_id &&
+      el.order > target.order
+    ) {
+      el = {
+        ...el,
+        order: el.order - 1,
+      };
+      diff.push(el);
+    }
+    result[i] = el;
+  }
 
-      return el;
-    });
+  return {
+    list: result,
+    diff,
+  };
 };
