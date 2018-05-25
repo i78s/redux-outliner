@@ -191,10 +191,10 @@ describe('getNodesAfterRelegateNode', () => {
 
   describe('兄に子が', () => {
     it('いる', () => {
-      // 2: foo
+      // 4: baz
     });
     it('いない', () => {
-      // 4: baz
+      // 2: foo
     });
   });
 });
