@@ -61,10 +61,6 @@ export const getNodesAfterPromotedNode = (list: NodeEntity[], target: NodeEntity
 };
 // 該当nodeの階層を一段下げた後のnode一覧を返す
 export const getNodesAfterRelegateNode = (list: NodeEntity[], target: NodeEntity): NodeEntity[] => {
-  /**
-   * todo
-   * 兄に子が いる / いない
-   */
   // 一番先頭のnodeは変更できない
   if (target.order === 0) {
     return list;

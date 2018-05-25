@@ -274,7 +274,6 @@ describe('getNodesAfterRelegateNode', () => {
 });
 
 describe('getNodesAfterPromotedNode', () => {
-  xit('xx', () => {
     const list = [
       {
         id: 1,
@@ -283,8 +282,50 @@ describe('getNodesAfterPromotedNode', () => {
         parent_id: 0,
         project_id: 1,
       },
+    {
+      id: 2,
+      title: 'foo',
+      order: 1,
+      parent_id: 0,
+      project_id: 1,
+    },
+    {
+      id: 3,
+      title: 'bar',
+      order: 0,
+      parent_id: 2,
+      project_id: 1,
+    },
+    {
+      id: 4,
+      title: 'baz',
+      order: 0,
+      parent_id: 3,
+      project_id: 1,
+    },
+    {
+      id: 5,
+      title: 'boo',
+      order: 1,
+      parent_id: 2,
+      project_id: 1,
+    },
     ];
-    const target = list[0];
+
+  /*
+  - 1: hoge
+  - 2: foo
+    - 3: foo
+      - 4: baz
+    - 5: boo
+  */
+  it('一番上のnodeの階層を上げることはできない', () => {
+    const targets = [0, 1];
+    targets.forEach(el => {
+      const result = getNodesAfterPromotedNode(list, list[el]);
+      expect(result).toEqual(list);
+    });
+  });
 
     const result = getNodesAfterPromotedNode(list, target);
     expect(result).toEqual([]);
