@@ -1,6 +1,6 @@
 import {
   findFocusNodeAfterDelete,
-  getNodesAfterPromotedNode,
+  getNodesAndDiffsAfterPromoted,
   getNodesAndDiffsAfterRelegate,
 } from 'modules/getters';
 
@@ -305,7 +305,7 @@ describe('getNodesAndDiffsAfterRelegate', () => {
   });
 });
 
-describe('getNodesAfterPromotedNode', () => {
+describe('getNodesAndDiffsAfterPromoted', () => {
   const list = [
     {
       id: 1,
@@ -370,14 +370,17 @@ describe('getNodesAfterPromotedNode', () => {
   it('一番上のnodeの階層を上げることはできない', () => {
     const targets = [0, 1, 6];
     targets.forEach(el => {
-      const result = getNodesAfterPromotedNode(list, list[el]);
-      expect(result).toEqual(list);
+      const result = getNodesAndDiffsAfterPromoted(list, list[el]);
+      expect(result).toEqual({
+        list,
+        diff: [],
+      });
     });
   });
 
   describe('自身に親がいて', () => {
     it('自身に子がいて弟がいる', () => {
-      const result = getNodesAfterPromotedNode(list, list[2]);
+      const result = getNodesAndDiffsAfterPromoted(list, list[2]);
       /*
       - 1: hoge
       - 2: foo
@@ -387,61 +390,86 @@ describe('getNodesAfterPromotedNode', () => {
         - 6: hoo
       - 7: xoxo
       */
-      expect(result).toEqual([
-        {
-          id: 1,
-          title: 'hoge',
-          order: 0,
-          parent_id: 0,
-          project_id: 1,
-        },
-        {
-          id: 2,
-          title: 'foo',
-          order: 1,
-          parent_id: 0,
-          project_id: 1,
-        },
-        {
-          id: 3,
-          title: 'bar',
-          order: 2,
-          parent_id: 0,
-          project_id: 1,
-        },
-        {
-          id: 4,
-          title: 'baz',
-          order: 0,
-          parent_id: 3,
-          project_id: 1,
-        },
-        {
-          id: 5,
-          title: 'boo',
-          order: 1,
-          parent_id: 3,
-          project_id: 1,
-        },
-        {
-          id: 6,
-          title: 'hoo',
-          order: 2,
-          parent_id: 3,
-          project_id: 1,
-        },
-        {
-          id: 7,
-          title: 'xoxo',
-          order: 3,
-          parent_id: 0,
-          project_id: 1,
-        },
-      ]);
+      expect(result).toEqual({
+        list: [
+          {
+            id: 1,
+            title: 'hoge',
+            order: 0,
+            parent_id: 0,
+            project_id: 1,
+          },
+          {
+            id: 2,
+            title: 'foo',
+            order: 1,
+            parent_id: 0,
+            project_id: 1,
+          },
+          {
+            id: 3,
+            title: 'bar',
+            order: 2,
+            parent_id: 0,
+            project_id: 1,
+          },
+          {
+            id: 4,
+            title: 'baz',
+            order: 0,
+            parent_id: 3,
+            project_id: 1,
+          },
+          {
+            id: 5,
+            title: 'boo',
+            order: 1,
+            parent_id: 3,
+            project_id: 1,
+          },
+          {
+            id: 6,
+            title: 'hoo',
+            order: 2,
+            parent_id: 3,
+            project_id: 1,
+          },
+          {
+            id: 7,
+            title: 'xoxo',
+            order: 3,
+            parent_id: 0,
+            project_id: 1,
+          },
+        ],
+        diff: [
+          {
+            id: 3,
+            title: 'bar',
+            order: 2,
+            parent_id: 0,
+            project_id: 1,
+          },
+          {
+            id: 6,
+            title: 'hoo',
+            order: 2,
+            parent_id: 3,
+            project_id: 1,
+          },
+          {
+            id: 7,
+            title: 'xoxo',
+            order: 3,
+            parent_id: 0,
+            project_id: 1,
+          },
+        ],
+      });
     });
 
     it('自身に子がいなくて弟がいる', () => {
-      const result = getNodesAfterPromotedNode(list, list[3]);
+      const result = getNodesAndDiffsAfterPromoted(list, list[3]);
       /*
       - 1: hoge
       - 2: foo
@@ -451,61 +479,86 @@ describe('getNodesAfterPromotedNode', () => {
         - 6: hoo
       - 7: xoxo
       */
-      expect(result).toEqual([
-        {
-          id: 1,
-          title: 'hoge',
-          order: 0,
-          parent_id: 0,
-          project_id: 1,
-        },
-        {
-          id: 2,
-          title: 'foo',
-          order: 1,
-          parent_id: 0,
-          project_id: 1,
-        },
-        {
-          id: 3,
-          title: 'bar',
-          order: 0,
-          parent_id: 2,
-          project_id: 1,
-        },
-        {
-          id: 4,
-          title: 'baz',
-          order: 1,
-          parent_id: 2,
-          project_id: 1,
-        },
-        {
-          id: 5,
-          title: 'boo',
-          order: 0,
-          parent_id: 4,
-          project_id: 1,
-        },
-        {
-          id: 6,
-          title: 'hoo',
-          order: 2,
-          parent_id: 2,
-          project_id: 1,
-        },
-        {
-          id: 7,
-          title: 'xoxo',
-          order: 2,
-          parent_id: 0,
-          project_id: 1,
-        },
-      ]);
+      expect(result).toEqual({
+        list: [
+          {
+            id: 1,
+            title: 'hoge',
+            order: 0,
+            parent_id: 0,
+            project_id: 1,
+          },
+          {
+            id: 2,
+            title: 'foo',
+            order: 1,
+            parent_id: 0,
+            project_id: 1,
+          },
+          {
+            id: 3,
+            title: 'bar',
+            order: 0,
+            parent_id: 2,
+            project_id: 1,
+          },
+          {
+            id: 4,
+            title: 'baz',
+            order: 1,
+            parent_id: 2,
+            project_id: 1,
+          },
+          {
+            id: 5,
+            title: 'boo',
+            order: 0,
+            parent_id: 4,
+            project_id: 1,
+          },
+          {
+            id: 6,
+            title: 'hoo',
+            order: 2,
+            parent_id: 2,
+            project_id: 1,
+          },
+          {
+            id: 7,
+            title: 'xoxo',
+            order: 2,
+            parent_id: 0,
+            project_id: 1,
+          },
+        ],
+        diff: [
+          {
+            id: 4,
+            title: 'baz',
+            order: 1,
+            parent_id: 2,
+            project_id: 1,
+          },
+          {
+            id: 5,
+            title: 'boo',
+            order: 0,
+            parent_id: 4,
+            project_id: 1,
+          },
+          {
+            id: 6,
+            title: 'hoo',
+            order: 2,
+            parent_id: 2,
+            project_id: 1,
+          },
+        ],
+      });
     });
 
     it('自身に子がいなくて弟もいない', () => {
-      const result = getNodesAfterPromotedNode(list, list[4]);
+      const result = getNodesAndDiffsAfterPromoted(list, list[4]);
       /*
       - 1: hoge
       - 2: foo
@@ -515,57 +568,75 @@ describe('getNodesAfterPromotedNode', () => {
         - 6: hoo
       - 7: xoxo
       */
-      expect(result).toEqual([
-        {
-          id: 1,
-          title: 'hoge',
-          order: 0,
-          parent_id: 0,
-          project_id: 1,
-        },
-        {
-          id: 2,
-          title: 'foo',
-          order: 1,
-          parent_id: 0,
-          project_id: 1,
-        },
-        {
-          id: 3,
-          title: 'bar',
-          order: 0,
-          parent_id: 2,
-          project_id: 1,
-        },
-        {
-          id: 4,
-          title: 'baz',
-          order: 0,
-          parent_id: 3,
-          project_id: 1,
-        },
-        {
-          id: 5,
-          title: 'boo',
-          order: 1,
-          parent_id: 2,
-          project_id: 1,
-        },
-        {
-          id: 6,
-          title: 'hoo',
-          order: 2,
-          parent_id: 2,
-          project_id: 1,
-        },
-        {
-          id: 7,
-          title: 'xoxo',
-          order: 2,
-          parent_id: 0,
-          project_id: 1,
-        },
-      ]);
+      expect(result).toEqual({
+        list: [
+          {
+            id: 1,
+            title: 'hoge',
+            order: 0,
+            parent_id: 0,
+            project_id: 1,
+          },
+          {
+            id: 2,
+            title: 'foo',
+            order: 1,
+            parent_id: 0,
+            project_id: 1,
+          },
+          {
+            id: 3,
+            title: 'bar',
+            order: 0,
+            parent_id: 2,
+            project_id: 1,
+          },
+          {
+            id: 4,
+            title: 'baz',
+            order: 0,
+            parent_id: 3,
+            project_id: 1,
+          },
+          {
+            id: 5,
+            title: 'boo',
+            order: 1,
+            parent_id: 2,
+            project_id: 1,
+          },
+          {
+            id: 6,
+            title: 'hoo',
+            order: 2,
+            parent_id: 2,
+            project_id: 1,
+          },
+          {
+            id: 7,
+            title: 'xoxo',
+            order: 2,
+            parent_id: 0,
+            project_id: 1,
+          },
+        ],
+        diff: [
+          {
+            id: 5,
+            title: 'boo',
+            order: 1,
+            parent_id: 2,
+            project_id: 1,
+          },
+          {
+            id: 6,
+            title: 'hoo',
+            order: 2,
+            parent_id: 2,
+            project_id: 1,
+          },
+        ],
+      });
     });
 
     it('自身に子がいなくて弟もいない 2', () => {
@@ -578,58 +649,76 @@ describe('getNodesAfterPromotedNode', () => {
       - 6: hoo
       - 7: xoxo
       */
-      const result = getNodesAfterPromotedNode(list, list[5]);
-      expect(result).toEqual([
-        {
-          id: 1,
-          title: 'hoge',
-          order: 0,
-          parent_id: 0,
-          project_id: 1,
-        },
-        {
-          id: 2,
-          title: 'foo',
-          order: 1,
-          parent_id: 0,
-          project_id: 1,
-        },
-        {
-          id: 3,
-          title: 'bar',
-          order: 0,
-          parent_id: 2,
-          project_id: 1,
-        },
-        {
-          id: 4,
-          title: 'baz',
-          order: 0,
-          parent_id: 3,
-          project_id: 1,
-        },
-        {
-          id: 5,
-          title: 'boo',
-          order: 1,
-          parent_id: 3,
-          project_id: 1,
-        },
-        {
-          id: 6,
-          title: 'hoo',
-          order: 2,
-          parent_id: 0,
-          project_id: 1,
-        },
-        {
-          id: 7,
-          title: 'xoxo',
-          order: 3,
-          parent_id: 0,
-          project_id: 1,
-        },
-      ]);
+      const result = getNodesAndDiffsAfterPromoted(list, list[5]);
+      expect(result).toEqual({
+        list: [
+          {
+            id: 1,
+            title: 'hoge',
+            order: 0,
+            parent_id: 0,
+            project_id: 1,
+          },
+          {
+            id: 2,
+            title: 'foo',
+            order: 1,
+            parent_id: 0,
+            project_id: 1,
+          },
+          {
+            id: 3,
+            title: 'bar',
+            order: 0,
+            parent_id: 2,
+            project_id: 1,
+          },
+          {
+            id: 4,
+            title: 'baz',
+            order: 0,
+            parent_id: 3,
+            project_id: 1,
+          },
+          {
+            id: 5,
+            title: 'boo',
+            order: 1,
+            parent_id: 3,
+            project_id: 1,
+          },
+          {
+            id: 6,
+            title: 'hoo',
+            order: 2,
+            parent_id: 0,
+            project_id: 1,
+          },
+          {
+            id: 7,
+            title: 'xoxo',
+            order: 3,
+            parent_id: 0,
+            project_id: 1,
+          },
+        ],
+        diff: [
+          {
+            id: 6,
+            title: 'hoo',
+            order: 2,
+            parent_id: 0,
+            project_id: 1,
+          },
+          {
+            id: 7,
+            title: 'xoxo',
+            order: 3,
+            parent_id: 0,
+            project_id: 1,
+          },
+        ],
+      });
     });
   });
 });

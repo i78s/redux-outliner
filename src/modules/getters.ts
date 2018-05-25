@@ -61,51 +61,59 @@ export const findFocusNodeAfterDelete = (list: NodeEntity[], target: NodeEntity)
   return node;
 };
 // 該当nodeの階層を一段上げた後のnode一覧を返す
-export const getNodesAfterPromotedNode = (list: NodeEntity[], target: NodeEntity): NodeEntity[] => {
+export const getNodesAndDiffsAfterPromoted = (list: NodeEntity[], target: NodeEntity): NodesAndDiffs => {
   // すでに一番上の階層なら変更不可
   if (target.parent_id === 0) {
-    return list;
+    return {
+      list,
+      diff: [],
+    };
   }
 
   const parent = list.find(el => el.id === target.parent_id)!;
   const child = list
     .filter(el => el.parent_id === target.id);
 
-  return list
-    .map(el => {
-      // 自身は親のindexの次に割り込み
-      if (el.id === target.id) {
-        return {
-          ...el,
-          order: parent.order + 1,
-          parent_id: parent.parent_id,
-        };
-      }
-      // 割り込んだので後ろにいた旧親のorderをずらす
-      if (
-        el.parent_id === parent.parent_id &&
-        el.order > parent.order
-      ) {
-        return {
-          ...el,
-          order: el.order + 1,
-        };
-      }
-      // 自身より後ろにいる兄弟を自分の子にする
-      if (
-        el.parent_id === target.parent_id &&
-        el.order > target.order
-      ) {
-        return {
-          ...el,
-          // orderを自分の子に連結した形にする
-          order: el.order + child.length - 1,
-          parent_id: target.id!,
-        };
-      }
+  const result = [];
+  const diff = [];
+  for (let i = 0, len = list.length; i < len; i++) {
+    let el = list[i];
+    // 自身は親のindexの次に割り込み
+    if (el.id === target.id) {
+      el = {
+        ...el,
+        order: parent.order + 1,
+        parent_id: parent.parent_id,
+      };
+      diff.push(el);
+    } else if (  // // 割り込んだので後ろにいた旧親のorderをずらす
+      el.parent_id === parent.parent_id &&
+      el.order > parent.order
+    ) {
+      el = {
+        ...el,
+        order: el.order + 1,
+      };
+      diff.push(el);
+    } else if (  // 自身より後ろにいる兄弟を自分の子にする
+      el.parent_id === target.parent_id &&
+      el.order > target.order
+    ) {
+      el = {
+        ...el,
+        // orderを自分の子に連結した形にする
+        order: el.order + child.length - 1,
+        parent_id: target.id!,
+      };
+      diff.push(el);
+    }
+    result[i] = el;
+  }
 
-      return el;
-    });
+  return {
+    list: result,
+    diff,
+  };
 };
 // 該当nodeの階層を一段下げた後のnode一覧を返す
 export const getNodesAndDiffsAfterRelegate = (list: NodeEntity[], target: NodeEntity): NodesAndDiffs => {
