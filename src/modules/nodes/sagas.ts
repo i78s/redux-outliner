@@ -277,10 +277,6 @@ function* watchRelegateNode(): SagaIterator {
 
 function* relegateNode(action: any): SagaIterator {
   const payload = action.payload;
-
-  // tslint:disable-next-line:no-console
-  console.log(payload);
-
   const tmp: NodeEntity[] = yield selectState<NodeEntity[]>(getNodesList);
   const list = getNodesAfterRelegateNode(tmp, payload.node);
 
