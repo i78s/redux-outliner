@@ -28,6 +28,8 @@ export default reducerWithInitialState(initialState)
       actions.fetchNodes.done,
       actions.addNode.done,
       actions.removeNode.done,
+      actions.relegateNode.done,
+      actions.promoteNode.done,
     ],
     (state, { result }) => ({ ...state, list: [ ...result.list ] }),
   )

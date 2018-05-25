@@ -31,3 +31,15 @@ export const removeNode = actionCreator.async<
 export const setFocus = actionCreator<{
   focus: NodesFocus,
 }>('SET_FOCUS');
+
+export const promoteNode = actionCreator.async<
+  { node?: NodeEntity },
+  { list: NodeEntity[] },
+  Error
+>('PROMOTE_NODE');
+
+export const relegateNode = actionCreator.async<
+  { node?: NodeEntity },
+  { list: NodeEntity[] },
+  Error
+>('RELEGATE_NODE');

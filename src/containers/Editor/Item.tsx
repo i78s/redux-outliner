@@ -1,5 +1,11 @@
 import Item, { HandlerProps, ItemProps, RefProps } from 'components/Editor/Item';
-import { addNode, editNode, removeNode } from 'modules/nodes/actions';
+import {
+  addNode,
+  editNode,
+  promoteNode,
+  relegateNode,
+  removeNode,
+} from 'modules/nodes/actions';
 import { State } from 'modules/store';
 import { connect } from 'react-redux';
 import { compose, lifecycle, withHandlers, withState } from 'recompose';
@@ -10,6 +16,8 @@ interface DispatchFromProps {
   addNode: (before: string, after: string, node: NodeEntity) => void;
   editNode: (node: NodeEntity) => void;
   removeNode: (before: string, after: string, node: NodeEntity) => void;
+  relegateNode: (node: NodeEntity) => void;
+  promoteNode: (node: NodeEntity) => void;
 }
 
 interface WithStateProps {
@@ -39,6 +47,8 @@ const mapDispatchToProps = (dispatch: Dispatch<State>) =>
           after,
           node,
         }),
+      relegateNode: node => relegateNode.started({ node }),
+      promoteNode: node => promoteNode.started({ node }),
     },
     dispatch,
   );
@@ -169,19 +179,9 @@ const onKeyDownDelete = (props: WithHandlersProp, target: HTMLDivElement, e: Key
 };
 
 const onKeyDownTab = (props: WithHandlersProp, target: HTMLDivElement) => {
-  /**
-   * todo
-   * 直前の兄弟が存在すればparent_idを直前の兄弟のidに変更
-   */
-  // tslint:disable-next-line:no-console
-  console.log('tab');
+  props.relegateNode(props.node);
 };
 
 const onKeyDownShiftTab = (props: WithHandlersProp, target: HTMLDivElement) => {
-  /**
-   * todo
-   * 親が存在すればparent_idを親のidに変更
-   */
-  // tslint:disable-next-line:no-console
-  console.log('shift + tab');
+  props.promoteNode(props.node);
 };

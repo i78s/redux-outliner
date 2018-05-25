@@ -1,5 +1,7 @@
 import {
   findFocusNodeAfterDelete,
+  getNodesAfterPromotedNode,
+  getNodesAfterRelegateNode,
 } from 'modules/getters';
 import * as actions from 'modules/nodes/actions';
 import {
@@ -17,6 +19,8 @@ export function* nodesTask() {
     fork(watchCreateNode),
     fork(watchUpdateNode),
     fork(watchDeleteNode),
+    fork(watchPromoteNode),
+    fork(watchRelegateNode),
   ]);
 }
 
@@ -237,6 +241,58 @@ function* deleteNode(action: any): SagaIterator {
 
   } catch (error) {
     yield put(actions.removeNode.failed({
+      params: {},
+      error: error as Error,
+    }));
+  }
+}
+
+function* watchPromoteNode(): SagaIterator {
+  yield takeLatest(actions.promoteNode.started, promoteNode);
+}
+
+function* promoteNode(action: any): SagaIterator {
+  const payload = action.payload;
+  const tmp: NodeEntity[] = yield selectState<NodeEntity[]>(getNodesList);
+  const list = getNodesAfterPromotedNode(tmp, payload.node);
+
+  try {
+    yield put(actions.promoteNode.done({
+      params: {},
+      result: {
+        list,
+      },
+    }));
+  } catch (error) {
+    yield put(actions.promoteNode.failed({
+      params: {},
+      error: error as Error,
+    }));
+  }
+}
+
+function* watchRelegateNode(): SagaIterator {
+  yield takeLatest(actions.relegateNode.started, relegateNode);
+}
+
+function* relegateNode(action: any): SagaIterator {
+  const payload = action.payload;
+
+  // tslint:disable-next-line:no-console
+  console.log(payload);
+
+  const tmp: NodeEntity[] = yield selectState<NodeEntity[]>(getNodesList);
+  const list = getNodesAfterRelegateNode(tmp, payload.node);
+
+  try {
+    yield put(actions.relegateNode.done({
+      params: {},
+      result: {
+        list,
+      },
+    }));
+  } catch (error) {
+    yield put(actions.relegateNode.failed({
       params: {},
       error: error as Error,
     }));
