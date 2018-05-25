@@ -305,7 +305,11 @@ function* relegateNode(action: any): SagaIterator {
         list,
       },
     }));
-    // todo 変更をバックエンドにも反映する
+    Promise.all([ // 変更をバックエンドにも反映
+      ...diff.map(el => {
+        return nodesApi.put(el);
+      }),
+    ]);
     // todo キャレットの位置の変更
   } catch (error) {
     yield put(actions.relegateNode.failed({
