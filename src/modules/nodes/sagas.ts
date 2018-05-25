@@ -263,6 +263,8 @@ function* promoteNode(action: any): SagaIterator {
         list,
       },
     }));
+    // todo 変更をバックエンドにも反映する
+    // todo キャレットの位置の変更
   } catch (error) {
     yield put(actions.promoteNode.failed({
       params: {},
@@ -287,6 +289,8 @@ function* relegateNode(action: any): SagaIterator {
         list,
       },
     }));
+    // todo 変更をバックエンドにも反映する
+    // todo キャレットの位置の変更
   } catch (error) {
     yield put(actions.relegateNode.failed({
       params: {},
