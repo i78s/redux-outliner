@@ -168,9 +168,9 @@ function* watchDeleteNode(): SagaIterator {
 }
 
 function* deleteNode(action: any): SagaIterator {
-  const payload = action.payload;
+  const { after, node } = action.payload;
   const list: NodeEntity[] = yield selectState<NodeEntity[]>(getNodesList);
-  const focus = findFocusNodeAfterDelete(list, payload.node);
+  const focus = findFocusNodeAfterDelete(list, node);
 
   if (focus && focus.id === 0) {
     return;
@@ -179,12 +179,22 @@ function* deleteNode(action: any): SagaIterator {
 
   const others = list
     // フォーカス移動先と削除されるnodeを弾き
-    .filter(el => el.id !== payload.node.id)
+    .filter(el => el.id !== node.id)
     .filter(el => el.id !== to.id)
     .map(el => {
+      if (
+        el.parent_id === node.parent_id &&
+        el.order > node.order
+      ) {
+        // 消すnodeの分orderを前につめる
+        return {
+          ...el,
+          order: el.order - 1,
+        };
+      }
       // todo workflowyとは仕様が異なる どうするかあとで検討
       // 削除されるnodeに子がいる場合は引き継ぐ
-      if (el.parent_id === payload.node.id) {
+      if (el.parent_id === node.id) {
         return {
           ...el,
           parent_id: to.id!,
@@ -196,7 +206,7 @@ function* deleteNode(action: any): SagaIterator {
 
   const target = {
     ...to,
-    title: to.title + payload.after,
+    title: to.title + after,
   };
 
   try {
@@ -223,15 +233,20 @@ function* deleteNode(action: any): SagaIterator {
     }));
     // キャレット移動が終わってからその他のnodeの更新を開始
     const requests = [
-      nodesApi.delete(payload.node.id),
+      nodesApi.delete(node.id),
     ];
     // キャレットの右に文字が存在したらnodeの更新
-    if (payload.after) {
+    if (after) {
       requests.push(
         nodesApi.put(target),
       );
     }
     // todo バックエンド側でやりたい
+    requests.push(
+      ...others
+        .filter(el => el.parent_id === node.parent_id && el.order > to.order)
+        .map(el => nodesApi.put(el)),
+    );
     const child = others.filter(el => el.parent_id === to.id);
     if (child.length !== 0) {
       requests.push(...child.map(el => {
