@@ -1,5 +1,5 @@
 import Item, { HandlerProps, ItemProps, RefProps } from 'components/Editor/Item';
-import { addNode, editNode, removeNode } from 'modules/nodes';
+import { addNode, editNode, removeNode } from 'modules/nodes/actions';
 import { State } from 'modules/store';
 import { connect } from 'react-redux';
 import { compose, lifecycle, withHandlers, withState } from 'recompose';

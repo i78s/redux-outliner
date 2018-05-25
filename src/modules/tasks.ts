@@ -1,4 +1,4 @@
-import { nodesTask } from 'modules/nodes';
+import { nodesTask } from 'modules/nodes/sagas';
 import { all, fork } from 'redux-saga/effects';
 
 export default function* rootTask() {

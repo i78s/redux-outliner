@@ -1,7 +1,7 @@
 import List, { ListProps } from 'components/Editor/List';
 import {
   fetchNodes,
-} from 'modules/nodes';
+} from 'modules/nodes/actions';
 import { State } from 'modules/store';
 import { connect } from 'react-redux';
 import { compose, lifecycle } from 'recompose';
