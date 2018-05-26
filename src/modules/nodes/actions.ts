@@ -33,7 +33,7 @@ export const setFocus = actionCreator<{
 }>('SET_FOCUS');
 
 export const promoteNode = actionCreator.async<
-  { node?: NodeEntity },
+  { node?: NodeEntity, start?: number, end?: number },
   { list: NodeEntity[] },
   Error
 >('PROMOTE_NODE');
