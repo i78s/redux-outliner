@@ -5,7 +5,7 @@ import {
 } from 'modules/getters';
 
 describe('findFocusNodeAfterDelete', () => {
-  it('nodeが最後の1つで削除できない', () => {
+  it('nodeが最後の1つの時はnullを返すこと', () => {
     const list = [
       {
         id: 1,
@@ -22,7 +22,6 @@ describe('findFocusNodeAfterDelete', () => {
   });
 
   describe('兄弟がいない', () => {
-    describe('親が', () => {
       const list = [
         {
           id: 1,
@@ -44,13 +43,15 @@ describe('findFocusNodeAfterDelete', () => {
       - 1: hoge
         - 2: foo
       */
-      it('いる', () => {
+    describe('親がいる', () => {
+      it('親を返すこと', () => {
         const target = list[1];
         const node = findFocusNodeAfterDelete(list, target);
         expect(node).toEqual(list[0]);
       });
-
-      it('いない', () => {
+    });
+    describe('いない', () => {
+      it('nullを返すこと', () => {
         const target = list[0];
         const node = findFocusNodeAfterDelete(list, target);
         expect(node).toBe(null);
@@ -105,33 +106,39 @@ describe('findFocusNodeAfterDelete', () => {
     - 5: boo
     */
     describe('自身が兄弟の先頭じゃない', () => {
-      it('前の兄弟に子がいない', () => {
+      describe('前の兄弟に子がいない', () => {
+        it('兄を返すこと', () => {
         const target = list[3];
         const node = findFocusNodeAfterDelete(list, target);
         expect(node).toEqual(list[2]);
       });
-
-      // todo 未実装
-      it('前の兄弟に子がいる', () => {
+      });
+      describe('前の兄弟に子がいる', () => {
+        it('前の兄弟の末っ子を返すこと', () => {
         const target = list[4];
         const node = findFocusNodeAfterDelete(list, target);
         expect(node).toEqual(list[3]);
       });
     });
+    });
 
-    describe('自身が兄弟の先頭', () => {
-      it('親がいる', () => {
+    describe('自身が兄弟の先頭で', () => {
+      describe('親がいる', () => {
+        it('親を返すこと', () => {
         const target = list[2];
         const node = findFocusNodeAfterDelete(list, target);
         expect(node).toEqual(list[1]);
       });
-      it('親がいない', () => {
+      });
+      describe('親がいない', () => {
+        it('0を返すこと', () => {
         const target = list[0];
         const node = findFocusNodeAfterDelete(list, target);
         expect(node).toBe(null);
       });
     });
   });
+});
 });
 
 describe('getNodesAndDiffsAfterRelegate', () => {
@@ -180,7 +187,7 @@ describe('getNodesAndDiffsAfterRelegate', () => {
     - 4: baz
   - 5: boo
   */
-  it('一番先頭のnodeは変更できない (兄がいない)', () => {
+  it('一番先頭の(兄がいない)nodeは変更できない', () => {
     const targets = [0, 2];
 
     targets.forEach(el => {
@@ -379,7 +386,8 @@ describe('getNodesAndDiffsAfterPromoted', () => {
   });
 
   describe('自身に親がいて', () => {
-    it('自身に子がいて弟がいる', () => {
+    describe('自身に子がいて弟がいる', () => {
+      it('子はそのまま自身の階層が上がり、弟のorderと親の弟のorderが変更されること', () => {
       const result = getNodesAndDiffsAfterPromoted(list, list[2]);
       /*
       - 1: hoge
@@ -467,8 +475,9 @@ describe('getNodesAndDiffsAfterPromoted', () => {
         ],
       });
     });
-
-    it('自身に子がいなくて弟がいる', () => {
+    });
+    describe('自身に子がいなくて弟がいる', () => {
+      it('自身の階層が上がり弟が新しく子になり、親の弟のorderが変更されること', () => {
       const result = getNodesAndDiffsAfterPromoted(list, list[3]);
       /*
       - 1: hoge
@@ -556,8 +565,9 @@ describe('getNodesAndDiffsAfterPromoted', () => {
         ],
       });
     });
-
-    it('自身に子がいなくて弟もいない', () => {
+    });
+    describe('自身に子がいなくて弟もいない', () => {
+      it('自身の階層が上がり、親の弟のorderが変更されること', () => {
       const result = getNodesAndDiffsAfterPromoted(list, list[4]);
       /*
       - 1: hoge
@@ -638,8 +648,7 @@ describe('getNodesAndDiffsAfterPromoted', () => {
         ],
       });
     });
-
-    it('自身に子がいなくて弟もいない 2', () => {
+      it('自身の階層が上がり、親の弟のorderが変更されること part 2', () => {
       /*
       - 1: hoge
       - 2: foo
@@ -721,4 +730,5 @@ describe('getNodesAndDiffsAfterPromoted', () => {
       });
     });
   });
+});
 });
