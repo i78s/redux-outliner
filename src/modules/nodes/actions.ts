@@ -39,7 +39,7 @@ export const promoteNode = actionCreator.async<
 >('PROMOTE_NODE');
 
 export const relegateNode = actionCreator.async<
-  { node?: NodeEntity },
+  { node?: NodeEntity, start?: number, end?: number },
   { list: NodeEntity[] },
   Error
 >('RELEGATE_NODE');

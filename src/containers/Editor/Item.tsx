@@ -16,7 +16,7 @@ interface DispatchFromProps {
   addNode: (before: string, after: string, node: NodeEntity) => void;
   editNode: (node: NodeEntity) => void;
   removeNode: (before: string, after: string, node: NodeEntity) => void;
-  relegateNode: (node: NodeEntity) => void;
+  relegateNode: (node: NodeEntity, start: number, end: number) => void;
   promoteNode: (node: NodeEntity) => void;
 }
 
@@ -47,7 +47,11 @@ const mapDispatchToProps = (dispatch: Dispatch<State>) =>
           after,
           node,
         }),
-      relegateNode: node => relegateNode.started({ node }),
+      relegateNode: (node, start, end) => relegateNode.started({
+        node,
+        start,
+        end,
+      }),
       promoteNode: node => promoteNode.started({ node }),
     },
     dispatch,
@@ -179,7 +183,9 @@ const onKeyDownDelete = (props: WithHandlersProp, target: HTMLDivElement, e: Key
 };
 
 const onKeyDownTab = (props: WithHandlersProp, target: HTMLDivElement) => {
-  props.relegateNode(props.node);
+  const selection = window.getSelection();
+  const { startOffset, endOffset } = selection.getRangeAt(0);
+  props.relegateNode(props.node, startOffset, endOffset);
 };
 
 const onKeyDownShiftTab = (props: WithHandlersProp, target: HTMLDivElement) => {

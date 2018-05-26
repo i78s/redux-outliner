@@ -298,9 +298,9 @@ function* watchRelegateNode(): SagaIterator {
 }
 
 function* relegateNode(action: any): SagaIterator {
-  const payload = action.payload;
+  const { node, start, end } = action.payload;
   const tmp: NodeEntity[] = yield selectState<NodeEntity[]>(getNodesList);
-  const { list, diff } = getNodesAndDiffsAfterRelegate(tmp, payload.node);
+  const { list, diff } = getNodesAndDiffsAfterRelegate(tmp, node);
 
   try {
     yield put(actions.relegateNode.done({
@@ -314,7 +314,15 @@ function* relegateNode(action: any): SagaIterator {
         return nodesApi.put(el);
       }),
     ]);
-    // todo キャレットの位置の変更
+    // キャレット位置の整合性を取る
+    yield call(delay, 16);
+    yield put(actions.setFocus({
+      focus: {
+        id: node.id!,
+        start,
+        end,
+      },
+    }));
   } catch (error) {
     yield put(actions.relegateNode.failed({
       params: {},
