@@ -114,7 +114,7 @@ export default compose<any, any>(
     moveCaret: props => (prevProps: WithHandlersProp) => {
       const { focus, node } = props;
       // focusに変更がない時は何もしない
-      if (prevProps.focus.id === focus.id) {
+      if (prevProps.focus.timestamp === focus.timestamp) {
         return;
       }
       // 対象のnodeでなければ何もしない
