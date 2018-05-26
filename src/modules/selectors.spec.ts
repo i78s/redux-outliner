@@ -25,6 +25,7 @@ describe('getNodesList', () => {
       const list = getNodesList({
         nodes: {
           focus: {
+            timestamp: 0,
             id: 0,
             start: 0,
             end: 0,

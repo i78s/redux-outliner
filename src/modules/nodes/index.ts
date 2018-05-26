@@ -3,6 +3,7 @@ import { NodeEntity } from 'services/models';
 import { reducerWithInitialState } from 'typescript-fsa-reducers';
 
 export interface NodesFocus {
+  timestamp?: number;
   id: number;
   start: number;
   end: number;
@@ -15,6 +16,7 @@ export interface NodesState {
 
 const initialState: NodesState = {
   focus: {
+    timestamp: 0,
     id: 0,
     start: 0,
     end: 0,
@@ -33,5 +35,13 @@ export default reducerWithInitialState(initialState)
     ],
     (state, { result }) => ({ ...state, list: [ ...result.list ] }),
   )
-  .case(actions.setFocus, (state, { focus }) => ({ ...state, focus: { ...focus } }))
+  .case(actions.setFocus, (state, { focus }) => {
+    return {
+      ...state,
+      focus: {
+        ...focus,
+        timestamp: Date.now(),
+      },
+    };
+  })
   ;
