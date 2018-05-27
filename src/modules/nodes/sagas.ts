@@ -154,7 +154,7 @@ function* deleteNode(action: any): SagaIterator {
   const list: NodeEntity[] = yield selectState<NodeEntity[]>(getNodesList);
   const focus = findNodeToBeFocusedAfterDelete(list, node);
 
-  if (focus && focus.id === 0) {
+  if (focus === null || focus.id === 0) {
     return;
   }
   const to = focus!;
