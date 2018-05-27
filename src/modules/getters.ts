@@ -5,6 +5,46 @@ interface NodesAndDiffs {
   diff: NodeEntity[];
 }
 
+interface NodesAndReq {
+  list: NodeEntity[];
+  req: NodeEntity;
+}
+
+export const getNodesAndReqParamBeforeCreate = (list: NodeEntity[], payload: any): NodesAndReq => {
+  const { after, before, node } = payload;
+  const child = list.filter(el => el.parent_id === node.id);
+  const isCreateChild = child.length !== 0;
+  const parentID = !isCreateChild ? node.parent_id : node.id;
+  const order = !isCreateChild ? node.order + 1 : 0;
+
+  const result = [];
+  for (let i = 0, len = list.length; i < len; i++) {
+    let el = list[i];
+    if (el.id === node.id) {  // Enterキーの起点のnodeを更新
+      el = {
+        ...el,
+        title: before,
+      };
+    } else if ( // 新規作成されたnodeの後ろにあるnodeの順番を更新
+      el.parent_id === parentID &&
+      order <= el.order
+    ) {
+      el = { ...el, order: el.order + 1 };
+    }
+    result[i] = el;
+  }
+
+  return {
+    list: result,
+    req: {
+      ...node,
+      id: null,
+      title: after,
+      order,
+      parent_id: parentID,
+    },
+  };
+};
 // node削除後の次のフォーカスをあてるnodeを返す
 export const findFocusNodeAfterDelete = (list: NodeEntity[], target: NodeEntity): NodeEntity | null => {
   /**
