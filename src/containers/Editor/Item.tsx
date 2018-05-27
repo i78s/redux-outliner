@@ -162,8 +162,7 @@ export default compose<any, any>(
 
 const update = (props: WithHandlersProp, target: any) => {
   const title = target.innerText;
-  const selection = window.getSelection();
-  const { startOffset, endOffset } = selection.getRangeAt(0);
+  const { startOffset, endOffset } = getSelectionRange();
 
   props.editNode(
     { ...props.node, title },
@@ -174,8 +173,7 @@ const update = (props: WithHandlersProp, target: any) => {
 
 const onKeyDownEnter = (props: WithHandlersProp, target: HTMLDivElement) => {
   const text = target.innerText;
-  const selection = window.getSelection();
-  const { startOffset, endOffset } = selection.getRangeAt(0);
+  const { startOffset, endOffset } = getSelectionRange();
   const before = text.slice(0, startOffset);
   const after = text.slice(endOffset);
 
@@ -184,8 +182,7 @@ const onKeyDownEnter = (props: WithHandlersProp, target: HTMLDivElement) => {
 
 const onKeyDownDelete = (props: WithHandlersProp, target: HTMLDivElement, e: KeyboardEvent) => {
   const text = target.innerText;
-  const selection = window.getSelection();
-  const { startOffset, endOffset } = selection.getRangeAt(0);
+  const { startOffset, endOffset } = getSelectionRange();
   const before = text.slice(0, startOffset);
   const after = text.slice(endOffset);
 
@@ -205,14 +202,12 @@ const onKeyDownDelete = (props: WithHandlersProp, target: HTMLDivElement, e: Key
 };
 
 const onKeyDownTab = (props: WithHandlersProp, target: HTMLDivElement) => {
-  const selection = window.getSelection();
-  const { startOffset, endOffset } = selection.getRangeAt(0);
+  const { startOffset, endOffset } = getSelectionRange();
   props.relegateNode(props.node, startOffset, endOffset);
 };
 
 const onKeyDownShiftTab = (props: WithHandlersProp, target: HTMLDivElement) => {
-  const selection = window.getSelection();
-  const { startOffset, endOffset } = selection.getRangeAt(0);
+  const { startOffset, endOffset } = getSelectionRange();
   props.promoteNode(props.node, startOffset, endOffset);
 };
 
@@ -232,3 +227,7 @@ const onKeyDownDown = (props: WithHandlersProp, target: HTMLDivElement) => {
   // tslint:disable-next-line:no-console
   console.log('down');
 };
+
+function getSelectionRange(): Range {
+  return window.getSelection().getRangeAt(0);
+}
