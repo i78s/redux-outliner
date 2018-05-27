@@ -310,7 +310,7 @@ describe('findNodeToBeFocusedAfterDelete', () => {
       });
       describe('兄に子がいる', () => {
         describe('末子に子がいない', () => {
-          it('末子を返すこと', () => {
+          it('nullを返すこと', () => {
             const list = [
               {
                 id: 1,
@@ -349,11 +349,11 @@ describe('findNodeToBeFocusedAfterDelete', () => {
             */
             const target = list[3];
             const node = findNodeToBeFocusedAfterDelete(list, target);
-            expect(node).toEqual(list[2]);
+            expect(node).toEqual(null);
           });
         });
         describe('末子に子がいる', () => {
-          it('末子の子を返すこと', () => {
+          it('nullを返すこと', () => {
             const list = [
               {
                 id: 1,
@@ -400,7 +400,7 @@ describe('findNodeToBeFocusedAfterDelete', () => {
             */
             const target = list[4];
             const node = findNodeToBeFocusedAfterDelete(list, target);
-            expect(node).toEqual(list[3]);
+            expect(node).toEqual(null);
           });
         });
       });

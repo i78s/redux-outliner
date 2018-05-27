@@ -174,7 +174,6 @@ function* deleteNode(action: any): SagaIterator {
           order: el.order - 1,
         };
       }
-      // todo workflowyとは仕様が異なる どうするかあとで検討
       // 削除されるnodeに子がいる場合は引き継ぐ
       if (el.parent_id === node.id) {
         return {

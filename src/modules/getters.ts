@@ -60,19 +60,15 @@ export const findNodeToBeFocusedAfterDelete = (list: NodeEntity[], target: NodeE
   }
 
   const index = target.order;
+  // 兄弟がいない or 自身が兄弟の先頭の時は親が返る
   if (sibling.length !== 0 && index !== 0) {
     const elder = sibling[index - 1];
     node = { ...elder };
 
-    let child = others
-      .filter(el => el.parent_id === elder.id)
-      .sort((a, b) => a.order - b.order);
-    while (child.length !== 0) {
-      const last = child[child.length - 1];
-      child = others
-        .filter(el => el.parent_id === last.id)
-        .sort((a, b) => a.order - b.order);
-      node = { ...last };
+    const cousin = others
+      .filter(el => el.parent_id === elder.id);
+    if (cousin.length !== 0) {  // 兄に子がいる時は削除させない
+      node = null;
     }
   }
 
