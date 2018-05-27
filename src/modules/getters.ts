@@ -78,6 +78,39 @@ export const findNodeToBeFocusedAfterDelete = (list: NodeEntity[], target: NodeE
 
   return node;
 };
+// 左or上矢印押下後フォーカスの移動先になるnodeを返す
+export const findNodeOnBack = (list: NodeEntity[], target: NodeEntity): NodeEntity | null => {
+  const others = list.filter(el => el.id !== target.id);
+  const parent = others.filter(el => el.id === target.parent_id)[0];
+  const sibling = others
+    .filter(el => el.parent_id === target.parent_id)
+    .sort((a, b) => a.order - b.order);
+
+  let node: NodeEntity | null = null;
+
+  if (parent) {
+    node = { ...parent };
+  }
+
+  const index = target.order;
+  if (sibling.length !== 0 && index !== 0) {
+    const elder = sibling[index - 1];
+    node = { ...elder };
+
+    let child = others
+      .filter(el => el.parent_id === elder.id)
+      .sort((a, b) => a.order - b.order);
+    while (child.length !== 0) {
+      const last = child[child.length - 1];
+      child = others
+        .filter(el => el.parent_id === last.id)
+        .sort((a, b) => a.order - b.order);
+      node = { ...last };
+    }
+  }
+
+  return node;
+};
 // 該当nodeの階層を一段上げた後のnode一覧を返す
 export const getNodesAndDiffsAfterPromoted = (list: NodeEntity[], target: NodeEntity): NodesAndDiffs => {
   // すでに一番上の階層なら変更不可
