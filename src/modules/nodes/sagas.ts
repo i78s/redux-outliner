@@ -2,6 +2,7 @@ import {
   findFocusNodeAfterDelete,
   getNodesAndDiffsAfterPromoted,
   getNodesAndDiffsAfterRelegate,
+  getNodesAndReqParamBeforeCreate,
 } from 'modules/getters';
 import * as actions from 'modules/nodes/actions';
 import {
@@ -52,45 +53,20 @@ function* watchCreateNode(): SagaIterator {
 
 function* createNode(action: any): SagaIterator {
   const payload = action.payload;
-  const order = payload.node.order + 1;
-  const list: NodeEntity[] = yield selectState<NodeEntity[]>(getNodesList);
-  const others = list
-    .map(el => {
-      // Enterキーの起点のnodeを更新
-      if (el.id === payload.node.id) {
-        return {
-          ...el,
-          title: payload.before,
-        };
-      }
-
-      // 新規作成されたnodeの後ろにあるnodeの順番を更新
-      if (
-        el.parent_id === payload.node.parent_id &&
-        order <= el.order
-      ) {
-        return { ...el, order: el.order + 1 };
-      }
-
-      return el;
-    });
+  const tmp: NodeEntity[] = yield selectState<NodeEntity[]>(getNodesList);
+  const { list, req } = getNodesAndReqParamBeforeCreate(tmp, payload);
 
   try {
     const res: NodeEntity = yield call(
       nodesApi.post,
-      {
-        ...payload.node,
-        title: payload.after,
-        order,
-        id: null,
-      },
+      req,
     );
 
     yield put(actions.addNode.done({
       params: {},
       result: {
         list: [
-          ...others,
+          ...list,
           res,
         ],
       },
@@ -115,9 +91,8 @@ function* createNode(action: any): SagaIterator {
       );
     }
 
-    // todo
-    // 並び替えはAPI側でやるようにする
-    const sibling = others
+    // todo 並び替えはAPI側でやるようにする
+    const sibling = list
       .filter(el => el.parent_id === payload.node.parent_id);
     requests.push(...sibling.map(el => {
       return nodesApi.put(el);
