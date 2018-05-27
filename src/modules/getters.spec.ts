@@ -258,7 +258,6 @@ describe('findFocusNodeAfterDelete', () => {
         project_id: 1,
       },
     ];
-
     /*
     - 1: hoge
       - 2: foo
@@ -270,7 +269,7 @@ describe('findFocusNodeAfterDelete', () => {
         expect(node).toEqual(list[0]);
       });
     });
-    describe('いない', () => {
+    describe('親がいない', () => {
       it('nullを返すこと', () => {
         const target = list[0];
         const node = findFocusNodeAfterDelete(list, target);
@@ -280,77 +279,197 @@ describe('findFocusNodeAfterDelete', () => {
   });
 
   describe('兄弟がいる', () => {
-    const list = [
-      {
-        id: 1,
-        title: 'hoge',
-        order: 0,
-        parent_id: 0,
-        project_id: 1,
-      },
-      {
-        id: 2,
-        title: 'foo',
-        order: 1,
-        parent_id: 0,
-        project_id: 1,
-      },
-      {
-        id: 3,
-        title: 'bar',
-        order: 0,
-        parent_id: 2,
-        project_id: 1,
-      },
-      {
-        id: 4,
-        title: 'baz',
-        order: 1,
-        parent_id: 2,
-        project_id: 1,
-      },
-      {
-        id: 5,
-        title: 'boo',
-        order: 2,
-        parent_id: 0,
-        project_id: 1,
-      },
-    ];
-
-    /*
-    - 1: hoge
-    - 2: foo
-      - 3: bar
-      - 4: baz
-    - 5: boo
-    */
     describe('自身が兄弟の先頭じゃない', () => {
-      describe('前の兄弟に子がいない', () => {
+      describe('兄に子がいない', () => {
+        const list = [
+          {
+            id: 1,
+            title: 'hoge',
+            order: 0,
+            parent_id: 0,
+            project_id: 1,
+          },
+          {
+            id: 2,
+            title: 'foo',
+            order: 1,
+            parent_id: 0,
+            project_id: 1,
+          },
+        ];
+        /*
+        - 1: hoge
+        - 2: foo
+        */
         it('兄を返すこと', () => {
-          const target = list[3];
+          const target = list[1];
           const node = findFocusNodeAfterDelete(list, target);
-          expect(node).toEqual(list[2]);
+          expect(node).toEqual(list[0]);
         });
       });
-      describe('前の兄弟に子がいる', () => {
-        it('前の兄弟の末っ子を返すこと', () => {
-          const target = list[4];
-          const node = findFocusNodeAfterDelete(list, target);
-          expect(node).toEqual(list[3]);
+      describe('兄に子がいる', () => {
+        describe('末子に子がいない', () => {
+          it('末子を返すこと', () => {
+            const list = [
+              {
+                id: 1,
+                title: 'hoge',
+                order: 0,
+                parent_id: 0,
+                project_id: 1,
+              },
+              {
+                id: 2,
+                title: 'foo',
+                order: 0,
+                parent_id: 0,
+                project_id: 1,
+              },
+              {
+                id: 3,
+                title: 'bar',
+                order: 1,
+                parent_id: 1,
+                project_id: 1,
+              },
+              {
+                id: 4,
+                title: 'baz',
+                order: 1,
+                parent_id: 0,
+                project_id: 1,
+              },
+            ];
+            /*
+            - 1: hoge
+              - 2: foo
+              - 3: bar
+            - 4: baz
+            */
+            const target = list[3];
+            const node = findFocusNodeAfterDelete(list, target);
+            expect(node).toEqual(list[2]);
+          });
+        });
+        describe('末子に子がいる', () => {
+          it('末子の子を返すこと', () => {
+            const list = [
+              {
+                id: 1,
+                title: 'hoge',
+                order: 0,
+                parent_id: 0,
+                project_id: 1,
+              },
+              {
+                id: 2,
+                title: 'foo',
+                order: 0,
+                parent_id: 1,
+                project_id: 1,
+              },
+              {
+                id: 3,
+                title: 'bar',
+                order: 0,
+                parent_id: 2,
+                project_id: 1,
+              },
+              {
+                id: 4,
+                title: 'baz',
+                order: 1,
+                parent_id: 2,
+                project_id: 1,
+              },
+              {
+                id: 5,
+                title: 'boo',
+                order: 1,
+                parent_id: 0,
+                project_id: 1,
+              },
+            ];
+            /*
+            - 1: hoge
+              - 2: foo
+                - 3: bar
+                - 4: baz
+            - 5: boo
+            */
+            const target = list[4];
+            const node = findFocusNodeAfterDelete(list, target);
+            expect(node).toEqual(list[3]);
+          });
         });
       });
     });
 
     describe('自身が兄弟の先頭で', () => {
       describe('親がいる', () => {
+        const list = [
+          {
+            id: 1,
+            title: 'hoge',
+            order: 0,
+            parent_id: 0,
+            project_id: 1,
+          },
+          {
+            id: 2,
+            title: 'foo',
+            order: 0,
+            parent_id: 1,
+            project_id: 1,
+          },
+          {
+            id: 3,
+            title: 'bar',
+            order: 1,
+            parent_id: 1,
+            project_id: 1,
+          },
+        ];
+        /*
+        - 1: hoge
+          - 2: foo
+          - 3: bar
+        */
         it('親を返すこと', () => {
-          const target = list[2];
+          const target = list[1];
           const node = findFocusNodeAfterDelete(list, target);
-          expect(node).toEqual(list[1]);
+          expect(node).toEqual(list[0]);
         });
       });
       describe('親がいない', () => {
+        const list = [
+          {
+            id: 1,
+            title: 'hoge',
+            order: 0,
+            parent_id: 0,
+            project_id: 1,
+          },
+          {
+            id: 2,
+            title: 'foo',
+            order: 1,
+            parent_id: 0,
+            project_id: 1,
+          },
+          {
+            id: 3,
+            title: 'bar',
+            order: 0,
+            parent_id: 1,
+            project_id: 1,
+          },
+        ];
+        /*
+        - 1: hoge
+        - 2: foo
+          - 3: bar
+        */
         it('0を返すこと', () => {
           const target = list[0];
           const node = findFocusNodeAfterDelete(list, target);
