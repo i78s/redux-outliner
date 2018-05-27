@@ -29,6 +29,7 @@ export default reducerWithInitialState(initialState)
     [
       actions.fetchNodes.done,
       actions.addNode.done,
+      actions.editNode.done,
       actions.removeNode.done,
       actions.relegateNode.done,
       actions.promoteNode.done,

@@ -111,24 +111,32 @@ function* watchUpdateNode(): SagaIterator {
 
 function* updateNode(action: any): SagaIterator {
   yield call(delay, 100);
-
+  const { start, end, node } = action.payload;
+  const list: NodeEntity[] = yield selectState<NodeEntity[]>(getNodesList);
+  const others = list.filter(el => el.id !== node.id);
   try {
-    yield call(
+    const res = yield call(
       nodesApi.put,
-      {
-        ...action.payload.node,
-      },
+      { ...node },
     );
-    /**
-     * 変更時ajaxは投げっぱなしに
-     * 状態はDOMに持たせるのでreducerでは何もしない
-     * 結果キャレットの移動処理もブラウザに任せられる
-     */
     yield put(actions.editNode.done({
       params: {},
-      result: {},
+      result: {
+        list: [
+          ...others,
+          res,
+        ],
+      },
     }));
-
+    // フォーカス/キャレット位置を変更
+    yield call(delay, 16);
+    yield put(actions.setFocus({
+      focus: {
+        id: res.id,
+        start,
+        end,
+      },
+    }));
   } catch (error) {
     yield put(actions.editNode.failed({
       params: {},

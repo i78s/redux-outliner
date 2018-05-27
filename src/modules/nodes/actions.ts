@@ -17,8 +17,8 @@ export const addNode = actionCreator.async<
 >('CREATE');
 
 export const editNode = actionCreator.async<
-  {},
-  {},
+  { node?: NodeEntity, start?: number, end?: number },
+  { list: NodeEntity[] },
   Error
 >('UPDATE');
 

@@ -14,7 +14,7 @@ import { NodeEntity } from 'services/models';
 
 interface DispatchFromProps {
   addNode: (before: string, after: string, node: NodeEntity) => void;
-  editNode: (node: NodeEntity) => void;
+  editNode: (node: NodeEntity, start: number, end: number) => void;
   removeNode: (before: string, after: string, node: NodeEntity) => void;
   relegateNode: (node: NodeEntity, start: number, end: number) => void;
   promoteNode: (node: NodeEntity, start: number, end: number) => void;
@@ -40,7 +40,11 @@ const mapDispatchToProps = (dispatch: Dispatch<State>) =>
           after,
           node,
         }),
-      editNode: node => editNode.started({ node }),
+      editNode: (node, start, end) => editNode.started({
+        node,
+        start,
+        end,
+      }),
       removeNode: (before, after, node) =>
         removeNode.started({
           before,
@@ -147,11 +151,14 @@ export default compose<any, any>(
 
 const update = (props: WithHandlersProp, target: any) => {
   const title = target.innerText;
+  const selection = window.getSelection();
+  const { startOffset, endOffset } = selection.getRangeAt(0);
 
-  props.editNode({
-    ...props.node,
-    title,
-  });
+  props.editNode(
+    { ...props.node, title },
+    startOffset,
+    endOffset,
+  );
 };
 
 const onKeyDownEnter = (props: WithHandlersProp, target: HTMLDivElement) => {
