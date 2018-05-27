@@ -1,5 +1,5 @@
 import {
-  findFocusNodeAfterDelete,
+  findNodeToBeFocusedAfterDelete,
   getNodesAndDiffsAfterPromoted,
   getNodesAndDiffsAfterRelegate,
   getNodesAndReqParamBeforeCreate,
@@ -224,7 +224,7 @@ describe('getNodesAndReqParamBeforeCreate', () => {
   });
 });
 
-describe('findFocusNodeAfterDelete', () => {
+describe('findNodeToBeFocusedAfterDelete', () => {
   it('nodeが最後の1つの時はnullを返すこと', () => {
     const list = [
       {
@@ -237,7 +237,7 @@ describe('findFocusNodeAfterDelete', () => {
     ];
     const target = list[0];
 
-    const node = findFocusNodeAfterDelete(list, target);
+    const node = findNodeToBeFocusedAfterDelete(list, target);
     expect(node).toBe(null);
   });
 
@@ -265,14 +265,14 @@ describe('findFocusNodeAfterDelete', () => {
     describe('親がいる', () => {
       it('親を返すこと', () => {
         const target = list[1];
-        const node = findFocusNodeAfterDelete(list, target);
+        const node = findNodeToBeFocusedAfterDelete(list, target);
         expect(node).toEqual(list[0]);
       });
     });
     describe('親がいない', () => {
       it('nullを返すこと', () => {
         const target = list[0];
-        const node = findFocusNodeAfterDelete(list, target);
+        const node = findNodeToBeFocusedAfterDelete(list, target);
         expect(node).toBe(null);
       });
     });
@@ -303,7 +303,7 @@ describe('findFocusNodeAfterDelete', () => {
         */
         it('兄を返すこと', () => {
           const target = list[1];
-          const node = findFocusNodeAfterDelete(list, target);
+          const node = findNodeToBeFocusedAfterDelete(list, target);
           expect(node).toEqual(list[0]);
         });
       });
@@ -347,7 +347,7 @@ describe('findFocusNodeAfterDelete', () => {
             - 4: baz
             */
             const target = list[3];
-            const node = findFocusNodeAfterDelete(list, target);
+            const node = findNodeToBeFocusedAfterDelete(list, target);
             expect(node).toEqual(list[2]);
           });
         });
@@ -398,7 +398,7 @@ describe('findFocusNodeAfterDelete', () => {
             - 5: boo
             */
             const target = list[4];
-            const node = findFocusNodeAfterDelete(list, target);
+            const node = findNodeToBeFocusedAfterDelete(list, target);
             expect(node).toEqual(list[3]);
           });
         });
@@ -437,7 +437,7 @@ describe('findFocusNodeAfterDelete', () => {
         */
         it('親を返すこと', () => {
           const target = list[1];
-          const node = findFocusNodeAfterDelete(list, target);
+          const node = findNodeToBeFocusedAfterDelete(list, target);
           expect(node).toEqual(list[0]);
         });
       });
@@ -472,7 +472,7 @@ describe('findFocusNodeAfterDelete', () => {
         */
         it('0を返すこと', () => {
           const target = list[0];
-          const node = findFocusNodeAfterDelete(list, target);
+          const node = findNodeToBeFocusedAfterDelete(list, target);
           expect(node).toBe(null);
         });
       });

@@ -1,5 +1,5 @@
 import {
-  findFocusNodeAfterDelete,
+  findNodeToBeFocusedAfterDelete,
   getNodesAndDiffsAfterPromoted,
   getNodesAndDiffsAfterRelegate,
   getNodesAndReqParamBeforeCreate,
@@ -152,7 +152,7 @@ function* watchDeleteNode(): SagaIterator {
 function* deleteNode(action: any): SagaIterator {
   const { after, node } = action.payload;
   const list: NodeEntity[] = yield selectState<NodeEntity[]>(getNodesList);
-  const focus = findFocusNodeAfterDelete(list, node);
+  const focus = findNodeToBeFocusedAfterDelete(list, node);
 
   if (focus && focus.id === 0) {
     return;

@@ -46,7 +46,7 @@ export const getNodesAndReqParamBeforeCreate = (list: NodeEntity[], payload: any
   };
 };
 // node削除後の次のフォーカスをあてるnodeを返す
-export const findFocusNodeAfterDelete = (list: NodeEntity[], target: NodeEntity): NodeEntity | null => {
+export const findNodeToBeFocusedAfterDelete = (list: NodeEntity[], target: NodeEntity): NodeEntity | null => {
   let node: NodeEntity | null = null;
 
   const others = list.filter(el => el.id !== target.id);
