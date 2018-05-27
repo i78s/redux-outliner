@@ -100,7 +100,18 @@ export default compose<any, any>(
           e.preventDefault();
           onKeyDownEnter(props, e.target);
           break;
-        // todo 矢印キーでの移動
+        case 37:
+          onKeyDownLeft(props, e.target);
+          break;
+        case 38:
+          onKeyDownUp(props, e.target);
+          break;
+        case 39:
+          onKeyDownRight(props, e.target);
+          break;
+        case 40:
+          onKeyDownDown(props, e.target);
+          break;
         default:
           break;
       }
@@ -203,4 +214,21 @@ const onKeyDownShiftTab = (props: WithHandlersProp, target: HTMLDivElement) => {
   const selection = window.getSelection();
   const { startOffset, endOffset } = selection.getRangeAt(0);
   props.promoteNode(props.node, startOffset, endOffset);
+};
+
+const onKeyDownLeft = (props: WithHandlersProp, target: HTMLDivElement) => {
+  // tslint:disable-next-line:no-console
+  console.log('left');
+};
+const onKeyDownRight = (props: WithHandlersProp, target: HTMLDivElement) => {
+  // tslint:disable-next-line:no-console
+  console.log('right');
+};
+const onKeyDownUp = (props: WithHandlersProp, target: HTMLDivElement) => {
+  // tslint:disable-next-line:no-console
+  console.log('up');
+};
+const onKeyDownDown = (props: WithHandlersProp, target: HTMLDivElement) => {
+  // tslint:disable-next-line:no-console
+  console.log('down');
 };
