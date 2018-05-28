@@ -16,17 +16,16 @@ import nodesApi from 'services/nodes';
 
 export function* nodesTask() {
   yield all([
-    fork(watchLoadNodes),
-    fork(watchCreateNode),
-    fork(watchUpdateNode),
-    fork(watchDeleteNode),
-    fork(watchPromoteNode),
-    fork(watchRelegateNode),
+    fork(watchCRUDNodes),
+    fork(watchUpdateGradeNode),
   ]);
 }
 
-function* watchLoadNodes(): SagaIterator {
+function* watchCRUDNodes(): SagaIterator {
   yield takeLatest(actions.fetchNodes.started, loadNodes);
+  yield takeLatest(actions.addNode.started, createNode);
+  yield takeLatest(actions.editNode.started, updateNode);
+  yield takeLatest(actions.removeNode.started, deleteNode);
 }
 
 function* loadNodes(action: any): SagaIterator {
@@ -45,10 +44,6 @@ function* loadNodes(action: any): SagaIterator {
       error: error as Error,
     }));
   }
-}
-
-function* watchCreateNode(): SagaIterator {
-  yield takeLatest(actions.addNode.started, createNode);
 }
 
 function* createNode(action: any): SagaIterator {
@@ -105,10 +100,6 @@ function* createNode(action: any): SagaIterator {
   }
 }
 
-function* watchUpdateNode(): SagaIterator {
-  yield takeLatest(actions.editNode.started, updateNode);
-}
-
 function* updateNode(action: any): SagaIterator {
   yield call(delay, 100);
   const { start, end, node } = action.payload;
@@ -143,10 +134,6 @@ function* updateNode(action: any): SagaIterator {
       error: error as Error,
     }));
   }
-}
-
-function* watchDeleteNode(): SagaIterator {
-  yield takeLatest(actions.removeNode.started, deleteNode);
 }
 
 function* deleteNode(action: any): SagaIterator {
@@ -244,8 +231,9 @@ function* deleteNode(action: any): SagaIterator {
   }
 }
 
-function* watchPromoteNode(): SagaIterator {
+function* watchUpdateGradeNode(): SagaIterator {
   yield takeLatest(actions.promoteNode.started, promoteNode);
+  yield takeLatest(actions.relegateNode.started, relegateNode);
 }
 
 function* promoteNode(action: any): SagaIterator {
@@ -280,10 +268,6 @@ function* promoteNode(action: any): SagaIterator {
       error: error as Error,
     }));
   }
-}
-
-function* watchRelegateNode(): SagaIterator {
-  yield takeLatest(actions.relegateNode.started, relegateNode);
 }
 
 function* relegateNode(action: any): SagaIterator {
