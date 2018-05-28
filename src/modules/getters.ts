@@ -107,6 +107,39 @@ export const findNodeOnBack = (list: NodeEntity[], target: NodeEntity): NodeEnti
 
   return node;
 };
+// 右or下矢印押下後フォーカスの移動先になるnodeを返す
+export const findNodeOnForward = (list: NodeEntity[], target: NodeEntity): NodeEntity | null => {
+  const child = list.filter(el => el.parent_id === target.id);
+  const sibling = list
+    .filter(el => el.parent_id === target.parent_id)
+    .sort((a, b) => a.order - b.order);
+  const younger = sibling[target.order + 1];
+
+  let parent = list.find(el => el.id === target.parent_id);
+  let node: NodeEntity | null = null;
+
+  if (child.length !== 0) {
+    node = { ...child[0] };
+  } else if (younger) {
+    node = { ...younger };
+  } else if (parent) {
+    // 親を辿って弟を持つnodeがいるか走査
+    while (parent) {
+      const y = list
+        .filter(el =>
+          el.parent_id === parent!.parent_id &&
+          el.order === parent!.order + 1,
+        )[0];
+      if (y) {
+        node = { ...y };
+        break;
+      }
+      parent = list.find(el => el.id === parent!.parent_id)!;
+    }
+  }
+
+  return node;
+};
 // 該当nodeの階層を一段上げた後のnode一覧を返す
 export const getNodesAndDiffsAfterPromoted = (list: NodeEntity[], target: NodeEntity): NodesAndDiffs => {
   // すでに一番上の階層なら変更不可
