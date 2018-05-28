@@ -1,5 +1,6 @@
 import {
   findNodeOnBack,
+  findNodeOnForward,
   findNodeToBeFocusedAfterDelete,
   getNodesAndDiffsAfterPromoted,
   getNodesAndDiffsAfterRelegate,
@@ -731,6 +732,272 @@ describe('findNodeOnBack', () => {
           const target = list[0];
           const node = findNodeOnBack(list, target);
           expect(node).toBe(null);
+        });
+      });
+    });
+  });
+});
+
+describe('findNodeOnForward', () => {
+  it('nodeが最後の1つの時はnullを返すこと', () => {
+    const list = [
+      {
+        id: 1,
+        title: 'hoge',
+        order: 0,
+        parent_id: 0,
+        project_id: 1,
+      },
+    ];
+    const target = list[0];
+
+    const node = findNodeOnBack(list, target);
+    expect(node).toBe(null);
+  });
+  describe('子がいる', () => {
+    it('先頭の子を返す', () => {
+      const list = [
+        {
+          id: 1,
+          title: 'hoge',
+          order: 0,
+          parent_id: 0,
+          project_id: 1,
+        },
+        {
+          id: 2,
+          title: 'foo',
+          order: 0,
+          parent_id: 1,
+          project_id: 1,
+        },
+        {
+          id: 3,
+          title: 'bar',
+          order: 1,
+          parent_id: 1,
+          project_id: 1,
+        },
+      ];
+      /*
+      - 1: hoge
+        - 2: foo
+        - 3: bar
+      */
+      const result = findNodeOnForward(list, list[0]);
+      expect(result).toEqual(list[1]);
+    });
+  });
+  describe('子がいない', () => {
+    describe('弟がいる', () => {
+      it('弟を返す', () => {
+        const list = [
+          {
+            id: 1,
+            title: 'hoge',
+            order: 0,
+            parent_id: 0,
+            project_id: 1,
+          },
+          {
+            id: 2,
+            title: 'foo',
+            order: 1,
+            parent_id: 0,
+            project_id: 1,
+          },
+        ];
+        /*
+        - 1: hoge
+        - 2: foo
+        */
+        const result = findNodeOnForward(list, list[0]);
+        expect(result).toEqual(list[1]);
+      });
+    });
+    describe('弟がいない', () => {
+      describe('親に弟がいる', () => {
+        it('親の弟を返すこと', () => {
+          const list = [
+            {
+              id: 1,
+              title: 'hoge',
+              order: 0,
+              parent_id: 0,
+              project_id: 1,
+            },
+            {
+              id: 2,
+              title: 'foo',
+              order: 0,
+              parent_id: 1,
+              project_id: 1,
+            },
+            {
+              id: 3,
+              title: 'bar',
+              order: 0,
+              parent_id: 2,
+              project_id: 1,
+            },
+            {
+              id: 4,
+              title: 'baz',
+              order: 1,
+              parent_id: 1,
+              project_id: 1,
+            },
+            {
+              id: 5,
+              title: 'boo',
+              order: 2,
+              parent_id: 1,
+              project_id: 1,
+            },
+          ];
+          /*
+          - 1: hoge
+            - 2: foo
+              - 3: bar
+            - 4: baz
+            - 5: boo
+          */
+          const result = findNodeOnForward(list, list[2]);
+          expect(result).toEqual(list[3]);
+        });
+      });
+      describe('祖父に弟がいる', () => {
+        it('祖父の弟を返すこと', () => {
+          const list = [
+            {
+              id: 1,
+              title: 'hoge',
+              order: 0,
+              parent_id: 0,
+              project_id: 1,
+            },
+            {
+              id: 2,
+              title: 'foo',
+              order: 0,
+              parent_id: 1,
+              project_id: 1,
+            },
+            {
+              id: 3,
+              title: 'bar',
+              order: 0,
+              parent_id: 2,
+              project_id: 1,
+            },
+            {
+              id: 4,
+              title: 'baz',
+              order: 0,
+              parent_id: 3,
+              project_id: 1,
+            },
+            {
+              id: 5,
+              title: 'boo',
+              order: 1,
+              parent_id: 1,
+              project_id: 1,
+            },
+          ];
+          /*
+          - 1: hoge
+            - 2: foo
+              - 3: bar
+                - 4: baz
+            - 5: boo
+          */
+          const result = findNodeOnForward(list, list[3]);
+          expect(result).toEqual(list[4]);
+        });
+      });
+      describe('曽祖父に弟がいる', () => {
+        it('曽祖父の弟を返すこと', () => {
+          const list = [
+            {
+              id: 1,
+              title: 'hoge',
+              order: 0,
+              parent_id: 0,
+              project_id: 1,
+            },
+            {
+              id: 2,
+              title: 'foo',
+              order: 0,
+              parent_id: 1,
+              project_id: 1,
+            },
+            {
+              id: 3,
+              title: 'bar',
+              order: 0,
+              parent_id: 2,
+              project_id: 1,
+            },
+            {
+              id: 4,
+              title: 'baz',
+              order: 0,
+              parent_id: 3,
+              project_id: 1,
+            },
+            {
+              id: 5,
+              title: 'boo',
+              order: 1,
+              parent_id: 0,
+              project_id: 1,
+            },
+          ];
+          /*
+          - 1: hoge
+            - 2: foo
+              - 3: bar
+                - 4: baz
+          - 5: boo
+          */
+          const result = findNodeOnForward(list, list[3]);
+          expect(result).toEqual(list[4]);
+        });
+      });
+      describe('先祖に弟がいない', () => {
+        it('nullを返すこと', () => {
+          const list = [
+            {
+              id: 1,
+              title: 'hoge',
+              order: 0,
+              parent_id: 0,
+              project_id: 1,
+            },
+            {
+              id: 2,
+              title: 'foo',
+              order: 0,
+              parent_id: 1,
+              project_id: 1,
+            },
+            {
+              id: 3,
+              title: 'bar',
+              order: 0,
+              parent_id: 2,
+              project_id: 1,
+            },
+          ];
+          /*
+          - 1: hoge
+            - 2: foo
+              - 3: bar
+          */
+          const result = findNodeOnForward(list, list[2]);
+          expect(result).toEqual(null);
         });
       });
     });
