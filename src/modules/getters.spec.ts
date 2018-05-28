@@ -242,7 +242,7 @@ describe('findNodeToBeFocusedAfterDelete', () => {
     expect(node).toBe(null);
   });
 
-  describe('兄弟がいない', () => {
+  describe('兄がいない', () => {
     const list = [
       {
         id: 1,
@@ -279,7 +279,7 @@ describe('findNodeToBeFocusedAfterDelete', () => {
     });
   });
 
-  describe('兄弟がいる', () => {
+  describe('兄がいる', () => {
     describe('自身が兄弟の先頭じゃない', () => {
       describe('兄に子がいない', () => {
         const list = [
@@ -406,7 +406,7 @@ describe('findNodeToBeFocusedAfterDelete', () => {
       });
     });
 
-    describe('自身が兄弟の先頭で', () => {
+    describe('自身が兄弟の先頭', () => {
       describe('親がいる', () => {
         const list = [
           {
@@ -471,7 +471,7 @@ describe('findNodeToBeFocusedAfterDelete', () => {
         - 2: foo
           - 3: bar
         */
-        it('0を返すこと', () => {
+        it('nullを返すこと', () => {
           const target = list[0];
           const node = findNodeToBeFocusedAfterDelete(list, target);
           expect(node).toBe(null);
@@ -498,7 +498,7 @@ describe('findNodeOnBack', () => {
     expect(node).toBe(null);
   });
 
-  describe('兄弟がいない', () => {
+  describe('兄がいない', () => {
     const list = [
       {
         id: 1,
@@ -535,7 +535,7 @@ describe('findNodeOnBack', () => {
     });
   });
 
-  describe('兄弟がいる', () => {
+  describe('兄がいる', () => {
     describe('自身が兄弟の先頭じゃない', () => {
       describe('兄に子がいない', () => {
         const list = [
@@ -662,7 +662,7 @@ describe('findNodeOnBack', () => {
       });
     });
 
-    describe('自身が兄弟の先頭で', () => {
+    describe('自身が兄弟の先頭', () => {
       describe('親がいる', () => {
         const list = [
           {
@@ -727,7 +727,7 @@ describe('findNodeOnBack', () => {
         - 2: foo
           - 3: bar
         */
-        it('0を返すこと', () => {
+        it('nullを返すこと', () => {
           const target = list[0];
           const node = findNodeOnBack(list, target);
           expect(node).toBe(null);
