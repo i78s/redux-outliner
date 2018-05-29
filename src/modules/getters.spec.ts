@@ -5,6 +5,7 @@ import {
   getNodesAndDiffsAfterPromoted,
   getNodesAndDiffsAfterRelegate,
   getNodesAndReqParamBeforeCreate,
+  getNodesAndReqParamBeforeDelete,
 } from 'modules/getters';
 
 describe('getNodesAndReqParamBeforeCreate', () => {
@@ -226,6 +227,545 @@ describe('getNodesAndReqParamBeforeCreate', () => {
   });
 });
 
+describe('getNodesAndReqParamBeforeDelete', () => {
+  describe('削除されるnodeに弟がいる', () => {
+    describe('削除されるnodeに子がいる', () => {
+      describe('削除されるnodeのタイトルの引き継ぎがない', () => {
+        const list = [
+          {
+            id: 1,
+            title: 'hoge',
+            order: 0,
+            parent_id: 0,
+            project_id: 1,
+          },
+          {
+            id: 2,
+            title: 'foo',
+            order: 1,
+            parent_id: 0,
+            project_id: 1,
+          },
+          {
+            id: 3,
+            title: 'bar',
+            order: 0,
+            parent_id: 2,
+            project_id: 1,
+          },
+          {
+            id: 4,
+            title: 'baz',
+            order: 2,
+            parent_id: 0,
+            project_id: 1,
+          },
+        ];
+        /*
+        - 1: hoge
+        - 2: foo
+          - 3: bar
+        - 4: baz
+        */
+        const target = list[1];
+        const beFocused = list[0];
+        const rightEnd = '';
+        const result = getNodesAndReqParamBeforeDelete(list, target, beFocused, rightEnd);
+        it('削除対象を除外、削除対象の子をfocus移動先に引き継ぎ、削除対象の弟のorderを更新すること', () => {
+          expect(result.list).toEqual([
+            {
+              id: 1,
+              title: 'hoge',
+              order: 0,
+              parent_id: 0,
+              project_id: 1,
+            },
+            {
+              id: 3,
+              title: 'bar',
+              order: 0,
+              parent_id: 1,
+              project_id: 1,
+            },
+            {
+              id: 4,
+              title: 'baz',
+              order: 1,
+              parent_id: 0,
+              project_id: 1,
+            },
+          ]);
+        });
+        it('フォーカス移動先のnodeに変更がないのでnullを返すこと', () => {
+          expect(result.req).toBe(null);
+        });
+      });
+      describe('削除されるnodeのタイトルの引き継ぎがある', () => {
+        const list = [
+          {
+            id: 1,
+            title: 'hoge',
+            order: 0,
+            parent_id: 0,
+            project_id: 1,
+          },
+          {
+            id: 2,
+            title: 'foo',
+            order: 1,
+            parent_id: 0,
+            project_id: 1,
+          },
+          {
+            id: 3,
+            title: 'bar',
+            order: 0,
+            parent_id: 2,
+            project_id: 1,
+          },
+          {
+            id: 4,
+            title: 'baz',
+            order: 2,
+            parent_id: 0,
+            project_id: 1,
+          },
+        ];
+        /*
+        - 1: hoge
+        - 2: foo
+          - 3: bar
+        - 4: baz
+        */
+        const target = list[1];
+        const beFocused = list[0];
+        const rightEnd = 'oo';
+        const result = getNodesAndReqParamBeforeDelete(list, target, beFocused, rightEnd);
+        it('削除対象を除外、削除対象の子とタイトルをfocus移動先が引き継ぎ、削除対象の弟のorderを更新すること', () => {
+          expect(result.list).toEqual([
+            {
+              id: 1,
+              title: 'hogeoo',
+              order: 0,
+              parent_id: 0,
+              project_id: 1,
+            },
+            {
+              id: 3,
+              title: 'bar',
+              order: 0,
+              parent_id: 1,
+              project_id: 1,
+            },
+            {
+              id: 4,
+              title: 'baz',
+              order: 1,
+              parent_id: 0,
+              project_id: 1,
+            },
+          ]);
+        });
+        it('titleを更新したfocus移動先のnodeを返すこと', () => {
+          expect(result.req).toEqual({
+            id: 1,
+            title: 'hogeoo',
+            order: 0,
+            parent_id: 0,
+            project_id: 1,
+          });
+        });
+      });
+    });
+    describe('削除されるnodeに子がいない', () => {
+      describe('削除されるnodeのタイトルの引き継ぎがない', () => {
+        const list = [
+          {
+            id: 1,
+            title: 'hoge',
+            order: 0,
+            parent_id: 0,
+            project_id: 1,
+          },
+          {
+            id: 2,
+            title: 'foo',
+            order: 1,
+            parent_id: 0,
+            project_id: 1,
+          },
+          {
+            id: 3,
+            title: 'bar',
+            order: 2,
+            parent_id: 0,
+            project_id: 1,
+          },
+        ];
+        /*
+        - 1: hoge
+        - 2: foo
+        - 3: bar
+        */
+        const target = list[1];
+        const beFocused = list[0];
+        const rightEnd = '';
+        const result = getNodesAndReqParamBeforeDelete(list, target, beFocused, rightEnd);
+        it('削除対象を除外、削除対象の子をfocus移動先に引き継ぎ、削除対象の弟のorderを更新すること', () => {
+          expect(result.list).toEqual([
+            {
+              id: 1,
+              title: 'hoge',
+              order: 0,
+              parent_id: 0,
+              project_id: 1,
+            },
+            {
+              id: 3,
+              title: 'bar',
+              order: 1,
+              parent_id: 0,
+              project_id: 1,
+            },
+          ]);
+        });
+        it('フォーカス移動先のnodeに変更がないのでnullを返すこと', () => {
+          expect(result.req).toBe(null);
+        });
+      });
+      describe('削除されるnodeのタイトルの引き継ぎがある', () => {
+        const list = [
+          {
+            id: 1,
+            title: 'hoge',
+            order: 0,
+            parent_id: 0,
+            project_id: 1,
+          },
+          {
+            id: 2,
+            title: 'foo',
+            order: 1,
+            parent_id: 0,
+            project_id: 1,
+          },
+          {
+            id: 3,
+            title: 'bar',
+            order: 2,
+            parent_id: 0,
+            project_id: 1,
+          },
+        ];
+        /*
+        - 1: hoge
+        - 2: foo
+        - 3: bar
+        */
+        const target = list[1];
+        const beFocused = list[0];
+        const rightEnd = 'oo';
+        const result = getNodesAndReqParamBeforeDelete(list, target, beFocused, rightEnd);
+        it('削除対象を除外、削除対象の子とタイトルをfocus移動先が引き継ぎ、削除対象の弟のorderを更新すること', () => {
+          expect(result.list).toEqual([
+            {
+              id: 1,
+              title: 'hogeoo',
+              order: 0,
+              parent_id: 0,
+              project_id: 1,
+            },
+            {
+              id: 3,
+              title: 'bar',
+              order: 1,
+              parent_id: 0,
+              project_id: 1,
+            },
+          ]);
+        });
+        it('titleを更新したfocus移動先のnodeを返すこと', () => {
+          expect(result.req).toEqual({
+            id: 1,
+            title: 'hogeoo',
+            order: 0,
+            parent_id: 0,
+            project_id: 1,
+          });
+        });
+      });
+    });
+  });
+  describe('削除されるnodeに弟がいない', () => {
+    describe('削除されるnodeに子がいる', () => {
+      describe('削除されるnodeのタイトルの引き継ぎがない', () => {
+        const list = [
+          {
+            id: 1,
+            title: 'hoge',
+            order: 0,
+            parent_id: 0,
+            project_id: 1,
+          },
+          {
+            id: 2,
+            title: 'foo',
+            order: 1,
+            parent_id: 0,
+            project_id: 1,
+          },
+          {
+            id: 3,
+            title: 'bar',
+            order: 0,
+            parent_id: 2,
+            project_id: 1,
+          },
+          {
+            id: 4,
+            title: 'baz',
+            order: 1,
+            parent_id: 2,
+            project_id: 1,
+          },
+        ];
+        /*
+        - 1: hoge
+        - 2: foo
+          - 3: bar
+          - 4: baz
+        */
+        const target = list[1];
+        const beFocused = list[0];
+        const rightEnd = '';
+        const result = getNodesAndReqParamBeforeDelete(list, target, beFocused, rightEnd);
+        it('削除対象を除外、削除対象の子をfocus移動先に引き継ぐこと', () => {
+          expect(result.list).toEqual([
+            {
+              id: 1,
+              title: 'hoge',
+              order: 0,
+              parent_id: 0,
+              project_id: 1,
+            },
+            {
+              id: 3,
+              title: 'bar',
+              order: 0,
+              parent_id: 1,
+              project_id: 1,
+            },
+            {
+              id: 4,
+              title: 'baz',
+              order: 1,
+              parent_id: 1,
+              project_id: 1,
+            },
+          ]);
+        });
+        it('focus移動先のnodeに変更がないのでnullを返すこと', () => {
+          expect(result.req).toBe(null);
+        });
+      });
+      describe('削除されるnodeのタイトルの引き継ぎがある', () => {
+        const list = [
+          {
+            id: 1,
+            title: 'hoge',
+            order: 0,
+            parent_id: 0,
+            project_id: 1,
+          },
+          {
+            id: 2,
+            title: 'foo',
+            order: 1,
+            parent_id: 0,
+            project_id: 1,
+          },
+          {
+            id: 3,
+            title: 'bar',
+            order: 0,
+            parent_id: 2,
+            project_id: 1,
+          },
+          {
+            id: 4,
+            title: 'baz',
+            order: 1,
+            parent_id: 2,
+            project_id: 1,
+          },
+        ];
+        /*
+        - 1: hoge
+        - 2: foo
+          - 3: bar
+          - 4: baz
+        */
+        const target = list[1];
+        const beFocused = list[0];
+        const rightEnd = 'oo';
+        const result = getNodesAndReqParamBeforeDelete(list, target, beFocused, rightEnd);
+        it('削除対象を除外、titleを更新したfocus移動先に削除対象の子を引き継ぐこと', () => {
+          expect(result.list).toEqual([
+            {
+              id: 1,
+              title: 'hogeoo',
+              order: 0,
+              parent_id: 0,
+              project_id: 1,
+            },
+            {
+              id: 3,
+              title: 'bar',
+              order: 0,
+              parent_id: 1,
+              project_id: 1,
+            },
+            {
+              id: 4,
+              title: 'baz',
+              order: 1,
+              parent_id: 1,
+              project_id: 1,
+            },
+          ]);
+        });
+        it('titleを更新したfocus移動先のnodeを返すこと', () => {
+          expect(result.req).toEqual({
+            id: 1,
+            title: 'hogeoo',
+            order: 0,
+            parent_id: 0,
+            project_id: 1,
+          });
+        });
+      });
+    });
+    describe('削除されるnodeに子がいない', () => {
+      describe('削除されるnodeのタイトルの引き継ぎがない', () => {
+        const list = [
+          {
+            id: 1,
+            title: 'hoge',
+            order: 0,
+            parent_id: 0,
+            project_id: 1,
+          },
+          {
+            id: 2,
+            title: 'foo',
+            order: 0,
+            parent_id: 1,
+            project_id: 1,
+          },
+          {
+            id: 3,
+            title: 'bar',
+            order: 1,
+            parent_id: 0,
+            project_id: 1,
+          },
+        ];
+        /*
+        - 1: hoge
+          - 2: foo
+        - 3: bar
+        */
+        const target = list[2];
+        const beFocused = list[1];
+        const rightEnd = '';
+        const result = getNodesAndReqParamBeforeDelete(list, target, beFocused, rightEnd);
+        it('削除対象を除外すること', () => {
+          expect(result.list).toEqual([
+            {
+              id: 1,
+              title: 'hoge',
+              order: 0,
+              parent_id: 0,
+              project_id: 1,
+            },
+            {
+              id: 2,
+              title: 'foo',
+              order: 0,
+              parent_id: 1,
+              project_id: 1,
+            },
+          ]);
+        });
+        it('focus移動先のnodeに変更がないのでnullを返すこと', () => {
+          expect(result.req).toBe(null);
+        });
+      });
+      describe('削除されるnodeのタイトルの引き継ぎがある', () => {
+        const list = [
+          {
+            id: 1,
+            title: 'hoge',
+            order: 0,
+            parent_id: 0,
+            project_id: 1,
+          },
+          {
+            id: 2,
+            title: 'foo',
+            order: 0,
+            parent_id: 1,
+            project_id: 1,
+          },
+          {
+            id: 3,
+            title: 'bar',
+            order: 1,
+            parent_id: 0,
+            project_id: 1,
+          },
+        ];
+        /*
+        - 1: hoge
+          - 2: foo
+        - 3: bar
+        */
+        const target = list[2];
+        const beFocused = list[1];
+        const rightEnd = 'ar';
+        const result = getNodesAndReqParamBeforeDelete(list, target, beFocused, rightEnd);
+        it('削除対象を除外、focus移動先のtitleを更新すること', () => {
+          expect(result.list).toEqual([
+            {
+              id: 1,
+              title: 'hoge',
+              order: 0,
+              parent_id: 0,
+              project_id: 1,
+            },
+            {
+              id: 2,
+              title: 'fooar',
+              order: 0,
+              parent_id: 1,
+              project_id: 1,
+            },
+          ]);
+        });
+        it('titleを更新したfocus移動先のnodeを返すこと', () => {
+          expect(result.req).toEqual({
+            id: 2,
+            title: 'fooar',
+            order: 0,
+            parent_id: 1,
+            project_id: 1,
+          });
+        });
+      });
+    });
+  });
+});
+
 describe('findNodeToBeFocusedAfterDelete', () => {
   it('nodeが最後の1つの時はnullを返すこと', () => {
     const list = [
@@ -283,27 +823,27 @@ describe('findNodeToBeFocusedAfterDelete', () => {
   describe('兄がいる', () => {
     describe('自身が兄弟の先頭じゃない', () => {
       describe('兄に子がいない', () => {
-        const list = [
-          {
-            id: 1,
-            title: 'hoge',
-            order: 0,
-            parent_id: 0,
-            project_id: 1,
-          },
-          {
-            id: 2,
-            title: 'foo',
-            order: 1,
-            parent_id: 0,
-            project_id: 1,
-          },
-        ];
-        /*
-        - 1: hoge
-        - 2: foo
-        */
         it('兄を返すこと', () => {
+          const list = [
+            {
+              id: 1,
+              title: 'hoge',
+              order: 0,
+              parent_id: 0,
+              project_id: 1,
+            },
+            {
+              id: 2,
+              title: 'foo',
+              order: 1,
+              parent_id: 0,
+              project_id: 1,
+            },
+          ];
+          /*
+          - 1: hoge
+          - 2: foo
+          */
           const target = list[1];
           const node = findNodeToBeFocusedAfterDelete(list, target);
           expect(node).toEqual(list[0]);
@@ -406,73 +946,72 @@ describe('findNodeToBeFocusedAfterDelete', () => {
         });
       });
     });
-
     describe('自身が兄弟の先頭', () => {
       describe('親がいる', () => {
-        const list = [
-          {
-            id: 1,
-            title: 'hoge',
-            order: 0,
-            parent_id: 0,
-            project_id: 1,
-          },
-          {
-            id: 2,
-            title: 'foo',
-            order: 0,
-            parent_id: 1,
-            project_id: 1,
-          },
-          {
-            id: 3,
-            title: 'bar',
-            order: 1,
-            parent_id: 1,
-            project_id: 1,
-          },
-        ];
-        /*
-        - 1: hoge
-          - 2: foo
-          - 3: bar
-        */
         it('親を返すこと', () => {
+          const list = [
+            {
+              id: 1,
+              title: 'hoge',
+              order: 0,
+              parent_id: 0,
+              project_id: 1,
+            },
+            {
+              id: 2,
+              title: 'foo',
+              order: 0,
+              parent_id: 1,
+              project_id: 1,
+            },
+            {
+              id: 3,
+              title: 'bar',
+              order: 1,
+              parent_id: 1,
+              project_id: 1,
+            },
+          ];
+          /*
+          - 1: hoge
+            - 2: foo
+            - 3: bar
+          */
           const target = list[1];
           const node = findNodeToBeFocusedAfterDelete(list, target);
           expect(node).toEqual(list[0]);
         });
       });
       describe('親がいない', () => {
-        const list = [
-          {
-            id: 1,
-            title: 'hoge',
-            order: 0,
-            parent_id: 0,
-            project_id: 1,
-          },
-          {
-            id: 2,
-            title: 'foo',
-            order: 1,
-            parent_id: 0,
-            project_id: 1,
-          },
-          {
-            id: 3,
-            title: 'bar',
-            order: 0,
-            parent_id: 1,
-            project_id: 1,
-          },
-        ];
-        /*
-        - 1: hoge
-        - 2: foo
-          - 3: bar
-        */
         it('nullを返すこと', () => {
+          const list = [
+            {
+              id: 1,
+              title: 'hoge',
+              order: 0,
+              parent_id: 0,
+              project_id: 1,
+            },
+            {
+              id: 2,
+              title: 'foo',
+              order: 1,
+              parent_id: 0,
+              project_id: 1,
+            },
+            {
+              id: 3,
+              title: 'bar',
+              order: 0,
+              parent_id: 1,
+              project_id: 1,
+            },
+          ];
+          /*
+          - 1: hoge
+          - 2: foo
+            - 3: bar
+          */
           const target = list[0];
           const node = findNodeToBeFocusedAfterDelete(list, target);
           expect(node).toBe(null);

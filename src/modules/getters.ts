@@ -5,12 +5,12 @@ interface NodesAndDiffs {
   diff: NodeEntity[];
 }
 
-interface NodesAndReq {
+interface NodesAndReq<T> {
   list: NodeEntity[];
-  req: NodeEntity;
+  req: T;
 }
 
-export const getNodesAndReqParamBeforeCreate = (list: NodeEntity[], payload: any): NodesAndReq => {
+export const getNodesAndReqParamBeforeCreate = (list: NodeEntity[], payload: any): NodesAndReq<NodeEntity> => {
   const { after, before, node } = payload;
   const child = list.filter(el => el.parent_id === node.id);
   const isCreateChild = child.length !== 0;
@@ -43,6 +43,47 @@ export const getNodesAndReqParamBeforeCreate = (list: NodeEntity[], payload: any
       order,
       parent_id: parentID,
     },
+  };
+};
+export const getNodesAndReqParamBeforeDelete = (
+  list: NodeEntity[],
+  target: NodeEntity,
+  beFocused: NodeEntity,
+  rightEnd: string,
+): NodesAndReq<NodeEntity | null> => {
+  const others = list.filter(el => el.id !== target.id);
+  const result = [];
+  let req: NodeEntity | null = null;
+  for (let i = 0, len = others.length; i < len; i++) {
+    let el = others[i];
+    // delキー押下時にキャレットの右側に文字があればフォーカス移動先のnodeに引き継ぐ
+    if (rightEnd && el.id === beFocused.id) {
+      el = {
+        ...el,
+        title: el.title + rightEnd,
+      };
+      req = el;
+    } else if (  // 削除されるnodeの弟がいればorderを前につめる
+      el.parent_id === target.parent_id &&
+      el.order > target.order
+    ) {
+      el = {
+        ...el,
+        order: el.order - 1,
+      };
+    // 削除されるnodeに子がいる場合は引き継ぐ
+    } else if (el.parent_id === target.id) {
+      el = {
+        ...el,
+        parent_id: beFocused.id!,
+      };
+    }
+    result[i] = el;
+  }
+
+  return {
+    list: result,
+    req,
   };
 };
 // node削除後の次のフォーカスをあてるnodeを返す
