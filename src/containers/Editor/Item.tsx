@@ -110,13 +110,13 @@ export default compose<any, any>(
           onKeyDownLeft(props, e.target, e);
           break;
         case 38:
-          onKeyDownUp(props, e.target);
+          onKeyDownUp(props, e.target, e);
           break;
         case 39:
           onKeyDownRight(props, e.target, e);
           break;
         case 40:
-          onKeyDownDown(props, e.target);
+          onKeyDownDown(props, e.target, e);
           break;
         default:
           break;
@@ -217,29 +217,27 @@ const onKeyDownShiftTab = (props: WithHandlersProp, target: HTMLDivElement) => {
   props.promoteNode(props.node, startOffset, endOffset);
 };
 
-const onKeyDownLeft = (props: WithHandlersProp, target: HTMLDivElement, e: KeyboardEvent) => {
-  const { startOffset, endOffset } = getSelectionRange();
-  if (startOffset === 0 && endOffset === 0) {
-    e.preventDefault();
-    props.goBack(props.node);
-  }
-};
-const onKeyDownRight = (props: WithHandlersProp, target: HTMLDivElement, e: KeyboardEvent) => {
+const onKeyDownLeft = onKeyUpOrLeft;
+const onKeyDownUp = onKeyUpOrLeft;
+const onKeyDownRight = onKeyDownOrRight;
+const onKeyDownDown = onKeyDownOrRight;
+
+function onKeyDownOrRight(props: WithHandlersProp, target: HTMLDivElement, e: KeyboardEvent) {
   const { startOffset, endOffset } = getSelectionRange();
   const len = props.node.title.length;
   if (startOffset === len && endOffset === len) {
     e.preventDefault();
     props.goForward(props.node);
   }
-};
-const onKeyDownUp = (props: WithHandlersProp, target: HTMLDivElement) => {
-  // tslint:disable-next-line:no-console
-  console.log('up');
-};
-const onKeyDownDown = (props: WithHandlersProp, target: HTMLDivElement) => {
-  // tslint:disable-next-line:no-console
-  console.log('down');
-};
+}
+
+function onKeyUpOrLeft(props: WithHandlersProp, target: HTMLDivElement, e: KeyboardEvent) {
+  const { startOffset, endOffset } = getSelectionRange();
+  if (startOffset === 0 && endOffset === 0) {
+    e.preventDefault();
+    props.goBack(props.node);
+  }
+}
 
 function getSelectionRange(): Range {
   return window.getSelection().getRangeAt(0);
