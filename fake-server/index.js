@@ -6,7 +6,7 @@ module.exports = () => {
     nodes: [] 
   };
   
-  const max = 100;
+  const max = 15;
   for (let i = 1; i <= max; i++) {
     const parent_id = i % 3 === 0 ? 0 : faker.random.number(max);
     const sibling = data.nodes.filter(el => el.parent_id === parent_id);
