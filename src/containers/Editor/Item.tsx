@@ -2,6 +2,8 @@ import Item, { HandlerProps, ItemProps, RefProps } from 'components/Editor/Item'
 import {
   addNode,
   editNode,
+  goBack,
+  goForward,
   promoteNode,
   relegateNode,
   removeNode,
@@ -18,6 +20,8 @@ interface DispatchFromProps {
   removeNode: (before: string, after: string, node: NodeEntity) => void;
   relegateNode: (node: NodeEntity, start: number, end: number) => void;
   promoteNode: (node: NodeEntity, start: number, end: number) => void;
+  goBack: (node: NodeEntity) => void;
+  goForward: (node: NodeEntity) => void;
 }
 
 interface WithStateProps {
@@ -61,6 +65,8 @@ const mapDispatchToProps = (dispatch: Dispatch<State>) =>
         start,
         end,
       }),
+      goBack: (node) => goBack({ node }),
+      goForward: (node) => goForward({ node }),
     },
     dispatch,
   );
@@ -101,13 +107,13 @@ export default compose<any, any>(
           onKeyDownEnter(props, e.target);
           break;
         case 37:
-          onKeyDownLeft(props, e.target);
+          onKeyDownLeft(props, e.target, e);
           break;
         case 38:
           onKeyDownUp(props, e.target);
           break;
         case 39:
-          onKeyDownRight(props, e.target);
+          onKeyDownRight(props, e.target, e);
           break;
         case 40:
           onKeyDownDown(props, e.target);
@@ -211,13 +217,20 @@ const onKeyDownShiftTab = (props: WithHandlersProp, target: HTMLDivElement) => {
   props.promoteNode(props.node, startOffset, endOffset);
 };
 
-const onKeyDownLeft = (props: WithHandlersProp, target: HTMLDivElement) => {
-  // tslint:disable-next-line:no-console
-  console.log('left');
+const onKeyDownLeft = (props: WithHandlersProp, target: HTMLDivElement, e: KeyboardEvent) => {
+  const { startOffset, endOffset } = getSelectionRange();
+  if (startOffset === 0 && endOffset === 0) {
+    e.preventDefault();
+    props.goBack(props.node);
+  }
 };
-const onKeyDownRight = (props: WithHandlersProp, target: HTMLDivElement) => {
-  // tslint:disable-next-line:no-console
-  console.log('right');
+const onKeyDownRight = (props: WithHandlersProp, target: HTMLDivElement, e: KeyboardEvent) => {
+  const { startOffset, endOffset } = getSelectionRange();
+  const len = props.node.title.length;
+  if (startOffset === len && endOffset === len) {
+    e.preventDefault();
+    props.goForward(props.node);
+  }
 };
 const onKeyDownUp = (props: WithHandlersProp, target: HTMLDivElement) => {
   // tslint:disable-next-line:no-console
