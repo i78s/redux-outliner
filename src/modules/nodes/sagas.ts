@@ -1,4 +1,6 @@
 import {
+  findNodeOnBack,
+  findNodeOnForward,
   findNodeToBeFocusedAfterDelete,
   getNodesAndDiffsAfterPromoted,
   getNodesAndDiffsAfterRelegate,
@@ -18,6 +20,7 @@ export function* nodesTask() {
   yield all([
     fork(watchCRUDNodes),
     fork(watchUpdateGradeNode),
+    fork(watchOnKeyDownArrow),
   ]);
 }
 
@@ -302,4 +305,44 @@ function* relegateNode(action: any): SagaIterator {
       error: error as Error,
     }));
   }
+}
+
+function* watchOnKeyDownArrow(): SagaIterator {
+  yield takeLatest(actions.goBack, goBack);
+  yield takeLatest(actions.goForward, goForward);
+}
+
+function* goBack(action: any): SagaIterator {
+  const { node } = action.payload;
+  const list: NodeEntity[] = yield selectState<NodeEntity[]>(getNodesList);
+  const target = findNodeOnBack(list, node);
+
+  if (!target) {
+    return;
+  }
+  const len = target.title.length;
+  yield put(actions.setFocus({
+    focus: {
+      id: target.id!,
+      start: len,
+      end: len,
+    },
+  }));
+}
+
+function* goForward(action: any): SagaIterator {
+  const { node } = action.payload;
+  const list: NodeEntity[] = yield selectState<NodeEntity[]>(getNodesList);
+  const target = findNodeOnForward(list, node);
+
+  if (!target) {
+    return;
+  }
+  yield put(actions.setFocus({
+    focus: {
+      id: target.id!,
+      start: 0,
+      end: 0,
+    },
+  }));
 }

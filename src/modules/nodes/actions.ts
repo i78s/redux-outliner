@@ -43,3 +43,11 @@ export const relegateNode = actionCreator.async<
   { list: NodeEntity[] },
   Error
 >('RELEGATE_NODE');
+
+export const goBack = actionCreator<{
+  node?: NodeEntity;
+}>('GO_BACK');
+
+export const goForward = actionCreator<{
+  node?: NodeEntity;
+}>('GO_FORWARD');
