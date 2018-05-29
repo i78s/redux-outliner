@@ -5,6 +5,7 @@ import {
   getNodesAndDiffsAfterPromoted,
   getNodesAndDiffsAfterRelegate,
   getNodesAndReqParamBeforeCreate,
+  getNodesAndReqParamBeforeDelete,
 } from 'modules/getters';
 import * as actions from 'modules/nodes/actions';
 import {
@@ -141,53 +142,26 @@ function* updateNode(action: any): SagaIterator {
 
 function* deleteNode(action: any): SagaIterator {
   const { after, node } = action.payload;
-  const list: NodeEntity[] = yield selectState<NodeEntity[]>(getNodesList);
-  const focus = findNodeToBeFocusedAfterDelete(list, node);
+  const tmp: NodeEntity[] = yield selectState<NodeEntity[]>(getNodesList);
+  const focus = findNodeToBeFocusedAfterDelete(tmp, node);
 
   if (focus === null || focus.id === 0) {
     return;
   }
   const to = focus!;
 
-  const others = list
-    // フォーカス移動先と削除されるnodeを弾き
-    .filter(el => el.id !== node.id)
-    .filter(el => el.id !== to.id)
-    .map(el => {
-      if (
-        el.parent_id === node.parent_id &&
-        el.order > node.order
-      ) {
-        // 消すnodeの分orderを前につめる
-        return {
-          ...el,
-          order: el.order - 1,
-        };
-      }
-      // 削除されるnodeに子がいる場合は引き継ぐ
-      if (el.parent_id === node.id) {
-        return {
-          ...el,
-          parent_id: to.id!,
-        };
-      }
-
-      return el;
-    });
-
-  const target = {
-    ...to,
-    title: to.title + after,
-  };
+  const { list, req } = getNodesAndReqParamBeforeDelete(
+    tmp,
+    node,
+    to,
+    after,
+  );
 
   try {
     yield put(actions.removeNode.done({
       params: {},
       result: {
-        list: [
-          ...others,
-          target,
-        ],
+        list,
       },
     }));
     // フォーカス/キャレット位置を変更
@@ -208,12 +182,13 @@ function* deleteNode(action: any): SagaIterator {
       nodesApi.delete(node.id),
     ];
     // キャレットの右に文字が存在したらnodeの更新
-    if (after) {
+    if (req) {
       requests.push(
-        nodesApi.put(target),
+        nodesApi.put(req),
       );
     }
     // todo バックエンド側でやりたい
+    const others = list.filter(el => el.id === to.id);
     requests.push(  // 並び順の更新
       ...others
         .filter(el => el.parent_id === node.parent_id && el.order > to.order)
