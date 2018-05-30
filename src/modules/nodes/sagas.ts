@@ -32,25 +32,26 @@ function* watchCRUDNodes(): SagaIterator {
   yield takeLatest(actions.removeNode.started, deleteNode);
 }
 
-function* loadNodes(action: any): SagaIterator {
+function* loadNodes(action: actions.FetchNodesAction): SagaIterator {
+  const { payload } = action;
   try {
     const list = yield call(
       nodesApi.getList,
     );
     yield put(actions.fetchNodes.done({
-      params: {},
+      params: { ...payload },
       result: { list },
     }));
 
   } catch (error) {
     yield put(actions.fetchNodes.failed({
-      params: {},
+      params: { ...payload },
       error: error as Error,
     }));
   }
 }
 
-function* createNode(action: any): SagaIterator {
+function* createNode(action: actions.AddNodeAction): SagaIterator {
   const payload = action.payload;
   const tmp: NodeEntity[] = yield selectState<NodeEntity[]>(getNodesList);
   const { list, req } = getNodesAndReqParamBeforeCreate(tmp, payload);
@@ -62,7 +63,7 @@ function* createNode(action: any): SagaIterator {
     );
 
     yield put(actions.addNode.done({
-      params: {},
+      params: { ...payload },
       result: {
         list: [
           ...list,
@@ -84,7 +85,7 @@ function* createNode(action: any): SagaIterator {
     if (payload.before) {
       requests.push(
         nodesApi.put({
-          ...action.payload.node,
+          ...payload.node,
           title: payload.before,
         }),
       );
@@ -98,15 +99,16 @@ function* createNode(action: any): SagaIterator {
 
   } catch (error) {
     yield put(actions.addNode.failed({
-      params: {},
+      params: { ...payload },
       error: error as Error,
     }));
   }
 }
 
-function* updateNode(action: any): SagaIterator {
+function* updateNode(action: actions.EditNodeAction): SagaIterator {
   yield call(delay, 100);
-  const { start, end, node } = action.payload;
+  const { payload } = action;
+  const { start, end, node } = payload;
   const list: NodeEntity[] = yield selectState<NodeEntity[]>(getNodesList);
   const others = list.filter(el => el.id !== node.id);
   try {
@@ -115,7 +117,7 @@ function* updateNode(action: any): SagaIterator {
       { ...node },
     );
     yield put(actions.editNode.done({
-      params: {},
+      params: { ...payload },
       result: {
         list: [
           ...others,
@@ -134,14 +136,15 @@ function* updateNode(action: any): SagaIterator {
     }));
   } catch (error) {
     yield put(actions.editNode.failed({
-      params: {},
+      params: { ...payload },
       error: error as Error,
     }));
   }
 }
 
-function* deleteNode(action: any): SagaIterator {
-  const { after, node } = action.payload;
+function* deleteNode(action: actions.DeleteNodeAction): SagaIterator {
+  const { payload } = action;
+  const { after, node } = payload;
   const tmp: NodeEntity[] = yield selectState<NodeEntity[]>(getNodesList);
   const focus = findNodeToBeFocusedAfterDelete(tmp, node);
 
@@ -159,7 +162,7 @@ function* deleteNode(action: any): SagaIterator {
 
   try {
     yield put(actions.removeNode.done({
-      params: {},
+      params: { ...payload },
       result: {
         list,
       },
@@ -203,7 +206,7 @@ function* deleteNode(action: any): SagaIterator {
 
   } catch (error) {
     yield put(actions.removeNode.failed({
-      params: {},
+      params: { ...payload },
       error: error as Error,
     }));
   }
@@ -214,14 +217,15 @@ function* watchUpdateGradeNode(): SagaIterator {
   yield takeLatest(actions.relegateNode.started, relegateNode);
 }
 
-function* promoteNode(action: any): SagaIterator {
-  const { node, start, end } = action.payload;
+function* promoteNode(action: actions.PromoteNodeAction): SagaIterator {
+  const { payload } = action;
+  const { node, start, end } = payload;
   const tmp: NodeEntity[] = yield selectState<NodeEntity[]>(getNodesList);
   const { list, diff } = getNodesAndDiffsAfterPromoted(tmp, node);
 
   try {
     yield put(actions.promoteNode.done({
-      params: {},
+      params: { ...payload },
       result: {
         list,
       },
@@ -242,20 +246,21 @@ function* promoteNode(action: any): SagaIterator {
     }));
   } catch (error) {
     yield put(actions.promoteNode.failed({
-      params: {},
+      params: { ...payload },
       error: error as Error,
     }));
   }
 }
 
-function* relegateNode(action: any): SagaIterator {
-  const { node, start, end } = action.payload;
+function* relegateNode(action: actions.RelegateNodeAction): SagaIterator {
+  const { payload } = action;
+  const { node, start, end } = payload;
   const tmp: NodeEntity[] = yield selectState<NodeEntity[]>(getNodesList);
   const { list, diff } = getNodesAndDiffsAfterRelegate(tmp, node);
 
   try {
     yield put(actions.relegateNode.done({
-      params: {},
+      params: { ...payload },
       result: {
         list,
       },
@@ -276,7 +281,7 @@ function* relegateNode(action: any): SagaIterator {
     }));
   } catch (error) {
     yield put(actions.relegateNode.failed({
-      params: {},
+      params: { ...payload },
       error: error as Error,
     }));
   }
@@ -287,7 +292,7 @@ function* watchOnKeyDownArrow(): SagaIterator {
   yield takeLatest(actions.goForward, goForward);
 }
 
-function* goBack(action: any): SagaIterator {
+function* goBack(action: actions.GoBackAction): SagaIterator {
   const { node } = action.payload;
   const list: NodeEntity[] = yield selectState<NodeEntity[]>(getNodesList);
   const target = findNodeOnBack(list, node);
@@ -305,7 +310,7 @@ function* goBack(action: any): SagaIterator {
   }));
 }
 
-function* goForward(action: any): SagaIterator {
+function* goForward(action: actions.GoForwardAction): SagaIterator {
   const { node } = action.payload;
   const list: NodeEntity[] = yield selectState<NodeEntity[]>(getNodesList);
   const target = findNodeOnForward(list, node);

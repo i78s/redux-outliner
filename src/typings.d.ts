@@ -7,3 +7,10 @@ declare module '*.json' {
 interface InputEvent<T extends HTMLElement> extends Event {
   target: T;
 }
+
+interface AbstractAction {
+  type: string;
+  payload: object;
+  meta?: object;
+  error: boolean;
+}

@@ -25,7 +25,8 @@ const initialState: NodesState = {
 };
 
 export default reducerWithInitialState(initialState)
-  .cases(
+  // reducerでpayload見ないのでanyでいいかなという気持ち
+  .cases<any>(
     [
       actions.fetchNodes.done,
       actions.addNode.done,
