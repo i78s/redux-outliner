@@ -5,7 +5,7 @@ export interface ProjectEntity {
 }
 
 export interface NodeEntity {
-  id?: number;
+  id: number;
   title: string;
   order: number;
   parent_id: number;

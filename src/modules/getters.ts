@@ -75,7 +75,7 @@ export const getNodesAndReqParamBeforeDelete = (
     } else if (el.parent_id === target.id) {
       el = {
         ...el,
-        parent_id: beFocused.id!,
+        parent_id: beFocused.id,
       };
     }
     result[i] = el;
@@ -224,7 +224,7 @@ export const getNodesAndDiffsAfterPromoted = (list: NodeEntity[], target: NodeEn
         ...el,
         // orderを自分の子に連結した形にする
         order: el.order + child.length - 1,
-        parent_id: target.id!,
+        parent_id: target.id,
       };
       diff.push(el);
     }
@@ -259,7 +259,7 @@ export const getNodesAndDiffsAfterRelegate = (list: NodeEntity[], target: NodeEn
       el = {
         ...el,
         order: cousin.length,
-        parent_id: elder.id!,
+        parent_id: elder.id,
       };
       diff.push(el);
     }

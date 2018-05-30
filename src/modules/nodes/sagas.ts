@@ -73,7 +73,7 @@ function* createNode(action: any): SagaIterator {
     // フォーカス/キャレット位置を変更
     yield put(actions.setFocus({
       focus: {
-        id: res.id!,
+        id: res.id,
         start: 0,
         end: 0,
       },
@@ -172,7 +172,7 @@ function* deleteNode(action: any): SagaIterator {
     // todo 削除時にtitleが空になるバグがあるっぽい
     yield put(actions.setFocus({
       focus: {
-        id: to.id!,
+        id: to.id,
         start: len,
         end: len,
       },
@@ -235,7 +235,7 @@ function* promoteNode(action: any): SagaIterator {
     yield call(delay, 16);
     yield put(actions.setFocus({
       focus: {
-        id: node.id!,
+        id: node.id,
         start,
         end,
       },
@@ -269,7 +269,7 @@ function* relegateNode(action: any): SagaIterator {
     yield call(delay, 16);
     yield put(actions.setFocus({
       focus: {
-        id: node.id!,
+        id: node.id,
         start,
         end,
       },
@@ -298,7 +298,7 @@ function* goBack(action: any): SagaIterator {
   const len = target.title.length;
   yield put(actions.setFocus({
     focus: {
-      id: target.id!,
+      id: target.id,
       start: len,
       end: len,
     },
@@ -315,7 +315,7 @@ function* goForward(action: any): SagaIterator {
   }
   yield put(actions.setFocus({
     focus: {
-      id: target.id!,
+      id: target.id,
       start: 0,
       end: 0,
     },
