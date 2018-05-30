@@ -42,8 +42,10 @@ const Item: React.SFC<ItemProps> = ({
 }) => {
 
   return (
-    <Style>
+    <Node>
+      <Dot />
       <div
+        className="content"
         suppressContentEditableWarning={true}
         contentEditable={true}
         onInput={onInput}
@@ -54,31 +56,28 @@ const Item: React.SFC<ItemProps> = ({
       >
         {node.title}
       </div>
-    </Style>
+    </Node>
   );
 };
 
 export default Item;
 
-const Style = styled.div`
-  div {
-    position: relative;
+const Node = styled.div`
+  position: relative;
+  .content {
     margin-bottom: 8px;
-    padding-left: 15px;
+    padding-left: 18px;
     outline: none;
-
-    &:before {
-      content: '';
-      display: block;
-      position: absolute;
-      top: 0;
-      left: 0;
-      bottom: 0;
-      margin: auto;
-      width: 5px;
-      height: 5px;
-      background-color: #333;
-      border-radius: 50%;
-    }
+    line-height: 22px;
   }
+`;
+
+const Dot = styled.div`
+  position: absolute;
+  top: 8px;
+  left: 0;
+  width: 7px;
+  height: 7px;
+  background-color: #333;
+  border-radius: 50%;
 `;

@@ -55,7 +55,6 @@ export default List;
 
 const Wrapper = styled.ul`
   margin-left: 20px;
-
   li {
     display: block;
   }
