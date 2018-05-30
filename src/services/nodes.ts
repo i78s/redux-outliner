@@ -1,5 +1,5 @@
 import instance from 'services/axios-instance';
-import { NodeEntity } from 'services/models';
+import { CreateNodeParams, NodeEntity } from 'services/models';
 
 export default {
   getList() {
@@ -10,7 +10,7 @@ export default {
     return instance.get(`nodes/${id}`)
       .then(res => res.data as NodeEntity);
   },
-  post(params: NodeEntity) {
+  post(params: CreateNodeParams) {
     return instance.post(`nodes`, params)
       .then(res => res.data as NodeEntity);
   },

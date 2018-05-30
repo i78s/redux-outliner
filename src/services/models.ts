@@ -4,6 +4,14 @@ export interface ProjectEntity {
   nodes: Node[];
 }
 
+export interface CreateNodeParams {
+  id: null;
+  title: string;
+  order: number;
+  parent_id: number;
+  project_id: number;
+}
+
 export interface NodeEntity {
   id: number;
   title: string;
