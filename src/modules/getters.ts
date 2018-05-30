@@ -1,4 +1,4 @@
-import { NodeEntity } from 'services/models';
+import { CreateNodeParams, NodeEntity } from 'services/models';
 
 interface NodesAndDiffs {
   list: NodeEntity[];
@@ -10,8 +10,11 @@ interface NodesAndReq<T> {
   req: T;
 }
 
-export const getNodesAndReqParamBeforeCreate = (list: NodeEntity[], payload: any): NodesAndReq<NodeEntity> => {
-  const { after, before, node } = payload;
+export const getNodesAndReqParamBeforeCreate = (
+  list: NodeEntity[],
+  node: NodeEntity,
+  title: string[],
+): NodesAndReq<CreateNodeParams> => {
   const child = list.filter(el => el.parent_id === node.id);
   const isCreateChild = child.length !== 0;
   const parentID = !isCreateChild ? node.parent_id : node.id;
@@ -23,7 +26,7 @@ export const getNodesAndReqParamBeforeCreate = (list: NodeEntity[], payload: any
     if (el.id === node.id) {  // Enterキーの起点のnodeを更新
       el = {
         ...el,
-        title: before,
+        title: title[0],
       };
     } else if ( // 新規作成されたnodeの後ろにあるnodeの順番を更新
       el.parent_id === parentID &&
@@ -39,7 +42,7 @@ export const getNodesAndReqParamBeforeCreate = (list: NodeEntity[], payload: any
     req: {
       ...node,
       id: null,
-      title: after,
+      title: title[1],
       order,
       parent_id: parentID,
     },

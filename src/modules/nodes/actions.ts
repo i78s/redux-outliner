@@ -4,6 +4,16 @@ import actionCreatorFactory from 'typescript-fsa';
 
 const actionCreator = actionCreatorFactory('NODES');
 
+interface DividedTitle {
+  left: string;
+  right: string;
+}
+
+interface RangeOffset {
+  start: number;
+  end: number;
+}
+
 export type FetchNodesAction = AbstractAction;
 export const fetchNodes = actionCreator.async<
   FetchNodesAction['payload'],
@@ -14,8 +24,7 @@ export const fetchNodes = actionCreator.async<
 export interface AddNodeAction extends AbstractAction {
   payload: {
     node: NodeEntity;
-    before: string;
-    after: string;
+    dividedTitle: DividedTitle;
   };
 }
 export const addNode = actionCreator.async<
@@ -27,8 +36,7 @@ export const addNode = actionCreator.async<
 export interface EditNodeAction extends AbstractAction {
   payload: {
     node: NodeEntity;
-    start: number;
-    end: number;
+    rangeOffset: RangeOffset;
   };
 }
 export const editNode = actionCreator.async<
@@ -40,8 +48,7 @@ export const editNode = actionCreator.async<
 export interface DeleteNodeAction extends AbstractAction {
   payload: {
     node: NodeEntity;
-    before: string;
-    after: string;
+    dividedTitle: DividedTitle;
   };
 }
 export const removeNode = actionCreator.async<
@@ -57,8 +64,7 @@ export const setFocus = actionCreator<{
 export interface PromoteNodeAction extends AbstractAction {
   payload: {
     node: NodeEntity;
-    start: number;
-    end: number;
+    rangeOffset: RangeOffset;
   };
 }
 export const promoteNode = actionCreator.async<
@@ -70,8 +76,7 @@ export const promoteNode = actionCreator.async<
 export interface RelegateNodeAction extends AbstractAction {
   payload: {
     node: NodeEntity;
-    start: number;
-    end: number;
+    rangeOffset: RangeOffset;
   };
 }
 export const relegateNode = actionCreator.async<

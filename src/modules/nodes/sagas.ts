@@ -53,8 +53,16 @@ function* loadNodes(action: actions.FetchNodesAction): SagaIterator {
 
 function* createNode(action: actions.AddNodeAction): SagaIterator {
   const payload = action.payload;
+  const { dividedTitle } = payload;
   const tmp: NodeEntity[] = yield selectState<NodeEntity[]>(getNodesList);
-  const { list, req } = getNodesAndReqParamBeforeCreate(tmp, payload);
+  const { list, req } = getNodesAndReqParamBeforeCreate(
+    tmp,
+    payload.node,
+    [
+      dividedTitle.left,
+      dividedTitle.right,
+    ],
+  );
 
   try {
     const res: NodeEntity = yield call(
@@ -82,11 +90,11 @@ function* createNode(action: actions.AddNodeAction): SagaIterator {
     // キャレット移動が終わってからその他のnodeの更新を開始
     const requests = [];
     // nodeの末尾でEnterでなければ既存nodeの更新
-    if (payload.before) {
+    if (dividedTitle.left) {
       requests.push(
         nodesApi.put({
           ...payload.node,
-          title: payload.before,
+          title: payload.dividedTitle.left,
         }),
       );
     }
@@ -108,7 +116,7 @@ function* createNode(action: actions.AddNodeAction): SagaIterator {
 function* updateNode(action: actions.EditNodeAction): SagaIterator {
   yield call(delay, 100);
   const { payload } = action;
-  const { start, end, node } = payload;
+  const { node, rangeOffset } = payload;
   const list: NodeEntity[] = yield selectState<NodeEntity[]>(getNodesList);
   const others = list.filter(el => el.id !== node.id);
   try {
@@ -130,8 +138,8 @@ function* updateNode(action: actions.EditNodeAction): SagaIterator {
     yield put(actions.setFocus({
       focus: {
         id: res.id,
-        start,
-        end,
+        start: rangeOffset.start,
+        end: rangeOffset.end,
       },
     }));
   } catch (error) {
@@ -144,7 +152,7 @@ function* updateNode(action: actions.EditNodeAction): SagaIterator {
 
 function* deleteNode(action: actions.DeleteNodeAction): SagaIterator {
   const { payload } = action;
-  const { after, node } = payload;
+  const { node, dividedTitle } = payload;
   const tmp: NodeEntity[] = yield selectState<NodeEntity[]>(getNodesList);
   const focus = findNodeToBeFocusedAfterDelete(tmp, node);
 
@@ -157,7 +165,7 @@ function* deleteNode(action: actions.DeleteNodeAction): SagaIterator {
     tmp,
     node,
     to,
-    after,
+    dividedTitle.right,
   );
 
   try {
@@ -219,7 +227,7 @@ function* watchUpdateGradeNode(): SagaIterator {
 
 function* promoteNode(action: actions.PromoteNodeAction): SagaIterator {
   const { payload } = action;
-  const { node, start, end } = payload;
+  const { node, rangeOffset } = payload;
   const tmp: NodeEntity[] = yield selectState<NodeEntity[]>(getNodesList);
   const { list, diff } = getNodesAndDiffsAfterPromoted(tmp, node);
 
@@ -240,8 +248,8 @@ function* promoteNode(action: actions.PromoteNodeAction): SagaIterator {
     yield put(actions.setFocus({
       focus: {
         id: node.id,
-        start,
-        end,
+        start: rangeOffset.start,
+        end: rangeOffset.end,
       },
     }));
   } catch (error) {
@@ -254,7 +262,7 @@ function* promoteNode(action: actions.PromoteNodeAction): SagaIterator {
 
 function* relegateNode(action: actions.RelegateNodeAction): SagaIterator {
   const { payload } = action;
-  const { node, start, end } = payload;
+  const { node, rangeOffset } = payload;
   const tmp: NodeEntity[] = yield selectState<NodeEntity[]>(getNodesList);
   const { list, diff } = getNodesAndDiffsAfterRelegate(tmp, node);
 
@@ -275,8 +283,8 @@ function* relegateNode(action: actions.RelegateNodeAction): SagaIterator {
     yield put(actions.setFocus({
       focus: {
         id: node.id,
-        start,
-        end,
+        start: rangeOffset.start,
+        end: rangeOffset.end,
       },
     }));
   } catch (error) {

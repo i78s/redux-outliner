@@ -15,9 +15,9 @@ import { bindActionCreators, Dispatch } from 'redux';
 import { NodeEntity } from 'services/models';
 
 interface DispatchFromProps {
-  addNode: (before: string, after: string, node: NodeEntity) => void;
+  addNode: (node: NodeEntity, left: string, right: string) => void;
   editNode: (node: NodeEntity, start: number, end: number) => void;
-  removeNode: (before: string, after: string, node: NodeEntity) => void;
+  removeNode: (node: NodeEntity, left: string, right: string) => void;
   relegateNode: (node: NodeEntity, start: number, end: number) => void;
   promoteNode: (node: NodeEntity, start: number, end: number) => void;
   goBack: (node: NodeEntity) => void;
@@ -38,32 +38,42 @@ const mapStateToProps = (state: State) => ({
 const mapDispatchToProps = (dispatch: Dispatch<State>) =>
   bindActionCreators(
     {
-      addNode: (before, after, node) =>
+      addNode: (node, left, right) =>
         addNode.started({
-          before,
-          after,
           node,
+          dividedTitle: {
+            left,
+            right,
+          },
         }),
       editNode: (node, start, end) => editNode.started({
         node,
-        start,
-        end,
+        rangeOffset: {
+          start,
+          end,
+        },
       }),
-      removeNode: (before, after, node) =>
+      removeNode: (node, left, right) =>
         removeNode.started({
-          before,
-          after,
           node,
+          dividedTitle: {
+            left,
+            right,
+          },
         }),
       relegateNode: (node, start, end) => relegateNode.started({
         node,
-        start,
-        end,
+        rangeOffset: {
+          start,
+          end,
+        },
       }),
       promoteNode: (node, start, end) => promoteNode.started({
         node,
-        start,
-        end,
+        rangeOffset: {
+          start,
+          end,
+        },
       }),
       goBack: (node) => goBack({ node }),
       goForward: (node) => goForward({ node }),
@@ -180,17 +190,17 @@ const update = (props: WithHandlersProp, target: any) => {
 const onKeyDownEnter = (props: WithHandlersProp, target: HTMLDivElement) => {
   const text = target.innerText;
   const { startOffset, endOffset } = getSelectionRange();
-  const before = text.slice(0, startOffset);
-  const after = text.slice(endOffset);
+  const left = text.slice(0, startOffset);
+  const right = text.slice(endOffset);
 
-  props.addNode(before, after, props.node);
+  props.addNode(props.node, left, right);
 };
 
 const onKeyDownDelete = (props: WithHandlersProp, target: HTMLDivElement, e: KeyboardEvent) => {
   const text = target.innerText;
   const { startOffset, endOffset } = getSelectionRange();
-  const before = text.slice(0, startOffset);
-  const after = text.slice(endOffset);
+  const left = text.slice(0, startOffset);
+  const right = text.slice(endOffset);
 
   // 末尾でdeleteじゃないなら止める
   if (before && text) {
@@ -204,7 +214,7 @@ const onKeyDownDelete = (props: WithHandlersProp, target: HTMLDivElement, e: Key
 
   // updateのリクエストさせたくないのでinputイベントを発火させないようにする
   e.preventDefault();
-  props.removeNode(before, after, props.node);
+  props.removeNode(props.node, left, right);
 };
 
 const onKeyDownTab = (props: WithHandlersProp, target: HTMLDivElement) => {

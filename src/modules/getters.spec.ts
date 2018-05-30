@@ -35,11 +35,11 @@ describe('getNodesAndReqParamBeforeCreate', () => {
         },
       ];
       describe('キャレットが末尾', () => {
-        const result = getNodesAndReqParamBeforeCreate(list, {
-          node: list[0],
-          before: 'hoge',
-          after: '',
-        });
+        const result = getNodesAndReqParamBeforeCreate(
+          list,
+          list[0],
+          ['hoge', ''],
+        );
         it('起点nodeのtitleはそのままで子のorderをずらした一覧を返すこと', () => {
           expect(result.list).toEqual([
             {
@@ -76,11 +76,11 @@ describe('getNodesAndReqParamBeforeCreate', () => {
         });
       });
       describe('キャレットが末尾じゃない', () => {
-        const result = getNodesAndReqParamBeforeCreate(list, {
-          node: list[0],
-          before: 'ho',
-          after: 'ge',
-        });
+        const result = getNodesAndReqParamBeforeCreate(
+          list,
+          list[0],
+          ['ho', 'ge'],
+        );
         it('起点nodeのtitleを更新して子のorderをずらした一覧を返すこと', () => {
           expect(result.list).toEqual([
             {
@@ -142,11 +142,11 @@ describe('getNodesAndReqParamBeforeCreate', () => {
         },
       ];
       describe('キャレットが末尾', () => {
-        const result = getNodesAndReqParamBeforeCreate(list, {
-          node: list[0],
-          before: 'hoge',
-          after: '',
-        });
+        const result = getNodesAndReqParamBeforeCreate(
+          list,
+          list[0],
+          ['hoge', ''],
+        );
         it('起点nodeのtitleはそのままで弟のorderをずらした一覧を返すこと', () => {
           expect(result.list).toEqual([
             {
@@ -183,11 +183,11 @@ describe('getNodesAndReqParamBeforeCreate', () => {
         });
       });
       describe('キャレットが末尾じゃない', () => {
-        const result = getNodesAndReqParamBeforeCreate(list, {
-          node: list[0],
-          before: 'ho',
-          after: 'ge',
-        });
+        const result = getNodesAndReqParamBeforeCreate(
+          list,
+          list[0],
+          ['ho', 'ge'],
+        );
         it('起点nodeのtitleを更新して弟のorderをずらした一覧を返すこと', () => {
           expect(result.list).toEqual([
             {
