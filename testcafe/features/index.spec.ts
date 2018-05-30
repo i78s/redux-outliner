@@ -5,7 +5,7 @@ import { dt } from '../utils';
 fixture('Top page')
   .page(`${config.baseUrl}/`);
 
-test('Is there the App logo?', async t => {
+test('Is there the App?', async t => {
   await t
-    .expect(Selector(dt('app-logo')).exists).ok();
+    .expect(Selector(dt('app')).exists).ok();
 });
