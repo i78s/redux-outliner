@@ -30,6 +30,8 @@ function* watchCRUDNodes(): SagaIterator {
   yield takeLatest(actions.addNode.started, createNode);
   yield takeLatest(actions.editNode.started, updateNode);
   yield takeLatest(actions.removeNode.started, deleteNode);
+  // nodes変更後のキャレット移動
+  yield takeLatest(actions.addNode.done, afterCreateNode);
 }
 
 export function* loadNodes(action: actions.FetchNodesAction): SagaIterator {
@@ -51,7 +53,7 @@ export function* loadNodes(action: actions.FetchNodesAction): SagaIterator {
   }
 }
 
-function* createNode(action: actions.AddNodeAction): SagaIterator {
+export function* createNode(action: actions.AddNodeAction): SagaIterator {
   const payload = action.payload;
   const { dividedTitle } = payload;
   const tmp: NodeEntity[] = yield selectState<NodeEntity[]>(getNodesList);
@@ -71,7 +73,10 @@ function* createNode(action: actions.AddNodeAction): SagaIterator {
     );
 
     yield put(actions.addNode.done({
-      params: { ...payload },
+      params: {
+        dividedTitle,
+        node: res,  // キャレット位置を移動のため新規nodeに変更する
+      },
       result: {
         list: [
           ...list,
@@ -79,27 +84,18 @@ function* createNode(action: actions.AddNodeAction): SagaIterator {
         ],
       },
     }));
-    // フォーカス/キャレット位置を変更
-    yield put(actions.setFocus({
-      focus: {
-        id: res.id,
-        start: 0,
-        end: 0,
-      },
-    }));
     // キャレット移動が終わってからその他のnodeの更新を開始
-    const requests = [];
     // nodeの末尾でEnterでなければ既存nodeの更新
     if (dividedTitle.left) {
-      requests.push(
-        nodesApi.put({
+      yield call(
+        nodesApi.put, {
           ...payload.node,
-          title: payload.dividedTitle.left,
-        }),
+          title: dividedTitle.left,
+        },
       );
     }
-
     // todo 並び替えはAPI側でやるようにする
+    const requests = [];
     requests.push(...list
       .filter(el => el.parent_id === req.parent_id)
       .map(el => nodesApi.put(el),
@@ -111,6 +107,17 @@ function* createNode(action: actions.AddNodeAction): SagaIterator {
       error: error as Error,
     }));
   }
+}
+
+export function* afterCreateNode(action: actions.AddNodeDoneAction): SagaIterator {
+  // フォーカス/キャレット位置を変更
+  yield put(actions.setFocus({
+    focus: {
+      id: action.payload.params.node.id,
+      start: 0,
+      end: 0,
+    },
+  }));
 }
 
 function* updateNode(action: actions.EditNodeAction): SagaIterator {

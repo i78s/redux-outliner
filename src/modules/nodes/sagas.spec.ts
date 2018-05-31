@@ -53,6 +53,73 @@ describe('loadNodes', () => {
   });
 });
 
+describe('createNode', () => {
+  describe('通信成功かつEnter押下時にキャレットがタイトルの末尾でない', () => {
+    it('起点のnodeのタイトルが更新され、キャレット右側を引き継いだnodeが新規作成されること', () => {
+      const list = [
+        {
+          id: 1,
+          title: 'hoge',
+          order: 0,
+          parent_id: 0,
+          project_id: 1,
+        },
+      ];
+      const res = {
+        id: 2,
+        title: 'ge',
+        order: 1,
+        parent_id: 0,
+        project_id: 1,
+      };
+      const state = {
+        nodes: {
+          focus: {
+            timestamp: 0,
+            id: 0,
+            start: 0,
+            end: 0,
+          },
+          list,
+        },
+      };
+      const payload = {
+        node: list[0],
+        dividedTitle: {
+          left: 'ho',
+          right: 'ge',
+        },
+      };
+      const updated = {
+        ...list[0],
+        title: 'ho',
+      };
+
+      return expectSaga(sagas.createNode, {
+        payload,
+      })
+        .withState(state)
+        .provide([
+          [matchers.call.fn(nodesApi.post), res],
+          [matchers.call.fn(nodesApi.put), updated],
+        ])
+        .put({
+          type: 'NODES/CREATE_DONE',
+          payload: {
+            params: {
+              dividedTitle: payload.dividedTitle,
+              node: res,
+            },
+            result: { list: [updated, res ] },
+          },
+        })
+        .call(nodesApi.post, { id: null, title: 'ge', order: 1, parent_id: 0, project_id: 1 })
+        .call(nodesApi.put, updated)
+        .run();
+    });
+  });
+});
+
 describe('goBack', () => {
   const list = [
     {

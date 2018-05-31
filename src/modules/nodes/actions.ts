@@ -1,6 +1,6 @@
 import { NodesFocus } from 'modules/nodes';
 import { NodeEntity } from 'services/models';
-import actionCreatorFactory from 'typescript-fsa';
+import actionCreatorFactory, { Action, Success } from 'typescript-fsa';
 
 const actionCreator = actionCreatorFactory('NODES');
 
@@ -27,6 +27,9 @@ export interface AddNodeAction extends AbstractAction {
     dividedTitle: DividedTitle;
   };
 }
+export type AddNodeDoneAction = Action<
+Success<AddNodeAction['payload'], { list: NodeEntity[] }>
+>;
 export const addNode = actionCreator.async<
   AddNodeAction['payload'],
   { list: NodeEntity[] },
