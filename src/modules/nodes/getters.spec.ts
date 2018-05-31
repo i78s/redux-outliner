@@ -6,7 +6,7 @@ import {
   getNodesAndDiffsAfterRelegate,
   getNodesAndReqParamBeforeCreate,
   getNodesAndReqParamBeforeDelete,
-} from 'modules/getters';
+} from 'modules/nodes/getters';
 
 describe('getNodesAndReqParamBeforeCreate', () => {
   describe('起点になるnodeに子が', () => {

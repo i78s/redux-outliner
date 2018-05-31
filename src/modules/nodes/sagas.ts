@@ -1,3 +1,4 @@
+import * as actions from 'modules/nodes/actions';
 import {
   findNodeOnBack,
   findNodeOnForward,
@@ -6,8 +7,7 @@ import {
   getNodesAndDiffsAfterRelegate,
   getNodesAndReqParamBeforeCreate,
   getNodesAndReqParamBeforeDelete,
-} from 'modules/getters';
-import * as actions from 'modules/nodes/actions';
+} from 'modules/nodes/getters';
 import {
   getNodesList,
   selectState,
