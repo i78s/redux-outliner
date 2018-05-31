@@ -1,6 +1,57 @@
 import * as actions from 'modules/nodes/actions';
 import * as sagas from 'modules/nodes/sagas';
 import { expectSaga } from 'redux-saga-test-plan';
+import * as matchers from 'redux-saga-test-plan/matchers';
+import { throwError } from 'redux-saga-test-plan/providers';
+import nodesApi from 'services/nodes';
+
+describe('loadNodes', () => {
+  it('通信成功時はFETCH_DONEを呼ぶこと', () => {
+    const res = [
+      {
+        id: 1,
+        title: 'hoge',
+        order: 0,
+        parent_id: 0,
+        project_id: 1,
+      },
+    ];
+
+    return expectSaga(sagas.loadNodes, {
+      payload: {},
+    })
+      .provide([
+        [matchers.call.fn(nodesApi.getList), res],
+      ])
+      .put({
+        type: 'NODES/FETCH_DONE',
+        payload: {
+          params: {},
+          result: { list: res },
+        },
+      })
+      .run();
+  });
+  it('通信失敗時はFETCH_DONEを呼ぶこと', () => {
+    const error = new Error('error');
+
+    return expectSaga(sagas.loadNodes, {
+      payload: {},
+    })
+      .provide([
+        [matchers.call.fn(nodesApi.getList), throwError(error)],
+      ])
+      .put({
+        type: 'NODES/FETCH_FAILED',
+        payload: {
+          params: {},
+          error,
+        },
+        error: true,
+      })
+      .run();
+  });
+});
 
 describe('goBack', () => {
   const list = [

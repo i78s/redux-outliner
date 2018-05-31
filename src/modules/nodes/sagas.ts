@@ -32,7 +32,7 @@ function* watchCRUDNodes(): SagaIterator {
   yield takeLatest(actions.removeNode.started, deleteNode);
 }
 
-function* loadNodes(action: actions.FetchNodesAction): SagaIterator {
+export function* loadNodes(action: actions.FetchNodesAction): SagaIterator {
   const { payload } = action;
   try {
     const list = yield call(
