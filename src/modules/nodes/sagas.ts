@@ -92,11 +92,11 @@ export function* createNode(action: actions.AddNodeAction): SagaIterator {
       );
     }
     // todo 並び替えはAPI側でやるようにする
-    const requests = [];
-    requests.push(...list
-      .filter(el => el.parent_id === req.parent_id)
-      .map(el => nodesApi.put(el),
-    ));
+    yield all([
+      ...list
+        .filter(el => el.parent_id === req.parent_id)
+        .map(el => call(nodesApi.put, el)),
+    ]);
 
   } catch (error) {
     yield put(actions.addNode.failed({
