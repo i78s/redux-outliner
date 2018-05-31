@@ -60,10 +60,7 @@ export function* createNode(action: actions.AddNodeAction): SagaIterator {
   const { list, req } = getNodesAndReqParamBeforeCreate(
     tmp,
     payload.node,
-    [
-      dividedTitle.left,
-      dividedTitle.right,
-    ],
+    dividedTitle,
   );
 
   try {

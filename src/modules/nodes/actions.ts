@@ -4,7 +4,7 @@ import actionCreatorFactory, { Action, Success } from 'typescript-fsa';
 
 const actionCreator = actionCreatorFactory('NODES');
 
-interface DividedTitle {
+export interface DividedTitle {
   left: string;
   right: string;
 }

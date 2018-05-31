@@ -38,7 +38,7 @@ describe('getNodesAndReqParamBeforeCreate', () => {
         const result = getNodesAndReqParamBeforeCreate(
           list,
           list[0],
-          ['hoge', ''],
+          { left: 'hoge', right: '' },
         );
         it('起点nodeのtitleはそのままで子のorderをずらした一覧を返すこと', () => {
           expect(result.list).toEqual([
@@ -79,7 +79,7 @@ describe('getNodesAndReqParamBeforeCreate', () => {
         const result = getNodesAndReqParamBeforeCreate(
           list,
           list[0],
-          ['ho', 'ge'],
+          { left: 'ho', right: 'ge' },
         );
         it('起点nodeのtitleを更新して子のorderをずらした一覧を返すこと', () => {
           expect(result.list).toEqual([
@@ -145,7 +145,7 @@ describe('getNodesAndReqParamBeforeCreate', () => {
         const result = getNodesAndReqParamBeforeCreate(
           list,
           list[0],
-          ['hoge', ''],
+          { left: 'hoge', right: '' },
         );
         it('起点nodeのtitleはそのままで弟のorderをずらした一覧を返すこと', () => {
           expect(result.list).toEqual([
@@ -186,7 +186,7 @@ describe('getNodesAndReqParamBeforeCreate', () => {
         const result = getNodesAndReqParamBeforeCreate(
           list,
           list[0],
-          ['ho', 'ge'],
+          { left: 'ho', right: 'ge' },
         );
         it('起点nodeのtitleを更新して弟のorderをずらした一覧を返すこと', () => {
           expect(result.list).toEqual([

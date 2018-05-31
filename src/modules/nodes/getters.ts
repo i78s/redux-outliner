@@ -1,3 +1,4 @@
+import { DividedTitle } from 'modules/nodes/actions';
 import { CreateNodeParams, NodeEntity } from 'services/models';
 
 interface NodesAndDiffs {
@@ -13,7 +14,7 @@ interface NodesAndReq<T> {
 export const getNodesAndReqParamBeforeCreate = (
   list: NodeEntity[],
   node: NodeEntity,
-  title: string[],
+  title: DividedTitle,
 ): NodesAndReq<CreateNodeParams> => {
   const child = list.filter(el => el.parent_id === node.id);
   const isCreateChild = child.length !== 0;
@@ -26,7 +27,7 @@ export const getNodesAndReqParamBeforeCreate = (
     if (el.id === node.id) {  // Enterキーの起点のnodeを更新
       el = {
         ...el,
-        title: title[0],
+        title: title.left,
       };
     } else if ( // 新規作成されたnodeの後ろにあるnodeの順番を更新
       el.parent_id === parentID &&
@@ -42,7 +43,7 @@ export const getNodesAndReqParamBeforeCreate = (
     req: {
       ...node,
       id: null,
-      title: title[1],
+      title: title.right,
       order,
       parent_id: parentID,
     },
