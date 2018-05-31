@@ -300,7 +300,7 @@ function* watchOnKeyDownArrow(): SagaIterator {
   yield takeLatest(actions.goForward, goForward);
 }
 
-function* goBack(action: actions.GoBackAction): SagaIterator {
+export function* goBack(action: actions.GoBackAction): SagaIterator {
   const { node } = action.payload;
   const list: NodeEntity[] = yield selectState<NodeEntity[]>(getNodesList);
   const target = findNodeOnBack(list, node);
@@ -318,7 +318,7 @@ function* goBack(action: actions.GoBackAction): SagaIterator {
   }));
 }
 
-function* goForward(action: actions.GoForwardAction): SagaIterator {
+export function* goForward(action: actions.GoForwardAction): SagaIterator {
   const { node } = action.payload;
   const list: NodeEntity[] = yield selectState<NodeEntity[]>(getNodesList);
   const target = findNodeOnForward(list, node);
