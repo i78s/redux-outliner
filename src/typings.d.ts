@@ -8,7 +8,7 @@ interface InputEvent<T extends HTMLElement> extends Event {
   target: T;
 }
 
-interface AbstractAction {
+interface FluxStandardAction {
   type: string;
   payload: object;
   meta?: object;

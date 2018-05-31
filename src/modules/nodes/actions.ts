@@ -14,14 +14,14 @@ interface RangeOffset {
   end: number;
 }
 
-export type FetchNodesAction = AbstractAction;
+export type FetchNodesAction = FluxStandardAction;
 export const fetchNodes = actionCreator.async<
   FetchNodesAction['payload'],
   { list: NodeEntity[] },
   Error
 >('FETCH');
 
-export interface AddNodeAction extends AbstractAction {
+export interface AddNodeAction extends FluxStandardAction {
   payload: {
     node: NodeEntity;
     dividedTitle: DividedTitle;
@@ -36,7 +36,7 @@ export const addNode = actionCreator.async<
   Error
 >('CREATE');
 
-export interface EditNodeAction extends AbstractAction {
+export interface EditNodeAction extends FluxStandardAction {
   payload: {
     node: NodeEntity;
     rangeOffset: RangeOffset;
@@ -48,7 +48,7 @@ export const editNode = actionCreator.async<
   Error
 >('UPDATE');
 
-export interface DeleteNodeAction extends AbstractAction {
+export interface DeleteNodeAction extends FluxStandardAction {
   payload: {
     node: NodeEntity;
     dividedTitle: DividedTitle;
@@ -64,7 +64,7 @@ export const setFocus = actionCreator<{
   focus: NodesFocus,
 }>('SET_FOCUS');
 
-export interface PromoteNodeAction extends AbstractAction {
+export interface PromoteNodeAction extends FluxStandardAction {
   payload: {
     node: NodeEntity;
     rangeOffset: RangeOffset;
@@ -76,7 +76,7 @@ export const promoteNode = actionCreator.async<
   Error
 >('PROMOTE_NODE');
 
-export interface RelegateNodeAction extends AbstractAction {
+export interface RelegateNodeAction extends FluxStandardAction {
   payload: {
     node: NodeEntity;
     rangeOffset: RangeOffset;
@@ -88,14 +88,14 @@ export const relegateNode = actionCreator.async<
   Error
 >('RELEGATE_NODE');
 
-export interface GoBackAction extends AbstractAction {
+export interface GoBackAction extends FluxStandardAction {
   payload: {
     node: NodeEntity;
   };
 }
 export const goBack = actionCreator<GoBackAction['payload']>('GO_BACK');
 
-export interface GoForwardAction extends AbstractAction {
+export interface GoForwardAction extends FluxStandardAction {
   payload: {
     node: NodeEntity;
   };
