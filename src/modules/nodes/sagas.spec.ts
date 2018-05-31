@@ -54,68 +54,129 @@ describe('loadNodes', () => {
 });
 
 describe('createNode', () => {
-  describe('通信成功かつEnter押下時にキャレットがタイトルの末尾でない', () => {
-    it('起点のnodeのタイトルが更新され、キャレット右側を引き継いだnodeが新規作成されること', () => {
-      const list = [
-        {
-          id: 1,
-          title: 'hoge',
-          order: 0,
+  describe('通信成功時', () => {
+    describe('Enter押下時にキャレットがタイトルの末尾', () => {
+      it('起点のnodeに変更がなく、タイトルが空文字列のnodeが新規作成されること', () => {
+        const list = [
+          {
+            id: 1,
+            title: 'hoge',
+            order: 0,
+            parent_id: 0,
+            project_id: 1,
+          },
+        ];
+        const res = {
+          id: 2,
+          title: '',
+          order: 1,
           parent_id: 0,
           project_id: 1,
-        },
-      ];
-      const res = {
-        id: 2,
-        title: 'ge',
-        order: 1,
-        parent_id: 0,
-        project_id: 1,
-      };
-      const state = {
-        nodes: {
-          focus: {
-            timestamp: 0,
-            id: 0,
-            start: 0,
-            end: 0,
-          },
-          list,
-        },
-      };
-      const payload = {
-        node: list[0],
-        dividedTitle: {
-          left: 'ho',
-          right: 'ge',
-        },
-      };
-      const updated = {
-        ...list[0],
-        title: 'ho',
-      };
-
-      return expectSaga(sagas.createNode, {
-        payload,
-      })
-        .withState(state)
-        .provide([
-          [matchers.call.fn(nodesApi.post), res],
-          [matchers.call.fn(nodesApi.put), updated],
-        ])
-        .put({
-          type: 'NODES/CREATE_DONE',
-          payload: {
-            params: {
-              dividedTitle: payload.dividedTitle,
-              node: res,
+        };
+        const state = {
+          nodes: {
+            focus: {
+              timestamp: 0,
+              id: 0,
+              start: 0,
+              end: 0,
             },
-            result: { list: [updated, res ] },
+            list,
           },
+        };
+        const payload = {
+          node: list[0],
+          dividedTitle: {
+            left: 'hoge',
+            right: '',
+          },
+        };
+
+        return expectSaga(sagas.createNode, {
+          payload,
         })
-        .call(nodesApi.post, { id: null, title: 'ge', order: 1, parent_id: 0, project_id: 1 })
-        .call(nodesApi.put, updated)
-        .run();
+          .withState(state)
+          .provide([
+            [matchers.call.fn(nodesApi.post), res],
+          ])
+          .put({
+            type: 'NODES/CREATE_DONE',
+            payload: {
+              params: {
+                dividedTitle: payload.dividedTitle,
+                node: res,
+              },
+              result: { list: [list[0], res ] },
+            },
+          })
+          .call(nodesApi.post, { id: null, title: '', order: 1, parent_id: 0, project_id: 1 })
+          .not.call(nodesApi.put)
+          .run();
+      });
+    });
+    describe('Enter押下時にキャレットがタイトルの末尾でない', () => {
+      it('起点のnodeのタイトルが更新され、キャレット右側を引き継いだnodeが新規作成されること', () => {
+        const list = [
+          {
+            id: 1,
+            title: 'hoge',
+            order: 0,
+            parent_id: 0,
+            project_id: 1,
+          },
+        ];
+        const res = {
+          id: 2,
+          title: 'ge',
+          order: 1,
+          parent_id: 0,
+          project_id: 1,
+        };
+        const state = {
+          nodes: {
+            focus: {
+              timestamp: 0,
+              id: 0,
+              start: 0,
+              end: 0,
+            },
+            list,
+          },
+        };
+        const payload = {
+          node: list[0],
+          dividedTitle: {
+            left: 'ho',
+            right: 'ge',
+          },
+        };
+        const updated = {
+          ...list[0],
+          title: 'ho',
+        };
+
+        return expectSaga(sagas.createNode, {
+          payload,
+        })
+          .withState(state)
+          .provide([
+            [matchers.call.fn(nodesApi.post), res],
+            [matchers.call.fn(nodesApi.put), updated],
+          ])
+          .put({
+            type: 'NODES/CREATE_DONE',
+            payload: {
+              params: {
+                dividedTitle: payload.dividedTitle,
+                node: res,
+              },
+              result: { list: [updated, res ] },
+            },
+          })
+          .call(nodesApi.post, { id: null, title: 'ge', order: 1, parent_id: 0, project_id: 1 })
+          .call(nodesApi.put, updated)
+          .run();
+      });
     });
   });
 });

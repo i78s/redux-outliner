@@ -55,11 +55,11 @@ export function* loadNodes(action: actions.FetchNodesAction): SagaIterator {
 
 export function* createNode(action: actions.AddNodeAction): SagaIterator {
   const payload = action.payload;
-  const { dividedTitle } = payload;
+  const { node, dividedTitle } = payload;
   const tmp: NodeEntity[] = yield selectState<NodeEntity[]>(getNodesList);
   const { list, req } = getNodesAndReqParamBeforeCreate(
     tmp,
-    payload.node,
+    node,
     dividedTitle,
   );
 
@@ -81,12 +81,11 @@ export function* createNode(action: actions.AddNodeAction): SagaIterator {
         ],
       },
     }));
-    // キャレット移動が終わってからその他のnodeの更新を開始
     // nodeの末尾でEnterでなければ既存nodeの更新
-    if (dividedTitle.left) {
+    if (dividedTitle.right) {
       yield call(
         nodesApi.put, {
-          ...payload.node,
+          ...node,
           title: dividedTitle.left,
         },
       );
@@ -94,10 +93,12 @@ export function* createNode(action: actions.AddNodeAction): SagaIterator {
     // todo 並び替えはAPI側でやるようにする
     yield all([
       ...list
-        .filter(el => el.parent_id === req.parent_id)
+        .filter(el => (
+          el.parent_id === req.parent_id &&
+          req.order < el.order
+        ))
         .map(el => call(nodesApi.put, el)),
     ]);
-
   } catch (error) {
     yield put(actions.addNode.failed({
       params: { ...payload },
