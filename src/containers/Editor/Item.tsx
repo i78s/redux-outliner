@@ -203,7 +203,7 @@ const onKeyDownDelete = (props: WithHandlersProp, target: HTMLDivElement, e: Key
   const right = text.slice(endOffset);
 
   // 末尾でdeleteじゃないなら止める
-  if (left && right) {
+  if (left) {
     return;
   }
 
