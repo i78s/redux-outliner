@@ -335,6 +335,37 @@ describe('afterUpdateNode', () => {
   });
 });
 
+describe('afterDeleteNode', () => {
+  it('SET_FOCUSが呼ばれること', () => {
+    const payload = {
+      params: {
+        node: {
+          id: 1,
+          title: 'hoge',
+          order: 0,
+          parent_id: 1,
+          project_id: 1,
+        },
+      },
+    };
+
+    return expectSaga(sagas.afterDeleteNode, {
+      payload,
+    })
+    .put({
+      type: 'NODES/SET_FOCUS',
+      payload: {
+        focus: {
+          id: payload.params.node.id,
+          start: payload.params.node.title.length,
+          end: payload.params.node.title.length,
+        },
+      },
+    })
+      .run();
+  });
+});
+
 describe('goBack', () => {
   const list = [
     {

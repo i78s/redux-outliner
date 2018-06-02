@@ -59,6 +59,9 @@ export interface DeleteNodeAction extends FluxStandardAction {
     dividedTitle: DividedTitle;
   };
 }
+export type DeleteNodeDoneAction = Action<
+Success<DeleteNodeAction['payload'], { list: NodeEntity[] }>
+>;
 export const removeNode = actionCreator.async<
   DeleteNodeAction['payload'],
   { list: NodeEntity[] },

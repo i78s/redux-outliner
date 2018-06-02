@@ -34,6 +34,7 @@ function* watchCRUDNodes(): SagaIterator {
   // nodes変更後のキャレット移動
   yield takeLatest(actions.addNode.done, afterCreateNode);
   yield takeLatest(actions.editNode.done, afterUpdateNode);
+  yield takeLatest(actions.removeNode.done, afterDeleteNode);
 }
 
 export function* loadNodes(action: actions.FetchNodesAction): SagaIterator {
@@ -232,6 +233,19 @@ function* deleteNode(action: actions.DeleteNodeAction): SagaIterator {
       error: error as Error,
     }));
   }
+}
+
+export function* afterDeleteNode(action: actions.DeleteNodeDoneAction): SagaIterator {
+  yield call(delay, 16);  // todo 遅延させないとフォーカス移動ができない謎
+  const { node } = action.payload.params;
+  const len = node.title.length;
+  yield put(actions.setFocus({
+    focus: {
+      id: node.id,
+      start: len,
+      end: len,
+    },
+  }));
 }
 
 function* watchUpdateGradeNode(): SagaIterator {
