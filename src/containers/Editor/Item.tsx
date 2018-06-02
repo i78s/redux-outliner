@@ -132,7 +132,7 @@ export default compose<any, any>(
           break;
       }
     },
-    onKeyUp: props => (e: KeyboardEvent) => {
+    onKeyUp: props => (e: KeyboardEvent & InputEvent<HTMLDivElement>) => {
       if (props.isComposing && e.keyCode === 13) {
         update(props, e.target);
       }
@@ -176,7 +176,7 @@ export default compose<any, any>(
   }),
 )(Item);
 
-const update = (props: WithHandlersProp, target: any) => {
+const update = (props: WithHandlersProp, target: HTMLDivElement) => {
   const title = target.innerText;
   const { startOffset, endOffset } = getSelectionRange();
 

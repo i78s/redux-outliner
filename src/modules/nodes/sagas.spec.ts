@@ -212,6 +212,71 @@ describe('afterCreateNode', () => {
   });
 });
 
+describe('updateNode', () => {
+  describe('通信成功時', () => {
+    it('起点のnodeのみ更新された一覧を返すこと', () => {
+      const list = [
+        {
+          id: 1,
+          title: 'hoge',
+          order: 0,
+          parent_id: 0,
+          project_id: 1,
+        },
+        {
+          id: 2,
+          title: 'foo',
+          order: 1,
+          parent_id: 0,
+          project_id: 1,
+        },
+      ];
+      const state = {
+        nodes: {
+          focus: {
+            timestamp: 0,
+            id: 0,
+            start: 0,
+            end: 0,
+          },
+          list,
+        },
+      };
+      const updated = {
+        id: 2,
+        title: 'fo',
+        order: 1,
+        parent_id: 0,
+        project_id: 1,
+      };
+      const payload = {
+        node: updated,
+        rangeOffset: {
+          start: 2,
+          end: 2,
+        },
+      };
+
+      return expectSaga(sagas.updateNode, {
+        payload,
+      })
+        .withState(state)
+        .provide([
+          [matchers.call.fn(nodesApi.put), updated],
+        ])
+        .put({
+          type: 'NODES/UPDATE_DONE',
+          payload: {
+            params: payload,
+            result: { list: [list[0], updated ] },
+          },
+        })
+        .call(nodesApi.put, { id: 2, title: 'fo', order: 1, parent_id: 0, project_id: 1 })
+        .run();
+    });
+  });
+});
+
 describe('afterUpdateNode', () => {
   it('SET_FOCUSが呼ばれること', () => {
     const payload = {

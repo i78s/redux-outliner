@@ -119,7 +119,7 @@ export function* afterCreateNode(action: actions.AddNodeDoneAction): SagaIterato
   }));
 }
 
-function* updateNode(action: actions.EditNodeAction): SagaIterator {
+export function* updateNode(action: actions.EditNodeAction): SagaIterator {
   yield call(delay, 100);
   const { payload } = action;
   const { node } = payload;
