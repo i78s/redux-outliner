@@ -1,9 +1,9 @@
 import Item, { HandlerProps, ItemProps, RefProps } from 'components/Editor/Item';
 import {
   addNode,
+  editNode,
   goBack,
   goForward,
-  handleEditNode,
   promoteNode,
   relegateNode,
   removeNode,
@@ -46,7 +46,7 @@ const mapDispatchToProps = (dispatch: Dispatch<State>) =>
             right,
           },
         }),
-      editNode: (node, start, end) => handleEditNode({
+      editNode: (node, start, end) => editNode.started({
         node,
         rangeOffset: {
           start,

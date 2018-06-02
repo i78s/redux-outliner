@@ -28,7 +28,6 @@ export function* nodesTask() {
 function* watchCRUDNodes(): SagaIterator {
   yield takeLatest(actions.fetchNodes.started, loadNodes);
   yield takeLatest(actions.addNode.started, createNode);
-  yield takeLatest(actions.handleEditNode, handleUpdateNode);
   yield takeLatest(actions.editNode.started, updateNode);
   yield takeLatest(actions.removeNode.started, deleteNode);
   // nodes変更後のキャレット移動
@@ -121,12 +120,8 @@ export function* afterCreateNode(action: actions.AddNodeDoneAction): SagaIterato
   }));
 }
 
-export function* handleUpdateNode(action: actions.EditNodeAction): SagaIterator {
-  yield call(delay, 100);
-  yield put(actions.editNode.started(action.payload));
-}
-
 export function* updateNode(action: actions.EditNodeAction): SagaIterator {
+  yield call(delay, 100);
   const { payload } = action;
   const { node } = payload;
   const list: NodeEntity[] = yield selectState<NodeEntity[]>(getNodesList);
@@ -185,24 +180,15 @@ function* deleteNode(action: actions.DeleteNodeAction): SagaIterator {
 
   try {
     yield put(actions.removeNode.done({
-      params: { ...payload },
+      params: {
+        dividedTitle,
+        node: to,
+      },
       result: {
         list,
       },
     }));
-    // フォーカス/キャレット位置を変更
-    // todo 待たせないとうまく動かなかった
-    yield call(delay, 16);
 
-    const len = to.title.length;
-    // todo 削除時にtitleが空になるバグがあるっぽい
-    yield put(actions.setFocus({
-      focus: {
-        id: to.id,
-        start: len,
-        end: len,
-      },
-    }));
     // 画面反映のラグを作らない為バックグランドで通信を行う
     const requests = [
       nodesApi.delete(node.id),

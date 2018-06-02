@@ -213,7 +213,7 @@ describe('afterCreateNode', () => {
   });
 });
 
-describe('nodeの更新処理', () => {
+describe('updateNode', () => {
   const list = [
     {
       id: 1,
@@ -255,47 +255,33 @@ describe('nodeの更新処理', () => {
       end: 2,
     },
   };
-  describe('handleUpdateNode', () => {
-    it('遅延実行前でupdateNodeが呼ばれていないこと', () => {
-      return expectSaga(sagas.handleUpdateNode, {
+  it('遅延実行前でupdateNodeが呼ばれていないこと', () => {
+    return expectSaga(sagas.updateNode, {
+      payload,
+    })
+      .call(delay, 100)
+      .not.call.fn(nodesApi.put)
+      .silentRun(50);
+  });
+  describe('通信成功時', () => {
+    it('起点のnodeのみを更新した一覧を返すこと', () => {
+      return expectSaga(sagas.updateNode, {
         payload,
       })
-        .call(delay, 100)
-        .not.put.actionType(actions.editNode.started.type)
-        .silentRun(50);
-    });
-    it('遅延実行後でupdateNodeが呼ばれていること', () => {
-      return expectSaga(sagas.handleUpdateNode, {
-        payload,
-      })
+        .withState(state)
+        .provide([
+          [matchers.call.fn(nodesApi.put), updated],
+        ])
         .call(delay, 100)
         .put({
-          type: actions.editNode.started.type,
-          payload,
+          type: 'NODES/UPDATE_DONE',
+          payload: {
+            params: payload,
+            result: { list: [list[0], updated ] },
+          },
         })
+        .call(nodesApi.put, { id: 2, title: 'fo', order: 1, parent_id: 0, project_id: 1 })
         .run();
-    });
-  });
-  describe('updateNode', () => {
-    describe('通信成功時', () => {
-      it('起点のnodeのみを更新した一覧を返すこと', () => {
-        return expectSaga(sagas.updateNode, {
-          payload,
-        })
-          .withState(state)
-          .provide([
-            [matchers.call.fn(nodesApi.put), updated],
-          ])
-          .put({
-            type: 'NODES/UPDATE_DONE',
-            payload: {
-              params: payload,
-              result: { list: [list[0], updated ] },
-            },
-          })
-          .call(nodesApi.put, { id: 2, title: 'fo', order: 1, parent_id: 0, project_id: 1 })
-          .run();
-      });
     });
   });
 });
