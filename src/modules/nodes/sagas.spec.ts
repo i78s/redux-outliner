@@ -181,6 +181,37 @@ describe('createNode', () => {
   });
 });
 
+describe('afterCreateNode', () => {
+  it('SET_FOCUSが呼ばれること', () => {
+    const payload = {
+      params: {
+        node: {
+          id: 1,
+          title: '',
+          order: 0,
+          parent_id: 1,
+          project_id: 1,
+        },
+      },
+    };
+
+    return expectSaga(sagas.afterCreateNode, {
+      payload,
+    })
+      .put({
+        type: 'NODES/SET_FOCUS',
+        payload: {
+          focus: {
+            id: payload.params.node.id,
+            start: 0,
+            end: 0,
+          },
+        },
+      })
+      .run();
+  });
+});
+
 describe('goBack', () => {
   const list = [
     {
