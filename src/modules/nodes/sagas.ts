@@ -32,6 +32,7 @@ function* watchCRUDNodes(): SagaIterator {
   yield takeLatest(actions.removeNode.started, deleteNode);
   // nodes変更後のキャレット移動
   yield takeLatest(actions.addNode.done, afterCreateNode);
+  yield takeLatest(actions.editNode.done, afterUpdateNode);
 }
 
 export function* loadNodes(action: actions.FetchNodesAction): SagaIterator {
@@ -121,7 +122,7 @@ export function* afterCreateNode(action: actions.AddNodeDoneAction): SagaIterato
 function* updateNode(action: actions.EditNodeAction): SagaIterator {
   yield call(delay, 100);
   const { payload } = action;
-  const { node, rangeOffset } = payload;
+  const { node } = payload;
   const list: NodeEntity[] = yield selectState<NodeEntity[]>(getNodesList);
   const others = list.filter(el => el.id !== node.id);
   try {
@@ -138,21 +139,24 @@ function* updateNode(action: actions.EditNodeAction): SagaIterator {
         ],
       },
     }));
-    // フォーカス/キャレット位置を変更
-    yield call(delay, 16);
-    yield put(actions.setFocus({
-      focus: {
-        id: res.id,
-        start: rangeOffset.start,
-        end: rangeOffset.end,
-      },
-    }));
   } catch (error) {
     yield put(actions.editNode.failed({
       params: { ...payload },
       error: error as Error,
     }));
   }
+}
+
+export function* afterUpdateNode(action: actions.EditNodeDoneAction): SagaIterator {
+  const { node, rangeOffset } = action.payload.params;
+  // フォーカス/キャレット位置を変更
+  yield put(actions.setFocus({
+    focus: {
+      id: node.id,
+      start: rangeOffset.start,
+      end: rangeOffset.end,
+    },
+  }));
 }
 
 function* deleteNode(action: actions.DeleteNodeAction): SagaIterator {

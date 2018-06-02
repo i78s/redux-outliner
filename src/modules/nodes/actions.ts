@@ -42,6 +42,9 @@ export interface EditNodeAction extends FluxStandardAction {
     rangeOffset: RangeOffset;
   };
 }
+export type EditNodeDoneAction = Action<
+Success<EditNodeAction['payload'], { list: NodeEntity[] }>
+>;
 export const editNode = actionCreator.async<
   EditNodeAction['payload'],
   { list: NodeEntity[] },
