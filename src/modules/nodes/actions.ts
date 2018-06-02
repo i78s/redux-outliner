@@ -45,6 +45,8 @@ export interface EditNodeAction extends FluxStandardAction {
 export type EditNodeDoneAction = Action<
 Success<EditNodeAction['payload'], { list: NodeEntity[] }>
 >;
+export const handleEditNode = actionCreator<EditNodeAction['payload']>
+('HANDLE_UPDATE');
 export const editNode = actionCreator.async<
   EditNodeAction['payload'],
   { list: NodeEntity[] },

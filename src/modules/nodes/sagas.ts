@@ -28,6 +28,7 @@ export function* nodesTask() {
 function* watchCRUDNodes(): SagaIterator {
   yield takeLatest(actions.fetchNodes.started, loadNodes);
   yield takeLatest(actions.addNode.started, createNode);
+  yield takeLatest(actions.handleEditNode, handleUpdateNode);
   yield takeLatest(actions.editNode.started, updateNode);
   yield takeLatest(actions.removeNode.started, deleteNode);
   // nodes変更後のキャレット移動
@@ -119,8 +120,12 @@ export function* afterCreateNode(action: actions.AddNodeDoneAction): SagaIterato
   }));
 }
 
-export function* updateNode(action: actions.EditNodeAction): SagaIterator {
+export function* handleUpdateNode(action: actions.EditNodeAction): SagaIterator {
   yield call(delay, 100);
+  yield put(actions.editNode.started(action.payload));
+}
+
+export function* updateNode(action: actions.EditNodeAction): SagaIterator {
   const { payload } = action;
   const { node } = payload;
   const list: NodeEntity[] = yield selectState<NodeEntity[]>(getNodesList);
