@@ -30,7 +30,7 @@ function* watchCRUDNodes(): SagaIterator {
   yield takeLatest(actions.addNode.started, createNode);
   yield takeLatest(actions.editNode.started, updateNode);
   yield takeLatest(actions.removeNode.started, deleteNode);
-  // nodes変更後のキャレット移動
+  // 一覧更新後のキャレット移動
   yield takeLatest(actions.addNode.done, afterCreateNode);
   yield takeLatest(actions.editNode.done, afterUpdateNode);
   yield takeLatest(actions.removeNode.done, afterDeleteNode);
@@ -236,11 +236,13 @@ export function* afterDeleteNode(action: actions.DeleteNodeDoneAction): SagaIter
 function* watchUpdateGradeNode(): SagaIterator {
   yield takeLatest(actions.promoteNode.started, promoteNode);
   yield takeLatest(actions.relegateNode.started, relegateNode);
+  // 一覧更新後のキャレット移動
+  yield takeLatest(actions.promoteNode.done, afterPromoteNode);
 }
 
 function* promoteNode(action: actions.PromoteNodeAction): SagaIterator {
   const { payload } = action;
-  const { node, rangeOffset } = payload;
+  const { node } = payload;
   const tmp: NodeEntity[] = yield selectState<NodeEntity[]>(getNodesList);
   const { list, diff } = getNodesAndDiffsAfterPromoted(tmp, node);
 
@@ -256,21 +258,25 @@ function* promoteNode(action: actions.PromoteNodeAction): SagaIterator {
         return nodesApi.put(el);
       }),
     ]);
-    // キャレット位置の整合性を取る
-    yield call(delay, 16);
-    yield put(actions.setFocus({
-      focus: {
-        id: node.id,
-        start: rangeOffset.start,
-        end: rangeOffset.end,
-      },
-    }));
+
   } catch (error) {
     yield put(actions.promoteNode.failed({
       params: { ...payload },
       error: error as Error,
     }));
   }
+}
+
+export function* afterPromoteNode(action: actions.PromoteNodeDoneAction): SagaIterator {
+  const { node, rangeOffset } = action.payload.params;
+  yield call(delay, 16);  // todo 遅延させないとフォーカス移動ができない謎
+  yield put(actions.setFocus({
+    focus: {
+      id: node.id,
+      start: rangeOffset.start,
+      end: rangeOffset.end,
+    },
+  }));
 }
 
 function* relegateNode(action: actions.RelegateNodeAction): SagaIterator {

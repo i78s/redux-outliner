@@ -76,6 +76,9 @@ export interface PromoteNodeAction extends FluxStandardAction {
     rangeOffset: RangeOffset;
   };
 }
+export type PromoteNodeDoneAction = Action<
+Success<PromoteNodeAction['payload'], { list: NodeEntity[] }>
+>;
 export const promoteNode = actionCreator.async<
   PromoteNodeAction['payload'],
   { list: NodeEntity[] },
