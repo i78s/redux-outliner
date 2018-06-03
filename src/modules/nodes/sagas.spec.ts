@@ -682,7 +682,7 @@ describe('afterDeleteNode', () => {
   });
 });
 
-describe('afterPromoteNode', () => {
+describe('afterUpdateGradeNode', () => {
   it('SET_FOCUSが呼ばれること', () => {
     const payload = {
       params: {
@@ -700,7 +700,7 @@ describe('afterPromoteNode', () => {
       },
     };
 
-    return expectSaga(sagas.afterPromoteNode, {
+    return expectSaga(sagas.afterUpdateGradeNode, {
       payload,
     })
     .put({
@@ -714,6 +714,7 @@ describe('afterPromoteNode', () => {
       },
     })
       .run();
+  });
 });
 
 describe('goBack', () => {

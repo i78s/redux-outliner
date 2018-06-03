@@ -237,10 +237,11 @@ function* watchUpdateGradeNode(): SagaIterator {
   yield takeLatest(actions.promoteNode.started, promoteNode);
   yield takeLatest(actions.relegateNode.started, relegateNode);
   // 一覧更新後のキャレット移動
-  yield takeLatest(actions.promoteNode.done, afterPromoteNode);
+  yield takeLatest(actions.promoteNode.done, afterUpdateGradeNode);
+  yield takeLatest(actions.relegateNode.done, afterUpdateGradeNode);
 }
 
-function* promoteNode(action: actions.PromoteNodeAction): SagaIterator {
+function* promoteNode(action: actions.UpdateGradeNodeAction): SagaIterator {
   const { payload } = action;
   const { node } = payload;
   const tmp: NodeEntity[] = yield selectState<NodeEntity[]>(getNodesList);
@@ -267,21 +268,9 @@ function* promoteNode(action: actions.PromoteNodeAction): SagaIterator {
   }
 }
 
-export function* afterPromoteNode(action: actions.PromoteNodeDoneAction): SagaIterator {
-  const { node, rangeOffset } = action.payload.params;
-  yield call(delay, 16);  // todo 遅延させないとフォーカス移動ができない謎
-  yield put(actions.setFocus({
-    focus: {
-      id: node.id,
-      start: rangeOffset.start,
-      end: rangeOffset.end,
-    },
-  }));
-}
-
-function* relegateNode(action: actions.RelegateNodeAction): SagaIterator {
+function* relegateNode(action: actions.UpdateGradeNodeAction): SagaIterator {
   const { payload } = action;
-  const { node, rangeOffset } = payload;
+  const { node } = payload;
   const tmp: NodeEntity[] = yield selectState<NodeEntity[]>(getNodesList);
   const { list, diff } = getNodesAndDiffsAfterRelegate(tmp, node);
 
@@ -297,21 +286,24 @@ function* relegateNode(action: actions.RelegateNodeAction): SagaIterator {
         return nodesApi.put(el);
       }),
     ]);
-    // キャレット位置の整合性を取る
-    yield call(delay, 16);
-    yield put(actions.setFocus({
-      focus: {
-        id: node.id,
-        start: rangeOffset.start,
-        end: rangeOffset.end,
-      },
-    }));
   } catch (error) {
     yield put(actions.relegateNode.failed({
       params: { ...payload },
       error: error as Error,
     }));
   }
+}
+
+export function* afterUpdateGradeNode(action: actions.UpdateGradeNodeDoneAction): SagaIterator {
+  const { node, rangeOffset } = action.payload.params;
+  yield call(delay, 16);  // todo 遅延させないとフォーカス移動ができない謎
+  yield put(actions.setFocus({
+    focus: {
+      id: node.id,
+      start: rangeOffset.start,
+      end: rangeOffset.end,
+    },
+  }));
 }
 
 function* watchOnKeyDownArrow(): SagaIterator {

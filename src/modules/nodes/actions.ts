@@ -70,29 +70,23 @@ export const setFocus = actionCreator<{
   focus: NodesFocus,
 }>('SET_FOCUS');
 
-export interface PromoteNodeAction extends FluxStandardAction {
+export interface UpdateGradeNodeAction extends FluxStandardAction {
   payload: {
     node: NodeEntity;
     rangeOffset: RangeOffset;
   };
 }
-export type PromoteNodeDoneAction = Action<
-Success<PromoteNodeAction['payload'], { list: NodeEntity[] }>
+export type UpdateGradeNodeDoneAction = Action<
+Success<UpdateGradeNodeAction['payload'], { list: NodeEntity[] }>
 >;
 export const promoteNode = actionCreator.async<
-  PromoteNodeAction['payload'],
+  UpdateGradeNodeAction['payload'],
   { list: NodeEntity[] },
   Error
 >('PROMOTE_NODE');
 
-export interface RelegateNodeAction extends FluxStandardAction {
-  payload: {
-    node: NodeEntity;
-    rangeOffset: RangeOffset;
-  };
-}
 export const relegateNode = actionCreator.async<
-  RelegateNodeAction['payload'],
+  UpdateGradeNodeAction['payload'],
   { list: NodeEntity[] },
   Error
 >('RELEGATE_NODE');
