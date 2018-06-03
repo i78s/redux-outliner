@@ -241,7 +241,7 @@ function* watchUpdateGradeNode(): SagaIterator {
   yield takeLatest(actions.relegateNode.done, afterUpdateGradeNode);
 }
 
-function* promoteNode(action: actions.UpdateGradeNodeAction): SagaIterator {
+export function* promoteNode(action: actions.UpdateGradeNodeAction): SagaIterator {
   const { payload } = action;
   const { node } = payload;
   const tmp: NodeEntity[] = yield selectState<NodeEntity[]>(getNodesList);
@@ -254,12 +254,9 @@ function* promoteNode(action: actions.UpdateGradeNodeAction): SagaIterator {
         list,
       },
     }));
-    Promise.all([ // 変更をバックエンドにも反映
-      ...diff.map(el => {
-        return nodesApi.put(el);
-      }),
+    yield all([ // 変更をバックエンドにも反映
+      ...diff.map(el => call(nodesApi.put, el)),
     ]);
-
   } catch (error) {
     yield put(actions.promoteNode.failed({
       params: { ...payload },
