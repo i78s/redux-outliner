@@ -766,6 +766,90 @@ describe('promoteNode', () => {
   });
 });
 
+describe('relegateNode', () => {
+  const list = [
+    {
+      id: 1,
+      title: 'hoge',
+      order: 0,
+      parent_id: 0,
+      project_id: 1,
+    },
+    {
+      id: 2,
+      title: 'bar',
+      order: 1,
+      parent_id: 0,
+      project_id: 1,
+    },
+  ];
+  const state = {
+    nodes: {
+      focus: {
+        timestamp: 0,
+        id: 0,
+        start: 0,
+        end: 0,
+      },
+      list,
+    },
+  };
+  it('階層を変更できない要件の時は一覧の変更と更新処理が発生しないこと', () => {
+    const payload = {
+      node: list[0],
+      rangeOffset: {
+        start: 1,
+        end: 1,
+      },
+    };
+
+    return expectSaga(sagas.relegateNode, {
+      payload,
+    })
+      .withState(state)
+      .put({
+        type: actions.relegateNode.done.type,
+        payload: {
+          params: payload,
+          result: { list },
+        },
+      })
+      .not.call.fn(nodesApi.put)
+      .run();
+  });
+  it('一覧の変更と更新処理が発生すること', () => {
+    const payload = {
+      node: list[1],
+      rangeOffset: {
+        start: 1,
+        end: 1,
+      },
+    };
+    const updated = {
+      ...list[1],
+      parent_id: 1,
+      order: 0,
+    };
+
+    return expectSaga(sagas.relegateNode, {
+      payload,
+    })
+      .withState(state)
+      .provide([
+        [matchers.call(nodesApi.put, updated), updated],
+      ])
+      .put({
+        type: actions.relegateNode.done.type,
+        payload: {
+          params: payload,
+          result: { list: [list[0], updated] },
+        },
+      })
+      .call(nodesApi.put, updated)
+      .run();
+  });
+});
+
 describe('afterUpdateGradeNode', () => {
   it('SET_FOCUSが呼ばれること', () => {
     const payload = {
