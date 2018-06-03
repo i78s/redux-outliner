@@ -160,13 +160,13 @@ export function* afterUpdateNode(action: actions.EditNodeDoneAction): SagaIterat
   }));
 }
 
-function* deleteNode(action: actions.DeleteNodeAction): SagaIterator {
+export function* deleteNode(action: actions.DeleteNodeAction): SagaIterator {
   const { payload } = action;
   const { node, dividedTitle } = payload;
   const tmp: NodeEntity[] = yield selectState<NodeEntity[]>(getNodesList);
   const focus = findNodeToBeFocusedAfterDelete(tmp, node);
 
-  if (focus === null || focus.id === 0) {
+  if (focus === null) {
     return;
   }
   const to = focus!;
@@ -190,28 +190,27 @@ function* deleteNode(action: actions.DeleteNodeAction): SagaIterator {
     }));
 
     // 画面反映のラグを作らない為バックグランドで通信を行う
-    const requests = [
-      nodesApi.delete(node.id),
-    ];
+    const requests = [call(nodesApi.delete, node.id)];
     // キャレットの右に文字が存在したらnodeの更新
     if (req) {
-      requests.push(
-        nodesApi.put(req),
-      );
+      requests.push(call(nodesApi.put, req));
     }
+
     // todo バックエンド側でやりたい
-    const others = list.filter(el => el.id === to.id);
-    requests.push(  // 並び順の更新
-      ...others
-        .filter(el => el.parent_id === node.parent_id && el.order > to.order)
-        .map(el => nodesApi.put(el)),
-    );
+    const others = list.filter(el => el.id !== to.id);
     const child = others.filter(el => el.parent_id === to.id);
     if (child.length !== 0) { // 子の引き継ぎ
-      requests.push(...child.map(el => {
-        return nodesApi.put(el);
-      }));
+      requests.push(...child.map(el => call(nodesApi.put, el)));
     }
+    const sibling = others
+      .filter(el => el.parent_id === node.parent_id)
+      .filter(el => el.order >= node.order);
+    requests.push(
+      ...sibling
+        .map(el => call(nodesApi.put, el)),
+    );
+
+    yield all(requests);
 
   } catch (error) {
     yield put(actions.removeNode.failed({

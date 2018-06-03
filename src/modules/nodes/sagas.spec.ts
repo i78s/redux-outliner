@@ -321,6 +321,336 @@ describe('afterUpdateNode', () => {
   });
 });
 
+describe('deleteNode', () => {
+  it('削除ができない要件の時は処理を中断すること', () => {
+    const list = [
+      {
+        id: 1,
+        title: 'hoge',
+        order: 0,
+        parent_id: 0,
+        project_id: 1,
+      },
+      {
+        id: 2,
+        title: 'foo',
+        order: 1,
+        parent_id: 0,
+        project_id: 1,
+      },
+      {
+        id: 3,
+        title: 'bar',
+        order: 2,
+        parent_id: 0,
+        project_id: 1,
+      },
+    ];
+    const state = {
+      nodes: {
+        focus: {
+          timestamp: 0,
+          id: 0,
+          start: 0,
+          end: 0,
+        },
+        list,
+      },
+    };
+    const payload = {
+      node: list[0],
+      dividedTitle: {
+        left: '',
+        right: '',
+      },
+    };
+
+    return expectSaga(sagas.deleteNode, {
+      payload,
+    })
+      .withState(state)
+      .not.put.actionType(actions.removeNode.done)
+      .not.call.fn(nodesApi.put)
+      .run();
+  });
+  it('削除対象を除外した一覧をresultに返すこと', () => {
+    const list = [
+      {
+        id: 1,
+        title: 'hoge',
+        order: 0,
+        parent_id: 0,
+        project_id: 1,
+      },
+      {
+        id: 2,
+        title: 'foo',
+        order: 1,
+        parent_id: 0,
+        project_id: 1,
+      },
+      {
+        id: 3,
+        title: 'bar',
+        order: 2,
+        parent_id: 0,
+        project_id: 1,
+      },
+    ];
+    const state = {
+      nodes: {
+        focus: {
+          timestamp: 0,
+          id: 0,
+          start: 0,
+          end: 0,
+        },
+        list,
+      },
+    };
+    const payload = {
+      node: list[2],
+      dividedTitle: {
+        left: '',
+        right: '',
+      },
+    };
+
+    return expectSaga(sagas.deleteNode, {
+      payload,
+    })
+      .withState(state)
+      .provide([
+        [matchers.call(nodesApi.delete, 3), {}],
+      ])
+      .put({
+        type: actions.removeNode.done.type,
+        payload: {
+          params: {
+            node: list[1],
+            dividedTitle: payload.dividedTitle,
+          },
+          result: {
+            list: [list[0], list[1]],
+          },
+        },
+      })
+      .not.call(nodesApi.put)
+      .run();
+  });
+  it('削除後タイトルを引き継ぐこと', () => {
+    const list = [
+      {
+        id: 1,
+        title: 'hoge',
+        order: 0,
+        parent_id: 0,
+        project_id: 1,
+      },
+      {
+        id: 2,
+        title: 'foo',
+        order: 1,
+        parent_id: 0,
+        project_id: 1,
+      },
+      {
+        id: 3,
+        title: 'bar',
+        order: 2,
+        parent_id: 0,
+        project_id: 1,
+      },
+    ];
+    const state = {
+      nodes: {
+        focus: {
+          timestamp: 0,
+          id: 0,
+          start: 0,
+          end: 0,
+        },
+        list,
+      },
+    };
+    const payload = {
+      node: list[2],
+      dividedTitle: {
+        left: '',
+        right: 'ar',
+      },
+    };
+    const updated = {
+      ...list[1],
+      title: `${list[1].title}${payload.dividedTitle.right}`,
+    };
+
+    return expectSaga(sagas.deleteNode, {
+      payload,
+    })
+      .withState(state)
+      .provide([
+        [matchers.call(nodesApi.delete, 3), {}],
+        [matchers.call(nodesApi.put, updated), updated],
+      ])
+      .put({
+        type: actions.removeNode.done.type,
+        payload: {
+          params: {
+            node: list[1],
+            dividedTitle: payload.dividedTitle,
+          },
+          result: {
+            list: [list[0], updated],
+          },
+        },
+      })
+      .call(nodesApi.put, updated)
+      .run();
+  });
+  it('削除対象に弟がいる場合orderを前に詰めること', () => {
+    const list = [
+      {
+        id: 1,
+        title: 'hoge',
+        order: 0,
+        parent_id: 0,
+        project_id: 1,
+      },
+      {
+        id: 2,
+        title: 'foo',
+        order: 1,
+        parent_id: 0,
+        project_id: 1,
+      },
+      {
+        id: 3,
+        title: 'bar',
+        order: 2,
+        parent_id: 0,
+        project_id: 1,
+      },
+    ];
+    const state = {
+      nodes: {
+        focus: {
+          timestamp: 0,
+          id: 0,
+          start: 0,
+          end: 0,
+        },
+        list,
+      },
+    };
+    const payload = {
+      node: list[1],
+      dividedTitle: {
+        left: '',
+        right: '',
+      },
+    };
+    const updated = { ...list[2], order: 1 };
+
+    return expectSaga(sagas.deleteNode, {
+      payload,
+    })
+      .withState(state)
+      .provide([
+        [matchers.call(nodesApi.delete, 2), {}],
+        [matchers.call(nodesApi.put, updated), updated],
+      ])
+      .put({
+        type: actions.removeNode.done.type,
+        payload: {
+          params: {
+            node: list[0],
+            dividedTitle: payload.dividedTitle,
+          },
+          result: {
+            list: [list[0], updated],
+          },
+        },
+      })
+      .call(nodesApi.put, updated)
+      .run();
+  });
+  it('削除対象に子がいる場合は親の引き継ぎを行うこと', () => {
+    const list = [
+      {
+        id: 1,
+        title: 'hoge',
+        order: 0,
+        parent_id: 0,
+        project_id: 1,
+      },
+      {
+        id: 2,
+        title: 'foo',
+        order: 1,
+        parent_id: 0,
+        project_id: 1,
+      },
+      {
+        id: 3,
+        title: 'bar',
+        order: 2,
+        parent_id: 0,
+        project_id: 1,
+      },
+      {
+        id: 4,
+        title: 'baz',
+        order: 0,
+        parent_id: 3,
+        project_id: 1,
+      },
+    ];
+    const state = {
+      nodes: {
+        focus: {
+          timestamp: 0,
+          id: 0,
+          start: 0,
+          end: 0,
+        },
+        list,
+      },
+    };
+    const payload = {
+      node: list[2],
+      dividedTitle: {
+        left: '',
+        right: '',
+      },
+    };
+    const updated = { ...list[3], parent_id: 2 };
+
+    return expectSaga(sagas.deleteNode, {
+      payload,
+    })
+      .withState(state)
+      .provide([
+        [matchers.call(nodesApi.delete, 3), {}],
+        [matchers.call(nodesApi.put, updated), updated],
+      ])
+      .put({
+        type: actions.removeNode.done.type,
+        payload: {
+          params: {
+            node: list[1],
+            dividedTitle: payload.dividedTitle,
+          },
+          result: {
+            list: [list[0], list[1], updated],
+          },
+        },
+      })
+      .call(nodesApi.put, updated)
+      .run();
+  });
+});
+
 describe('afterDeleteNode', () => {
   it('SET_FOCUSが呼ばれること', () => {
     const payload = {
