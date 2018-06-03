@@ -67,6 +67,7 @@ describe('createNode', () => {
             project_id: 1,
           },
         ];
+        const req = { id: null, title: '', order: 1, parent_id: 0, project_id: 1 };
         const res = {
           id: 2,
           title: '',
@@ -98,7 +99,7 @@ describe('createNode', () => {
         })
           .withState(state)
           .provide([
-            [matchers.call.fn(nodesApi.post), res],
+            [matchers.call(nodesApi.post, req), res],
           ])
           .put({
             type: 'NODES/CREATE_DONE',
@@ -110,7 +111,7 @@ describe('createNode', () => {
               result: { list: [list[0], res ] },
             },
           })
-          .call(nodesApi.post, { id: null, title: '', order: 1, parent_id: 0, project_id: 1 })
+          .call(nodesApi.post, req)
           .not.call(nodesApi.put)
           .run();
       });
@@ -126,6 +127,7 @@ describe('createNode', () => {
             project_id: 1,
           },
         ];
+        const req = { id: null, title: 'ge', order: 1, parent_id: 0, project_id: 1 };
         const res = {
           id: 2,
           title: 'ge',
@@ -161,8 +163,8 @@ describe('createNode', () => {
         })
           .withState(state)
           .provide([
-            [matchers.call.fn(nodesApi.post), res],
-            [matchers.call.fn(nodesApi.put), updated],
+            [matchers.call(nodesApi.post, req), res],
+            [matchers.call(nodesApi.put, updated), updated],
           ])
           .put({
             type: 'NODES/CREATE_DONE',
@@ -174,7 +176,7 @@ describe('createNode', () => {
               result: { list: [updated, res ] },
             },
           })
-          .call(nodesApi.post, { id: null, title: 'ge', order: 1, parent_id: 0, project_id: 1 })
+          .call(nodesApi.post, req)
           .call(nodesApi.put, updated)
           .run();
       });
@@ -270,7 +272,7 @@ describe('updateNode', () => {
       })
         .withState(state)
         .provide([
-          [matchers.call.fn(nodesApi.put), updated],
+          [matchers.call(nodesApi.put, updated), updated],
         ])
         .call(delay, 100)
         .put({
