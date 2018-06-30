@@ -3,15 +3,35 @@ import * as React from 'react';
 import { NodeEntity } from 'services/models';
 import styled from 'styled-components';
 
-interface Props {
-  focus: NodesFocus;
+export interface OuterProps {
   node: NodeEntity;
+}
+
+interface StateFromProps extends OuterProps {
+  focus: NodesFocus;
+}
+
+interface DispatchFromProps {
+  addNode: (node: NodeEntity, left: string, right: string) => void;
+  editNode: (node: NodeEntity, start: number, end: number) => void;
+  removeNode: (node: NodeEntity, left: string, right: string) => void;
+  relegateNode: (node: NodeEntity, start: number, end: number) => void;
+  promoteNode: (node: NodeEntity, start: number, end: number) => void;
+  goBack: (node: NodeEntity) => void;
+  goForward: (node: NodeEntity) => void;
+}
+
+interface WithStateProps {
+  isComposing: boolean;
+  setComposing: (isComposing: boolean) => boolean;
 }
 
 export interface RefProps {
   setRef: (e: any) => void;
   getRef: () => HTMLDivElement;
 }
+
+export type WithHandlersProp = StateFromProps & DispatchFromProps & WithStateProps & RefProps;
 
 export interface HandlerProps {
   onInput: (e: any) => void;
@@ -21,7 +41,7 @@ export interface HandlerProps {
   moveCaret: (props: any) => void;
 }
 
-export type ItemProps = Props & RefProps & HandlerProps;
+export type EnhancedProps = StateFromProps & DispatchFromProps & WithStateProps & RefProps & HandlerProps;
 
 /**
  * 追加
@@ -32,7 +52,7 @@ export type ItemProps = Props & RefProps & HandlerProps;
  *  ノードが空になる かつ ノードが子要素を持っていない
  */
 
-const Item: React.SFC<ItemProps> = ({
+const Item: React.SFC<EnhancedProps> = ({
   node,
   onInput,
   onPaste,

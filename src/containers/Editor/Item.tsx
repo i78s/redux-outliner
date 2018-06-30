@@ -1,4 +1,4 @@
-import Item, { HandlerProps, ItemProps, RefProps } from 'components/Editor/Item';
+import Item, { EnhancedProps, HandlerProps, OuterProps, RefProps, WithHandlersProp } from 'components/Editor/Item';
 import {
   addNode,
   editNode,
@@ -12,24 +12,6 @@ import { State } from 'modules/store';
 import { connect } from 'react-redux';
 import { compose, lifecycle, withHandlers, withState } from 'recompose';
 import { bindActionCreators, Dispatch } from 'redux';
-import { NodeEntity } from 'services/models';
-
-interface DispatchFromProps {
-  addNode: (node: NodeEntity, left: string, right: string) => void;
-  editNode: (node: NodeEntity, start: number, end: number) => void;
-  removeNode: (node: NodeEntity, left: string, right: string) => void;
-  relegateNode: (node: NodeEntity, start: number, end: number) => void;
-  promoteNode: (node: NodeEntity, start: number, end: number) => void;
-  goBack: (node: NodeEntity) => void;
-  goForward: (node: NodeEntity) => void;
-}
-
-interface WithStateProps {
-  isComposing: boolean;
-  setComposing: (isComposing: boolean) => boolean;
-}
-
-type WithHandlersProp = DispatchFromProps & WithStateProps & ItemProps;
 
 const mapStateToProps = (state: State) => ({
   focus: state.nodes.focus,
@@ -81,13 +63,13 @@ const mapDispatchToProps = (dispatch: Dispatch<State>) =>
     dispatch,
   );
 
-export default compose<any, any>(
+export default compose<EnhancedProps, OuterProps>(
   connect(
     mapStateToProps,
     mapDispatchToProps,
   ),
   withState('isComposing', 'setComposing', false),
-  withHandlers<WithHandlersProp, RefProps>(() => {
+  withHandlers<{}, RefProps>(() => {
     const refs: any = {};
 
     return {
@@ -169,8 +151,8 @@ export default compose<any, any>(
       selection.addRange(range);
     },
   }),
-  lifecycle<WithHandlersProp, {}, {}>({
-    componentDidUpdate(prevProps: WithHandlersProp) {
+  lifecycle<EnhancedProps, {}, {}>({
+    componentDidUpdate(prevProps: EnhancedProps) {
       prevProps.moveCaret(prevProps);
     },
   }),
