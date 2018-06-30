@@ -13,6 +13,8 @@ import { connect } from 'react-redux';
 import { compose, lifecycle, withHandlers, withState } from 'recompose';
 import { bindActionCreators, Dispatch } from 'redux';
 
+type ItemKeyEvent = KeyboardEvent & HTMLElementEvent<HTMLDivElement>;
+
 const mapStateToProps = (state: State) => ({
   focus: state.nodes.focus,
 });
@@ -78,43 +80,41 @@ export default compose<EnhancedProps, OuterProps>(
     };
   }),
   withHandlers<WithHandlersProp, HandlerProps>({
-    onInput: props => (e: InputEvent<HTMLDivElement>) => {
+    onInput: props => (e: HTMLElementEvent<HTMLDivElement>) => {
       if (props.isComposing) {
         return;
       }
       update(props, e.target);
     },
-    onKeyDown: props => (e: KeyboardEvent & InputEvent<HTMLDivElement>) => {
+    onKeyDown: props => (e: ItemKeyEvent) => {
       props.setComposing(e.keyCode === 229);
       switch (e.keyCode) {
         case 8:
-          onKeyDownDelete(props, e.target, e);
+          onKeyDownDelete(props, e);
           break;
         case 9:
-          e.preventDefault();
-          e.shiftKey ? onKeyDownShiftTab(props, e.target) : onKeyDownTab(props, e.target);
+          e.shiftKey ? onKeyDownShiftTab(props, e) : onKeyDownTab(props, e);
           break;
         case 13:
-          e.preventDefault();
-          onKeyDownEnter(props, e.target);
+          onKeyDownEnter(props, e);
           break;
         case 37:
-          onKeyDownLeft(props, e.target, e);
+          onKeyDownLeft(props, e);
           break;
         case 38:
-          onKeyDownUp(props, e.target, e);
+          onKeyDownUp(props, e);
           break;
         case 39:
-          onKeyDownRight(props, e.target, e);
+          onKeyDownRight(props, e);
           break;
         case 40:
-          onKeyDownDown(props, e.target, e);
+          onKeyDownDown(props, e);
           break;
         default:
           break;
       }
     },
-    onKeyUp: props => (e: KeyboardEvent & InputEvent<HTMLDivElement>) => {
+    onKeyUp: props => (e: ItemKeyEvent) => {
       if (props.isComposing && e.keyCode === 13) {
         update(props, e.target);
       }
@@ -169,8 +169,9 @@ const update = (props: WithHandlersProp, target: HTMLDivElement) => {
   );
 };
 
-const onKeyDownEnter = (props: WithHandlersProp, target: HTMLDivElement) => {
-  const text = target.innerText;
+const onKeyDownEnter = (props: WithHandlersProp, e: ItemKeyEvent) => {
+  e.preventDefault();
+  const text = e.target.innerText;
   const { startOffset, endOffset } = getSelectionRange();
   const left = text.slice(0, startOffset);
   const right = text.slice(endOffset);
@@ -178,8 +179,8 @@ const onKeyDownEnter = (props: WithHandlersProp, target: HTMLDivElement) => {
   props.addNode(props.node, left, right);
 };
 
-const onKeyDownDelete = (props: WithHandlersProp, target: HTMLDivElement, e: KeyboardEvent) => {
-  const text = target.innerText;
+const onKeyDownDelete = (props: WithHandlersProp, e: ItemKeyEvent) => {
+  const text = e.target.innerText;
   const { startOffset, endOffset } = getSelectionRange();
   const left = text.slice(0, startOffset);
   const right = text.slice(endOffset);
@@ -199,12 +200,14 @@ const onKeyDownDelete = (props: WithHandlersProp, target: HTMLDivElement, e: Key
   props.removeNode(props.node, left, right);
 };
 
-const onKeyDownTab = (props: WithHandlersProp, target: HTMLDivElement) => {
+const onKeyDownTab = (props: WithHandlersProp, e: KeyboardEvent) => {
+  e.preventDefault();
   const { startOffset, endOffset } = getSelectionRange();
   props.relegateNode(props.node, startOffset, endOffset);
 };
 
-const onKeyDownShiftTab = (props: WithHandlersProp, target: HTMLDivElement) => {
+const onKeyDownShiftTab = (props: WithHandlersProp, e: KeyboardEvent) => {
+  e.preventDefault();
   const { startOffset, endOffset } = getSelectionRange();
   props.promoteNode(props.node, startOffset, endOffset);
 };
@@ -214,7 +217,7 @@ const onKeyDownUp = onKeyUpOrLeft;
 const onKeyDownRight = onKeyDownOrRight;
 const onKeyDownDown = onKeyDownOrRight;
 
-function onKeyDownOrRight(props: WithHandlersProp, target: HTMLDivElement, e: KeyboardEvent) {
+function onKeyDownOrRight(props: WithHandlersProp, e: KeyboardEvent) {
   const { startOffset, endOffset } = getSelectionRange();
   const len = props.node.title.length;
   if (startOffset === len && endOffset === len) {
@@ -223,7 +226,7 @@ function onKeyDownOrRight(props: WithHandlersProp, target: HTMLDivElement, e: Ke
   }
 }
 
-function onKeyUpOrLeft(props: WithHandlersProp, target: HTMLDivElement, e: KeyboardEvent) {
+function onKeyUpOrLeft(props: WithHandlersProp, e: KeyboardEvent) {
   const { startOffset, endOffset } = getSelectionRange();
   if (startOffset === 0 && endOffset === 0) {
     e.preventDefault();

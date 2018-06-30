@@ -4,7 +4,7 @@ declare module '*.json' {
   export default value;
 }
 
-interface InputEvent<T extends HTMLElement> extends Event {
+interface HTMLElementEvent<T extends HTMLElement> extends Event {
   target: T;
 }
 
