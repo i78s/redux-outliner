@@ -20,7 +20,7 @@ const mapDispatchToProps = (dispatch: Dispatch<State>) => (
   )
 );
 
-export default compose<ListProps, any>(
+export default compose<ListProps, {}>(
   connect(
     mapStateToProps,
     mapDispatchToProps,
