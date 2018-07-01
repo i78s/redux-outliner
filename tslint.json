@@ -4,6 +4,7 @@
   "rules": {
     "prettier": true,
     "interface-name": [true, "never-prefix"],
+    "no-implicit-dependencies": false,
     "no-submodule-imports": false,
     "object-literal-sort-keys": false
   },
