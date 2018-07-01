@@ -1,7 +1,7 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
-import List from 'containers/Editor/List';
+import List from '../../containers/Editor/List';
 
 export default () => {
   return (

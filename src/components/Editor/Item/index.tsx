@@ -1,7 +1,8 @@
-import { NodesFocus } from 'modules/nodes';
 import * as React from 'react';
-import { NodeEntity } from 'services/models';
 import styled from 'styled-components';
+
+import { NodesFocus } from '../../../modules/nodes';
+import { NodeEntity } from '../../../services/models';
 
 export interface OuterProps {
   node: NodeEntity;
@@ -31,7 +32,10 @@ export interface RefProps {
   getRef: () => HTMLDivElement;
 }
 
-export type WithHandlersProp = StateFromProps & DispatchFromProps & WithStateProps & RefProps;
+export type WithHandlersProp = StateFromProps &
+  DispatchFromProps &
+  WithStateProps &
+  RefProps;
 
 export interface HandlerProps {
   onInput: (e: any) => void;
@@ -41,7 +45,11 @@ export interface HandlerProps {
   moveCaret: (props: any) => void;
 }
 
-export type EnhancedProps = StateFromProps & DispatchFromProps & WithStateProps & RefProps & HandlerProps;
+export type EnhancedProps = StateFromProps &
+  DispatchFromProps &
+  WithStateProps &
+  RefProps &
+  HandlerProps;
 
 const Item: React.SFC<EnhancedProps> = ({
   node,
@@ -51,7 +59,6 @@ const Item: React.SFC<EnhancedProps> = ({
   onKeyUp,
   setRef,
 }) => {
-
   return (
     <Node>
       <Dot />

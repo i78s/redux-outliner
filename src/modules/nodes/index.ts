@@ -1,6 +1,7 @@
-import * as actions from 'modules/nodes/actions';
-import { NodeEntity } from 'services/models';
 import { reducerWithInitialState } from 'typescript-fsa-reducers';
+
+import * as actions from '../../modules/nodes/actions';
+import { NodeEntity } from '../../services/models';
 
 export interface NodesFocus {
   timestamp?: number;
@@ -35,7 +36,7 @@ export default reducerWithInitialState(initialState)
       actions.relegateNode.done,
       actions.promoteNode.done,
     ],
-    (state, { result }) => ({ ...state, list: [ ...result.list ] }),
+    (state, { result }) => ({ ...state, list: [...result.list] }),
   )
   .case(actions.setFocus, (state, { focus }) => {
     return {
@@ -45,5 +46,4 @@ export default reducerWithInitialState(initialState)
         timestamp: Date.now(),
       },
     };
-  })
-  ;
+  });

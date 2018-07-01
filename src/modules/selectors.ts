@@ -1,5 +1,6 @@
-import { State } from 'modules/store';
 import { select, SelectEffect } from 'redux-saga/effects';
+
+import { State } from '../modules/store';
 
 export function selectState<T>(selector: (s: State) => T): SelectEffect {
   return select(selector);

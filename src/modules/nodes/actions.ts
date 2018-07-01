@@ -1,6 +1,7 @@
-import { NodesFocus } from 'modules/nodes';
-import { NodeEntity } from 'services/models';
 import actionCreatorFactory, { Action, Success } from 'typescript-fsa';
+
+import { NodesFocus } from '../../modules/nodes';
+import { NodeEntity } from '../../services/models';
 
 const actionCreator = actionCreatorFactory('NODES');
 
@@ -28,7 +29,7 @@ export interface AddNodeAction extends FluxStandardAction {
   };
 }
 export type AddNodeDoneAction = Action<
-Success<AddNodeAction['payload'], { list: NodeEntity[] }>
+  Success<AddNodeAction['payload'], { list: NodeEntity[] }>
 >;
 export const addNode = actionCreator.async<
   AddNodeAction['payload'],
@@ -43,7 +44,7 @@ export interface EditNodeAction extends FluxStandardAction {
   };
 }
 export type EditNodeDoneAction = Action<
-Success<EditNodeAction['payload'], { list: NodeEntity[] }>
+  Success<EditNodeAction['payload'], { list: NodeEntity[] }>
 >;
 export const editNode = actionCreator.async<
   EditNodeAction['payload'],
@@ -58,7 +59,7 @@ export interface DeleteNodeAction extends FluxStandardAction {
   };
 }
 export type DeleteNodeDoneAction = Action<
-Success<DeleteNodeAction['payload'], { list: NodeEntity[] }>
+  Success<DeleteNodeAction['payload'], { list: NodeEntity[] }>
 >;
 export const removeNode = actionCreator.async<
   DeleteNodeAction['payload'],
@@ -67,7 +68,7 @@ export const removeNode = actionCreator.async<
 >('DELETE');
 
 export const setFocus = actionCreator<{
-  focus: NodesFocus,
+  focus: NodesFocus;
 }>('SET_FOCUS');
 
 export interface UpdateGradeNodeAction extends FluxStandardAction {
@@ -77,7 +78,7 @@ export interface UpdateGradeNodeAction extends FluxStandardAction {
   };
 }
 export type UpdateGradeNodeDoneAction = Action<
-Success<UpdateGradeNodeAction['payload'], { list: NodeEntity[] }>
+  Success<UpdateGradeNodeAction['payload'], { list: NodeEntity[] }>
 >;
 export const promoteNode = actionCreator.async<
   UpdateGradeNodeAction['payload'],
@@ -103,4 +104,6 @@ export interface GoForwardAction extends FluxStandardAction {
     node: NodeEntity;
   };
 }
-export const goForward = actionCreator<GoForwardAction['payload']>('GO_FORWARD');
+export const goForward = actionCreator<GoForwardAction['payload']>(
+  'GO_FORWARD',
+);

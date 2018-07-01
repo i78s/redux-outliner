@@ -1,10 +1,11 @@
-import * as actions from 'modules/nodes/actions';
-import * as sagas from 'modules/nodes/sagas';
 import { delay } from 'redux-saga';
 import { expectSaga } from 'redux-saga-test-plan';
 import * as matchers from 'redux-saga-test-plan/matchers';
 import { throwError } from 'redux-saga-test-plan/providers';
-import nodesApi from 'services/nodes';
+
+import * as actions from '../../modules/nodes/actions';
+import * as sagas from '../../modules/nodes/sagas';
+import nodesApi from '../../services/nodes';
 
 describe('loadNodes', () => {
   it('通信成功時はFETCH_DONEを呼ぶこと', () => {
@@ -21,9 +22,7 @@ describe('loadNodes', () => {
     return expectSaga(sagas.loadNodes, {
       payload: {},
     })
-      .provide([
-        [matchers.call.fn(nodesApi.getList), res],
-      ])
+      .provide([[matchers.call.fn(nodesApi.getList), res]])
       .put({
         type: 'NODES/FETCH_DONE',
         payload: {
@@ -39,9 +38,7 @@ describe('loadNodes', () => {
     return expectSaga(sagas.loadNodes, {
       payload: {},
     })
-      .provide([
-        [matchers.call.fn(nodesApi.getList), throwError(error)],
-      ])
+      .provide([[matchers.call.fn(nodesApi.getList), throwError(error)]])
       .put({
         type: 'NODES/FETCH_FAILED',
         payload: {
@@ -67,7 +64,13 @@ describe('createNode', () => {
             project_id: 1,
           },
         ];
-        const req = { id: null, title: '', order: 1, parent_id: 0, project_id: 1 };
+        const req = {
+          id: null,
+          title: '',
+          order: 1,
+          parent_id: 0,
+          project_id: 1,
+        };
         const res = {
           id: 2,
           title: '',
@@ -98,9 +101,7 @@ describe('createNode', () => {
           payload,
         })
           .withState(state)
-          .provide([
-            [matchers.call(nodesApi.post, req), res],
-          ])
+          .provide([[matchers.call(nodesApi.post, req), res]])
           .put({
             type: 'NODES/CREATE_DONE',
             payload: {
@@ -108,7 +109,7 @@ describe('createNode', () => {
                 dividedTitle: payload.dividedTitle,
                 node: res,
               },
-              result: { list: [list[0], res ] },
+              result: { list: [list[0], res] },
             },
           })
           .call(nodesApi.post, req)
@@ -127,7 +128,13 @@ describe('createNode', () => {
             project_id: 1,
           },
         ];
-        const req = { id: null, title: 'ge', order: 1, parent_id: 0, project_id: 1 };
+        const req = {
+          id: null,
+          title: 'ge',
+          order: 1,
+          parent_id: 0,
+          project_id: 1,
+        };
         const res = {
           id: 2,
           title: 'ge',
@@ -173,7 +180,7 @@ describe('createNode', () => {
                 dividedTitle: payload.dividedTitle,
                 node: res,
               },
-              result: { list: [updated, res ] },
+              result: { list: [updated, res] },
             },
           })
           .call(nodesApi.post, req)
@@ -271,18 +278,22 @@ describe('updateNode', () => {
         payload,
       })
         .withState(state)
-        .provide([
-          [matchers.call(nodesApi.put, updated), updated],
-        ])
+        .provide([[matchers.call(nodesApi.put, updated), updated]])
         .call(delay, 100)
         .put({
           type: 'NODES/UPDATE_DONE',
           payload: {
             params: payload,
-            result: { list: [list[0], updated ] },
+            result: { list: [list[0], updated] },
           },
         })
-        .call(nodesApi.put, { id: 2, title: 'fo', order: 1, parent_id: 0, project_id: 1 })
+        .call(nodesApi.put, {
+          id: 2,
+          title: 'fo',
+          order: 1,
+          parent_id: 0,
+          project_id: 1,
+        })
         .run();
     });
   });
@@ -422,9 +433,7 @@ describe('deleteNode', () => {
       payload,
     })
       .withState(state)
-      .provide([
-        [matchers.call(nodesApi.delete, 3), {}],
-      ])
+      .provide([[matchers.call(nodesApi.delete, 3), {}]])
       .put({
         type: actions.removeNode.done.type,
         payload: {
@@ -670,16 +679,16 @@ describe('afterDeleteNode', () => {
     return expectSaga(sagas.afterDeleteNode, {
       payload,
     })
-    .put({
-      type: 'NODES/SET_FOCUS',
-      payload: {
-        focus: {
-          id: payload.params.node.id,
-          start: payload.params.node.title.length,
-          end: payload.params.node.title.length,
+      .put({
+        type: 'NODES/SET_FOCUS',
+        payload: {
+          focus: {
+            id: payload.params.node.id,
+            start: payload.params.node.title.length,
+            end: payload.params.node.title.length,
+          },
         },
-      },
-    })
+      })
       .run();
   });
 });
@@ -753,9 +762,7 @@ describe('promoteNode', () => {
       payload,
     })
       .withState(state)
-      .provide([
-        [matchers.call(nodesApi.put, updated), updated],
-      ])
+      .provide([[matchers.call(nodesApi.put, updated), updated]])
       .put({
         type: actions.promoteNode.done.type,
         payload: {
@@ -837,9 +844,7 @@ describe('relegateNode', () => {
       payload,
     })
       .withState(state)
-      .provide([
-        [matchers.call(nodesApi.put, updated), updated],
-      ])
+      .provide([[matchers.call(nodesApi.put, updated), updated]])
       .put({
         type: actions.relegateNode.done.type,
         payload: {
@@ -873,16 +878,16 @@ describe('afterUpdateGradeNode', () => {
     return expectSaga(sagas.afterUpdateGradeNode, {
       payload,
     })
-    .put({
-      type: 'NODES/SET_FOCUS',
-      payload: {
-        focus: {
-          id: payload.params.node.id,
-          start: payload.params.rangeOffset.start,
-          end: payload.params.rangeOffset.end,
+      .put({
+        type: 'NODES/SET_FOCUS',
+        payload: {
+          focus: {
+            id: payload.params.node.id,
+            start: payload.params.rangeOffset.start,
+            end: payload.params.rangeOffset.end,
+          },
         },
-      },
-    })
+      })
       .run();
   });
 });

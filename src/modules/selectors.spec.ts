@@ -1,6 +1,4 @@
-import {
-  getNodesList,
-} from 'modules/selectors';
+import { getNodesList } from '../modules/selectors';
 
 describe('getNodesList', () => {
   it('initial', () => {
