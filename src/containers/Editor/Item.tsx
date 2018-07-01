@@ -8,7 +8,7 @@ import Item, {
   OuterProps,
   RefProps,
   WithHandlersProp,
-} from '../../components/Editor/Item';
+} from 'components/Editor/Item';
 import {
   addNode,
   editNode,
@@ -17,8 +17,8 @@ import {
   promoteNode,
   relegateNode,
   removeNode,
-} from '../../modules/nodes/actions';
-import { State } from '../../modules/store';
+} from 'modules/nodes/actions';
+import { State } from 'modules/store';
 
 type ItemKeyEvent = KeyboardEvent & HTMLElementEvent<HTMLDivElement>;
 

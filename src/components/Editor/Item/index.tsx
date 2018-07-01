@@ -1,8 +1,8 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
-import { NodesFocus } from '../../../modules/nodes';
-import { NodeEntity } from '../../../services/models';
+import { NodesFocus } from 'modules/nodes';
+import { NodeEntity } from 'services/models';
 
 export interface OuterProps {
   node: NodeEntity;

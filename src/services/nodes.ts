@@ -1,5 +1,5 @@
-import instance from '../services/axios-instance';
-import { CreateNodeParams, NodeEntity } from '../services/models';
+import instance from 'services/axios-instance';
+import { CreateNodeParams, NodeEntity } from 'services/models';
 
 export default {
   getList() {

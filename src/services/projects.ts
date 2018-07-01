@@ -1,5 +1,5 @@
-import instance from '../services/axios-instance';
-import { ProjectEntity } from '../services/models';
+import instance from 'services/axios-instance';
+import { ProjectEntity } from 'services/models';
 
 export default {
   getList() {

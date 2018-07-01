@@ -1,7 +1,7 @@
 import { delay, SagaIterator } from 'redux-saga';
 import { all, call, fork, put, takeLatest } from 'redux-saga/effects';
 
-import * as actions from '../../modules/nodes/actions';
+import * as actions from 'modules/nodes/actions';
 import {
   findNodeOnBack,
   findNodeOnForward,
@@ -10,10 +10,10 @@ import {
   getNodesAndDiffsAfterRelegate,
   getNodesAndReqParamBeforeCreate,
   getNodesAndReqParamBeforeDelete,
-} from '../../modules/nodes/getters';
-import { getNodesList, selectState } from '../../modules/selectors';
-import { NodeEntity } from '../../services/models';
-import nodesApi from '../../services/nodes';
+} from 'modules/nodes/getters';
+import { getNodesList, selectState } from 'modules/selectors';
+import { NodeEntity } from 'services/models';
+import nodesApi from 'services/nodes';
 
 export function* nodesTask() {
   yield all([

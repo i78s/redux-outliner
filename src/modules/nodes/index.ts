@@ -1,7 +1,7 @@
 import { reducerWithInitialState } from 'typescript-fsa-reducers';
 
-import * as actions from '../../modules/nodes/actions';
-import { NodeEntity } from '../../services/models';
+import * as actions from 'modules/nodes/actions';
+import { NodeEntity } from 'services/models';
 
 export interface NodesFocus {
   timestamp?: number;

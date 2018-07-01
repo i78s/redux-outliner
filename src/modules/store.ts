@@ -2,8 +2,8 @@ import { applyMiddleware, combineReducers, createStore } from 'redux';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import createSagaMiddleware from 'redux-saga';
 
-import nodesReducer, { NodesState } from '../modules/nodes';
-import rootTask from '../modules/tasks';
+import nodesReducer, { NodesState } from 'modules/nodes';
+import rootTask from 'modules/tasks';
 
 const rootReducer = combineReducers({
   nodes: nodesReducer,
