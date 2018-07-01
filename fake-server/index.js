@@ -1,11 +1,12 @@
 const faker = require('faker');
 
+/* tslint:disable */
 module.exports = () => {
-  const data = { 
+  const data = {
     projects: [],
-    nodes: [] 
+    nodes: [],
   };
-  
+
   const max = 15;
   for (let i = 1; i <= max; i++) {
     const parent_id = i % 3 === 0 ? 0 : faker.random.number(max);
