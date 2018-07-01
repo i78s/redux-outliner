@@ -6,7 +6,7 @@ import {
   getNodesAndDiffsAfterRelegate,
   getNodesAndReqParamBeforeCreate,
   getNodesAndReqParamBeforeDelete,
-} from 'modules/nodes/getters';
+} from '../../modules/nodes/getters';
 
 describe('getNodesAndReqParamBeforeCreate', () => {
   describe('起点になるnodeに子が', () => {
@@ -35,11 +35,10 @@ describe('getNodesAndReqParamBeforeCreate', () => {
         },
       ];
       describe('キャレットが末尾', () => {
-        const result = getNodesAndReqParamBeforeCreate(
-          list,
-          list[0],
-          { left: 'hoge', right: '' },
-        );
+        const result = getNodesAndReqParamBeforeCreate(list, list[0], {
+          left: 'hoge',
+          right: '',
+        });
         it('起点nodeのtitleはそのままで子のorderをずらした一覧を返すこと', () => {
           expect(result.list).toEqual([
             {
@@ -76,11 +75,10 @@ describe('getNodesAndReqParamBeforeCreate', () => {
         });
       });
       describe('キャレットが末尾じゃない', () => {
-        const result = getNodesAndReqParamBeforeCreate(
-          list,
-          list[0],
-          { left: 'ho', right: 'ge' },
-        );
+        const result = getNodesAndReqParamBeforeCreate(list, list[0], {
+          left: 'ho',
+          right: 'ge',
+        });
         it('起点nodeのtitleを更新して子のorderをずらした一覧を返すこと', () => {
           expect(result.list).toEqual([
             {
@@ -142,11 +140,10 @@ describe('getNodesAndReqParamBeforeCreate', () => {
         },
       ];
       describe('キャレットが末尾', () => {
-        const result = getNodesAndReqParamBeforeCreate(
-          list,
-          list[0],
-          { left: 'hoge', right: '' },
-        );
+        const result = getNodesAndReqParamBeforeCreate(list, list[0], {
+          left: 'hoge',
+          right: '',
+        });
         it('起点nodeのtitleはそのままで弟のorderをずらした一覧を返すこと', () => {
           expect(result.list).toEqual([
             {
@@ -183,12 +180,11 @@ describe('getNodesAndReqParamBeforeCreate', () => {
         });
       });
       describe('キャレットが末尾じゃない', () => {
-        const result = getNodesAndReqParamBeforeCreate(
-          list,
-          list[0],
-          { left: 'ho', right: 'ge' },
-        );
         it('起点nodeのtitleを更新して弟のorderをずらした一覧を返すこと', () => {
+          const result = getNodesAndReqParamBeforeCreate(list, list[0], {
+            left: 'ho',
+            right: 'ge',
+          });
           expect(result.list).toEqual([
             {
               id: 1,
@@ -214,6 +210,10 @@ describe('getNodesAndReqParamBeforeCreate', () => {
           ]);
         });
         it('キャレットより後ろにある文字列をtitleに引き継いだ弟を新規作成するリクエストパラメータを返すこと', () => {
+          const result = getNodesAndReqParamBeforeCreate(list, list[0], {
+            left: 'ho',
+            right: 'ge',
+          });
           expect(result.req).toEqual({
             id: null,
             title: 'ge',
@@ -270,7 +270,12 @@ describe('getNodesAndReqParamBeforeDelete', () => {
         const target = list[1];
         const beFocused = list[0];
         const rightEnd = '';
-        const result = getNodesAndReqParamBeforeDelete(list, target, beFocused, rightEnd);
+        const result = getNodesAndReqParamBeforeDelete(
+          list,
+          target,
+          beFocused,
+          rightEnd,
+        );
         it('削除対象を除外、削除対象の子をfocus移動先に引き継ぎ、削除対象の弟のorderを更新すること', () => {
           expect(result.list).toEqual([
             {
@@ -340,7 +345,12 @@ describe('getNodesAndReqParamBeforeDelete', () => {
         const target = list[1];
         const beFocused = list[0];
         const rightEnd = 'oo';
-        const result = getNodesAndReqParamBeforeDelete(list, target, beFocused, rightEnd);
+        const result = getNodesAndReqParamBeforeDelete(
+          list,
+          target,
+          beFocused,
+          rightEnd,
+        );
         it('削除対象を除外、削除対象の子とタイトルをfocus移動先が引き継ぎ、削除対象の弟のorderを更新すること', () => {
           expect(result.list).toEqual([
             {
@@ -410,7 +420,12 @@ describe('getNodesAndReqParamBeforeDelete', () => {
         const target = list[1];
         const beFocused = list[0];
         const rightEnd = '';
-        const result = getNodesAndReqParamBeforeDelete(list, target, beFocused, rightEnd);
+        const result = getNodesAndReqParamBeforeDelete(
+          list,
+          target,
+          beFocused,
+          rightEnd,
+        );
         it('削除対象を除外、削除対象の子をfocus移動先に引き継ぎ、削除対象の弟のorderを更新すること', () => {
           expect(result.list).toEqual([
             {
@@ -465,7 +480,12 @@ describe('getNodesAndReqParamBeforeDelete', () => {
         const target = list[1];
         const beFocused = list[0];
         const rightEnd = 'oo';
-        const result = getNodesAndReqParamBeforeDelete(list, target, beFocused, rightEnd);
+        const result = getNodesAndReqParamBeforeDelete(
+          list,
+          target,
+          beFocused,
+          rightEnd,
+        );
         it('削除対象を除外、削除対象の子とタイトルをfocus移動先が引き継ぎ、削除対象の弟のorderを更新すること', () => {
           expect(result.list).toEqual([
             {
@@ -538,7 +558,12 @@ describe('getNodesAndReqParamBeforeDelete', () => {
         const target = list[1];
         const beFocused = list[0];
         const rightEnd = '';
-        const result = getNodesAndReqParamBeforeDelete(list, target, beFocused, rightEnd);
+        const result = getNodesAndReqParamBeforeDelete(
+          list,
+          target,
+          beFocused,
+          rightEnd,
+        );
         it('削除対象を除外、削除対象の子をfocus移動先に引き継ぐこと', () => {
           expect(result.list).toEqual([
             {
@@ -608,7 +633,12 @@ describe('getNodesAndReqParamBeforeDelete', () => {
         const target = list[1];
         const beFocused = list[0];
         const rightEnd = 'oo';
-        const result = getNodesAndReqParamBeforeDelete(list, target, beFocused, rightEnd);
+        const result = getNodesAndReqParamBeforeDelete(
+          list,
+          target,
+          beFocused,
+          rightEnd,
+        );
         it('削除対象を除外、titleを更新したfocus移動先に削除対象の子を引き継ぐこと', () => {
           expect(result.list).toEqual([
             {
@@ -678,7 +708,12 @@ describe('getNodesAndReqParamBeforeDelete', () => {
         const target = list[2];
         const beFocused = list[1];
         const rightEnd = '';
-        const result = getNodesAndReqParamBeforeDelete(list, target, beFocused, rightEnd);
+        const result = getNodesAndReqParamBeforeDelete(
+          list,
+          target,
+          beFocused,
+          rightEnd,
+        );
         it('削除対象を除外すること', () => {
           expect(result.list).toEqual([
             {
@@ -733,7 +768,12 @@ describe('getNodesAndReqParamBeforeDelete', () => {
         const target = list[2];
         const beFocused = list[1];
         const rightEnd = 'ar';
-        const result = getNodesAndReqParamBeforeDelete(list, target, beFocused, rightEnd);
+        const result = getNodesAndReqParamBeforeDelete(
+          list,
+          target,
+          beFocused,
+          rightEnd,
+        );
         it('削除対象を除外、focus移動先のtitleを更新すること', () => {
           expect(result.list).toEqual([
             {

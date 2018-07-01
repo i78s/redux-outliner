@@ -1,5 +1,5 @@
-import { DividedTitle } from 'modules/nodes/actions';
-import { CreateNodeParams, NodeEntity } from 'services/models';
+import { DividedTitle } from '../../modules/nodes/actions';
+import { CreateNodeParams, NodeEntity } from '../../services/models';
 
 interface NodesAndDiffs {
   list: NodeEntity[];
@@ -24,12 +24,14 @@ export const getNodesAndReqParamBeforeCreate = (
   const result = [];
   for (let i = 0, len = list.length; i < len; i++) {
     let el = list[i];
-    if (el.id === node.id) {  // Enterキーの起点のnodeを更新
+    if (el.id === node.id) {
+      // Enterキーの起点のnodeを更新
       el = {
         ...el,
         title: title.left,
       };
-    } else if ( // 新規作成されたnodeの後ろにあるnodeの順番を更新
+    } else if (
+      // 新規作成されたnodeの後ろにあるnodeの順番を更新
       el.parent_id === parentID &&
       order <= el.order
     ) {
@@ -67,7 +69,8 @@ export const getNodesAndReqParamBeforeDelete = (
         title: el.title + rightEnd,
       };
       req = el;
-    } else if (  // 削除されるnodeの弟がいればorderを前につめる
+    } else if (
+      // 削除されるnodeの弟がいればorderを前につめる
       el.parent_id === target.parent_id &&
       el.order > target.order
     ) {
@@ -75,7 +78,7 @@ export const getNodesAndReqParamBeforeDelete = (
         ...el,
         order: el.order - 1,
       };
-    // 削除されるnodeに子がいる場合は引き継ぐ
+      // 削除されるnodeに子がいる場合は引き継ぐ
     } else if (el.parent_id === target.id) {
       el = {
         ...el,
@@ -91,7 +94,10 @@ export const getNodesAndReqParamBeforeDelete = (
   };
 };
 // node削除後の次のフォーカスをあてるnodeを返す
-export const findNodeToBeFocusedAfterDelete = (list: NodeEntity[], target: NodeEntity): NodeEntity | null => {
+export const findNodeToBeFocusedAfterDelete = (
+  list: NodeEntity[],
+  target: NodeEntity,
+): NodeEntity | null => {
   let node: NodeEntity | null = null;
 
   const others = list.filter(el => el.id !== target.id);
@@ -110,9 +116,9 @@ export const findNodeToBeFocusedAfterDelete = (list: NodeEntity[], target: NodeE
     const elder = sibling[index - 1];
     node = { ...elder };
 
-    const cousin = others
-      .filter(el => el.parent_id === elder.id);
-    if (cousin.length !== 0) {  // 兄に子がいる時は削除させない
+    const cousin = others.filter(el => el.parent_id === elder.id);
+    if (cousin.length !== 0) {
+      // 兄に子がいる時は削除させない
       node = null;
     }
   }
@@ -120,7 +126,10 @@ export const findNodeToBeFocusedAfterDelete = (list: NodeEntity[], target: NodeE
   return node;
 };
 // 左or上矢印押下後フォーカスの移動先になるnodeを返す
-export const findNodeOnBack = (list: NodeEntity[], target: NodeEntity): NodeEntity | null => {
+export const findNodeOnBack = (
+  list: NodeEntity[],
+  target: NodeEntity,
+): NodeEntity | null => {
   const others = list.filter(el => el.id !== target.id);
   const parent = others.filter(el => el.id === target.parent_id)[0];
   const sibling = others
@@ -153,7 +162,10 @@ export const findNodeOnBack = (list: NodeEntity[], target: NodeEntity): NodeEnti
   return node;
 };
 // 右or下矢印押下後フォーカスの移動先になるnodeを返す
-export const findNodeOnForward = (list: NodeEntity[], target: NodeEntity): NodeEntity | null => {
+export const findNodeOnForward = (
+  list: NodeEntity[],
+  target: NodeEntity,
+): NodeEntity | null => {
   const child = list.filter(el => el.parent_id === target.id);
   const sibling = list
     .filter(el => el.parent_id === target.parent_id)
@@ -170,11 +182,10 @@ export const findNodeOnForward = (list: NodeEntity[], target: NodeEntity): NodeE
   } else if (parent) {
     // 親を辿って弟を持つnodeがいるか走査
     while (parent) {
-      const y = list
-        .filter(el =>
-          el.parent_id === parent!.parent_id &&
-          el.order === parent!.order + 1,
-        )[0];
+      const y = list.filter(
+        el =>
+          el.parent_id === parent!.parent_id && el.order === parent!.order + 1,
+      )[0];
       if (y) {
         node = { ...y };
         break;
@@ -186,7 +197,10 @@ export const findNodeOnForward = (list: NodeEntity[], target: NodeEntity): NodeE
   return node;
 };
 // 該当nodeの階層を一段上げた後のnode一覧を返す
-export const getNodesAndDiffsAfterPromoted = (list: NodeEntity[], target: NodeEntity): NodesAndDiffs => {
+export const getNodesAndDiffsAfterPromoted = (
+  list: NodeEntity[],
+  target: NodeEntity,
+): NodesAndDiffs => {
   // すでに一番上の階層なら変更不可
   if (target.parent_id === 0) {
     return {
@@ -196,8 +210,7 @@ export const getNodesAndDiffsAfterPromoted = (list: NodeEntity[], target: NodeEn
   }
 
   const parent = list.find(el => el.id === target.parent_id)!;
-  const child = list
-    .filter(el => el.parent_id === target.id);
+  const child = list.filter(el => el.parent_id === target.id);
 
   const result = [];
   const diff = [];
@@ -211,7 +224,8 @@ export const getNodesAndDiffsAfterPromoted = (list: NodeEntity[], target: NodeEn
         parent_id: parent.parent_id,
       };
       diff.push(el);
-    } else if (  // // 割り込んだので後ろにいた旧親のorderをずらす
+    } else if (
+      // // 割り込んだので後ろにいた旧親のorderをずらす
       el.parent_id === parent.parent_id &&
       el.order > parent.order
     ) {
@@ -220,7 +234,8 @@ export const getNodesAndDiffsAfterPromoted = (list: NodeEntity[], target: NodeEn
         order: el.order + 1,
       };
       diff.push(el);
-    } else if (  // 自身より後ろにいる兄弟を自分の子にする
+    } else if (
+      // 自身より後ろにいる兄弟を自分の子にする
       el.parent_id === target.parent_id &&
       el.order > target.order
     ) {
@@ -241,7 +256,10 @@ export const getNodesAndDiffsAfterPromoted = (list: NodeEntity[], target: NodeEn
   };
 };
 // 該当nodeの階層を一段下げた後のnode一覧を返す
-export const getNodesAndDiffsAfterRelegate = (list: NodeEntity[], target: NodeEntity): NodesAndDiffs => {
+export const getNodesAndDiffsAfterRelegate = (
+  list: NodeEntity[],
+  target: NodeEntity,
+): NodesAndDiffs => {
   // 一番先頭のnodeは変更できない
   if (target.order === 0) {
     return {
@@ -267,7 +285,8 @@ export const getNodesAndDiffsAfterRelegate = (list: NodeEntity[], target: NodeEn
       };
       diff.push(el);
     }
-    if (  // 弟がいる時
+    if (
+      // 弟がいる時
       el.parent_id === target.parent_id &&
       el.order > target.order
     ) {

@@ -1,4 +1,14 @@
-import Item, { EnhancedProps, HandlerProps, OuterProps, RefProps, WithHandlersProp } from 'components/Editor/Item';
+import { connect } from 'react-redux';
+import { compose, lifecycle, withHandlers, withState } from 'recompose';
+import { bindActionCreators, Dispatch } from 'redux';
+
+import Item, {
+  EnhancedProps,
+  HandlerProps,
+  OuterProps,
+  RefProps,
+  WithHandlersProp,
+} from '../../components/Editor/Item';
 import {
   addNode,
   editNode,
@@ -7,11 +17,8 @@ import {
   promoteNode,
   relegateNode,
   removeNode,
-} from 'modules/nodes/actions';
-import { State } from 'modules/store';
-import { connect } from 'react-redux';
-import { compose, lifecycle, withHandlers, withState } from 'recompose';
-import { bindActionCreators, Dispatch } from 'redux';
+} from '../../modules/nodes/actions';
+import { State } from '../../modules/store';
 
 type ItemKeyEvent = KeyboardEvent & HTMLElementEvent<HTMLDivElement>;
 
@@ -19,7 +26,7 @@ const mapStateToProps = (state: State) => ({
   focus: state.nodes.focus,
 });
 
-const mapDispatchToProps = (dispatch: Dispatch<State>) =>
+const mapDispatchToProps = (dispatch: Dispatch) =>
   bindActionCreators(
     {
       addNode: (node, left, right) =>
@@ -30,13 +37,14 @@ const mapDispatchToProps = (dispatch: Dispatch<State>) =>
             right,
           },
         }),
-      editNode: (node, start, end) => editNode.started({
-        node,
-        rangeOffset: {
-          start,
-          end,
-        },
-      }),
+      editNode: (node, start, end) =>
+        editNode.started({
+          node,
+          rangeOffset: {
+            start,
+            end,
+          },
+        }),
       removeNode: (node, left, right) =>
         removeNode.started({
           node,
@@ -45,22 +53,24 @@ const mapDispatchToProps = (dispatch: Dispatch<State>) =>
             right,
           },
         }),
-      relegateNode: (node, start, end) => relegateNode.started({
-        node,
-        rangeOffset: {
-          start,
-          end,
-        },
-      }),
-      promoteNode: (node, start, end) => promoteNode.started({
-        node,
-        rangeOffset: {
-          start,
-          end,
-        },
-      }),
-      goBack: (node) => goBack({ node }),
-      goForward: (node) => goForward({ node }),
+      relegateNode: (node, start, end) =>
+        relegateNode.started({
+          node,
+          rangeOffset: {
+            start,
+            end,
+          },
+        }),
+      promoteNode: (node, start, end) =>
+        promoteNode.started({
+          node,
+          rangeOffset: {
+            start,
+            end,
+          },
+        }),
+      goBack: node => goBack({ node }),
+      goForward: node => goForward({ node }),
     },
     dispatch,
   );
@@ -162,11 +172,7 @@ const update = (props: WithHandlersProp, target: HTMLDivElement) => {
   const title = target.innerText;
   const { startOffset, endOffset } = getSelectionRange();
 
-  props.editNode(
-    { ...props.node, title },
-    startOffset,
-    endOffset,
-  );
+  props.editNode({ ...props.node, title }, startOffset, endOffset);
 };
 
 const onKeyDownEnter = (props: WithHandlersProp, e: ItemKeyEvent) => {
