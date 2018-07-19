@@ -1,57 +1,18 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
-import { NodesFocus } from 'modules/nodes';
 import { NodeEntity } from 'services/models';
 
-export interface OuterProps {
+export interface ItemProps {
   node: NodeEntity;
-}
-
-interface StateFromProps extends OuterProps {
-  focus: NodesFocus;
-}
-
-interface DispatchFromProps {
-  addNode: (node: NodeEntity, left: string, right: string) => void;
-  editNode: (node: NodeEntity, start: number, end: number) => void;
-  removeNode: (node: NodeEntity, left: string, right: string) => void;
-  relegateNode: (node: NodeEntity, start: number, end: number) => void;
-  promoteNode: (node: NodeEntity, start: number, end: number) => void;
-  goBack: (node: NodeEntity) => void;
-  goForward: (node: NodeEntity) => void;
-}
-
-interface WithStateProps {
-  isComposing: boolean;
-  setComposing: (isComposing: boolean) => boolean;
-}
-
-export interface RefProps {
-  setRef: (e: any) => void;
-  getRef: () => HTMLDivElement;
-}
-
-export type WithHandlersProp = StateFromProps &
-  DispatchFromProps &
-  WithStateProps &
-  RefProps;
-
-export interface HandlerProps {
   onInput: (e: any) => void;
   onKeyDown: (e: any) => void;
   onKeyUp: (e: any) => void;
   onPaste: (e: any) => void;
-  moveCaret: (props: any) => void;
+  setRef: (e: any) => void;
 }
 
-export type EnhancedProps = StateFromProps &
-  DispatchFromProps &
-  WithStateProps &
-  RefProps &
-  HandlerProps;
-
-const Item: React.SFC<EnhancedProps> = ({
+const Item: React.SFC<ItemProps> = ({
   node,
   onInput,
   onPaste,

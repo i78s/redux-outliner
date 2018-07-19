@@ -1,14 +1,15 @@
 import { connect } from 'react-redux';
-import { compose, lifecycle, withHandlers, withState } from 'recompose';
+import {
+  compose,
+  lifecycle,
+  mapProps,
+  withHandlers,
+  withState,
+} from 'recompose';
 import { bindActionCreators, Dispatch } from 'redux';
 
-import Item, {
-  EnhancedProps,
-  HandlerProps,
-  OuterProps,
-  RefProps,
-  WithHandlersProp,
-} from 'components/Editor/Item';
+import Item, { ItemProps } from 'components/Editor/Item';
+import { NodesFocus } from 'modules/nodes';
 import {
   addNode,
   editNode,
@@ -19,6 +20,51 @@ import {
   removeNode,
 } from 'modules/nodes/actions';
 import { State } from 'modules/store';
+import { NodeEntity } from 'services/models';
+
+interface OuterProps {
+  node: NodeEntity;
+}
+
+interface StateFromProps {
+  focus: NodesFocus;
+}
+
+interface DispatchFromProps {
+  addNode: (node: NodeEntity, left: string, right: string) => void;
+  editNode: (node: NodeEntity, start: number, end: number) => void;
+  removeNode: (node: NodeEntity, left: string, right: string) => void;
+  relegateNode: (node: NodeEntity, start: number, end: number) => void;
+  promoteNode: (node: NodeEntity, start: number, end: number) => void;
+  goBack: (node: NodeEntity) => void;
+  goForward: (node: NodeEntity) => void;
+}
+
+interface WithStateProps {
+  isComposing: boolean;
+  setComposing: (isComposing: boolean) => boolean;
+}
+
+export interface RefProps {
+  setRef: (e: any) => void;
+  getRef: () => HTMLDivElement;
+}
+
+type WithHandlersProp = OuterProps &
+  StateFromProps &
+  DispatchFromProps &
+  WithStateProps &
+  RefProps;
+
+interface HandlerProps {
+  onInput: (e: any) => void;
+  onKeyDown: (e: any) => void;
+  onKeyUp: (e: any) => void;
+  onPaste: (e: any) => void;
+  moveCaret: (props: any) => void;
+}
+
+type EnhancedProps = WithHandlersProp & HandlerProps;
 
 type ItemKeyEvent = KeyboardEvent & HTMLElementEvent<HTMLDivElement>;
 
@@ -166,6 +212,16 @@ export default compose<EnhancedProps, OuterProps>(
       prevProps.moveCaret(prevProps);
     },
   }),
+  mapProps<ItemProps, EnhancedProps>(
+    ({ node, onInput, onPaste, onKeyDown, onKeyUp, setRef }) => ({
+      node,
+      onInput,
+      onPaste,
+      onKeyDown,
+      onKeyUp,
+      setRef,
+    }),
+  ),
 )(Item);
 
 const update = (props: WithHandlersProp, target: HTMLDivElement) => {
