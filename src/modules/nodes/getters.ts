@@ -1,5 +1,5 @@
-import { DividedTitle } from 'modules/nodes/actions';
-import { CreateNodeParams, NodeEntity } from 'services/models';
+import { DividedTitle } from '~/modules/nodes/actions';
+import { CreateNodeParams, NodeEntity } from '~/services/models';
 
 interface NodesAndDiffs {
   list: NodeEntity[];

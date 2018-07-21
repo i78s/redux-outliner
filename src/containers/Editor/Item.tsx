@@ -8,8 +8,8 @@ import {
 } from 'recompose';
 import { bindActionCreators, Dispatch } from 'redux';
 
-import Item, { ItemProps } from 'components/Editor/Item';
-import { NodesFocus } from 'modules/nodes';
+import Item, { ItemProps } from '~/components/Editor/Item';
+import { NodesFocus } from '~/modules/nodes';
 import {
   addNode,
   editNode,
@@ -18,9 +18,9 @@ import {
   promoteNode,
   relegateNode,
   removeNode,
-} from 'modules/nodes/actions';
-import { State } from 'modules/store';
-import { NodeEntity } from 'services/models';
+} from '~/modules/nodes/actions';
+import { State } from '~/modules/store';
+import { NodeEntity } from '~/services/models';
 
 interface OuterProps {
   node: NodeEntity;

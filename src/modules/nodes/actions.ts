@@ -1,7 +1,7 @@
 import actionCreatorFactory, { Action, Success } from 'typescript-fsa';
 
-import { NodesFocus } from 'modules/nodes';
-import { NodeEntity } from 'services/models';
+import { NodesFocus } from '~/modules/nodes';
+import { NodeEntity } from '~/services/models';
 
 const actionCreator = actionCreatorFactory('NODES');
 

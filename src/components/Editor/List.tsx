@@ -1,8 +1,8 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
-import Item from 'containers/Editor/Item';
-import { NodeEntity } from 'services/models';
+import Item from '~/containers/Editor/Item';
+import { NodeEntity } from '~/services/models';
 
 export interface Props {
   list: NodeEntity[];

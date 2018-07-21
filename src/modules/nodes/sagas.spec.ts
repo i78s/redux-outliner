@@ -3,9 +3,9 @@ import { expectSaga } from 'redux-saga-test-plan';
 import * as matchers from 'redux-saga-test-plan/matchers';
 import { throwError } from 'redux-saga-test-plan/providers';
 
-import * as actions from 'modules/nodes/actions';
-import * as sagas from 'modules/nodes/sagas';
-import nodesApi from 'services/nodes';
+import * as actions from '~/modules/nodes/actions';
+import * as sagas from '~/modules/nodes/sagas';
+import nodesApi from '~/services/nodes';
 
 describe('loadNodes', () => {
   it('通信成功時はFETCH_DONEを呼ぶこと', () => {
