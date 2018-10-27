@@ -1,7 +1,7 @@
 import { delay, SagaIterator } from 'redux-saga';
 import { all, call, fork, put, takeLatest } from 'redux-saga/effects';
 
-import { NodeEntity } from '~/services/models';
+import { NodeEntity } from '~/models/node';
 import nodesApi from '~/services/nodes';
 import * as actions from './actions';
 import { getNodesList, selectState } from './selectors';

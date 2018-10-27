@@ -1,9 +1,15 @@
 import actionCreatorFactory, { Action, Success } from 'typescript-fsa';
 
-import { NodesFocus } from '~/modules/nodes';
-import { NodeEntity } from '~/services/models';
+import { NodeEntity } from '~/models/node';
 
 const actionCreator = actionCreatorFactory('NODES');
+
+export interface NodesFocus {
+  timestamp?: number;
+  id: number;
+  start: number;
+  end: number;
+}
 
 export interface DividedTitle {
   left: string;

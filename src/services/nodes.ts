@@ -1,5 +1,13 @@
+import { NodeEntity } from '~/models/node';
 import instance from '~/services/axios-instance';
-import { CreateNodeParams, NodeEntity } from '~/services/models';
+
+export interface CreateNodeParams {
+  id: null;
+  title: string;
+  order: number;
+  parent_id: number;
+  project_id: number;
+}
 
 export default {
   getList() {

@@ -9,16 +9,16 @@ import {
 import { bindActionCreators, Dispatch } from 'redux';
 
 import Item, { ItemProps } from '~/components/Editor/Item';
-import { nodeActions, NodesFocus } from '~/modules/nodes';
+import { NodeEntity } from '~/models/node';
+import { nodeActions } from '~/modules/nodes';
 import { State } from '~/modules/store';
-import { NodeEntity } from '~/services/models';
 
 interface OuterProps {
   node: NodeEntity;
 }
 
 interface StateFromProps {
-  focus: NodesFocus;
+  focus: State['nodes']['focus'];
 }
 
 interface DispatchFromProps {

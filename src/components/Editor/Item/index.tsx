@@ -1,7 +1,7 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
-import { NodeEntity } from '~/services/models';
+import { NodeEntity } from '~/models/node';
 
 export interface ItemProps {
   node: NodeEntity;
