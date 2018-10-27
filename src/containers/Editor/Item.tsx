@@ -9,16 +9,7 @@ import {
 import { bindActionCreators, Dispatch } from 'redux';
 
 import Item, { ItemProps } from '~/components/Editor/Item';
-import { NodesFocus } from '~/modules/nodes';
-import {
-  addNode,
-  editNode,
-  goBack,
-  goForward,
-  promoteNode,
-  relegateNode,
-  removeNode,
-} from '~/modules/nodes/actions';
+import { nodeActions, NodesFocus } from '~/modules/nodes';
 import { State } from '~/modules/store';
 import { NodeEntity } from '~/services/models';
 
@@ -76,7 +67,7 @@ const mapDispatchToProps = (dispatch: Dispatch) =>
   bindActionCreators(
     {
       addNode: (node, left, right) =>
-        addNode.started({
+        nodeActions.addNode.started({
           node,
           dividedTitle: {
             left,
@@ -84,7 +75,7 @@ const mapDispatchToProps = (dispatch: Dispatch) =>
           },
         }),
       editNode: (node, start, end) =>
-        editNode.started({
+        nodeActions.editNode.started({
           node,
           rangeOffset: {
             start,
@@ -92,7 +83,7 @@ const mapDispatchToProps = (dispatch: Dispatch) =>
           },
         }),
       removeNode: (node, left, right) =>
-        removeNode.started({
+        nodeActions.removeNode.started({
           node,
           dividedTitle: {
             left,
@@ -100,7 +91,7 @@ const mapDispatchToProps = (dispatch: Dispatch) =>
           },
         }),
       relegateNode: (node, start, end) =>
-        relegateNode.started({
+        nodeActions.relegateNode.started({
           node,
           rangeOffset: {
             start,
@@ -108,15 +99,15 @@ const mapDispatchToProps = (dispatch: Dispatch) =>
           },
         }),
       promoteNode: (node, start, end) =>
-        promoteNode.started({
+        nodeActions.promoteNode.started({
           node,
           rangeOffset: {
             start,
             end,
           },
         }),
-      goBack: node => goBack({ node }),
-      goForward: node => goForward({ node }),
+      goBack: node => nodeActions.goBack({ node }),
+      goForward: node => nodeActions.goForward({ node }),
     },
     dispatch,
   );

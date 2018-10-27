@@ -1,9 +1,9 @@
 import { applyMiddleware, combineReducers, createStore } from 'redux';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import createSagaMiddleware from 'redux-saga';
+import { all, fork } from 'redux-saga/effects';
 
-import nodesReducer, { NodesState } from '~/modules/nodes';
-import rootTask from '~/modules/tasks';
+import nodesReducer, { NodesState, nodesTask } from '~/modules/nodes';
 
 const rootReducer = combineReducers({
   nodes: nodesReducer,
@@ -25,3 +25,7 @@ const getMiddleware = () => {
 
 export default createStore(rootReducer, getMiddleware());
 sagaMiddleware.run(rootTask);
+
+function* rootTask() {
+  yield all([fork(nodesTask)]);
+}

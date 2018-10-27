@@ -4,7 +4,7 @@ import * as matchers from 'redux-saga-test-plan/matchers';
 import { throwError } from 'redux-saga-test-plan/providers';
 
 import * as actions from '~/modules/nodes/actions';
-import * as sagas from '~/modules/nodes/sagas';
+import * as sagas from '~/modules/nodes/operations';
 import nodesApi from '~/services/nodes';
 
 describe('loadNodes', () => {

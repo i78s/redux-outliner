@@ -1,4 +1,4 @@
-import { getNodesList } from '~/modules/selectors';
+import { getNodesList } from './selectors';
 
 describe('getNodesList', () => {
   it('initial', () => {

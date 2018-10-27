@@ -3,7 +3,7 @@ import { compose, lifecycle } from 'recompose';
 import { bindActionCreators, Dispatch } from 'redux';
 
 import List, { ListProps } from '~/components/Editor/List';
-import { fetchNodes } from '~/modules/nodes/actions';
+import { nodeActions } from '~/modules/nodes';
 import { State } from '~/modules/store';
 
 const mapStateToProps = (state: State) => ({
@@ -13,7 +13,7 @@ const mapStateToProps = (state: State) => ({
 const mapDispatchToProps = (dispatch: Dispatch) =>
   bindActionCreators(
     {
-      fetchList: () => fetchNodes.started({}),
+      fetchList: () => nodeActions.fetchNodes.started({}),
     },
     dispatch,
   );
