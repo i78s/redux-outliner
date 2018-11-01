@@ -1,10 +1,19 @@
+import * as React from 'react';
 import { connect } from 'react-redux';
 import { compose, lifecycle } from 'recompose';
 import { bindActionCreators, Dispatch } from 'redux';
+import styled from 'styled-components';
 
-import List, { ListProps } from '~/components/Editor/List';
+import { NodeEntity } from '~/models/node';
 import { nodeActions } from '~/modules/nodes';
 import { State } from '~/modules/store';
+
+import List from '~/components/Node/List';
+
+interface EnhancedProps {
+  list: NodeEntity[];
+  fetchList: () => void;
+}
 
 const mapStateToProps = (state: State) => ({
   list: state.nodes.list,
@@ -18,14 +27,22 @@ const mapDispatchToProps = (dispatch: Dispatch) =>
     dispatch,
   );
 
-export default compose<ListProps, {}>(
+export default compose<EnhancedProps, {}>(
   connect(
     mapStateToProps,
     mapDispatchToProps,
   ),
-  lifecycle<ListProps, {}, {}>({
+  lifecycle<EnhancedProps, {}, {}>({
     componentDidMount() {
       this.props.fetchList();
     },
   }),
-)(List);
+)(({ list }) => (
+  <Container>
+    <List list={list} />
+  </Container>
+));
+
+const Container = styled.div`
+  padding: 20px 20px 20px 0;
+`;

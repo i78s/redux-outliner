@@ -1,24 +1,29 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
-import Item from '~/containers/Editor/Item';
+import Item from '~/components/Node/Item';
 import { NodeEntity } from '~/models/node';
 
-export interface Props {
+interface OuterProps {
   list: NodeEntity[];
 }
-export interface DispatchFromProps {
-  fetchList: () => void;
-}
-export type ListProps = Props & DispatchFromProps;
+
+type EnhancedProps = OuterProps;
 
 /**
  * 開閉
  *  ノードの子要素を非表示/表示切り替え
  */
+const List: React.SFC<EnhancedProps> = props => {
+  if (props.list.length === 0) {
+    return <div />;
+  }
+
+  return RecursionList(props.list);
+};
 
 const RecursionList = (list: NodeEntity[], id = 0) => {
-  const child: any = list.filter(el => el.parent_id === id).sort((a, b) => {
+  const child = list.filter(el => el.parent_id === id).sort((a, b) => {
     return a.order - b.order;
   });
 
@@ -29,7 +34,7 @@ const RecursionList = (list: NodeEntity[], id = 0) => {
   return (
     <Wrapper>
       {child.reduce(
-        (c: any, e: any) => (
+        (c: any, e) => (
           <React.Fragment>
             {c}{' '}
             <li>
@@ -41,14 +46,6 @@ const RecursionList = (list: NodeEntity[], id = 0) => {
       )}
     </Wrapper>
   );
-};
-
-const List: React.SFC<ListProps> = props => {
-  if (props.list.length === 0) {
-    return <div />;
-  }
-
-  return RecursionList(props.list);
 };
 
 export default List;

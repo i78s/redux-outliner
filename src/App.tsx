@@ -1,10 +1,10 @@
 import * as React from 'react';
 
-import Editor from '~/components/Editor';
+import Node from '~/components/pages/Node';
 
 const App: React.SFC<any> = props => (
   <div data-test={'app'}>
-    <Editor />
+    <Node />
   </div>
 );
 

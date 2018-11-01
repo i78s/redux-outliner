@@ -1,27 +1,21 @@
+import * as React from 'react';
 import { connect } from 'react-redux';
-import {
-  compose,
-  lifecycle,
-  mapProps,
-  withHandlers,
-  withState,
-} from 'recompose';
+import { compose, lifecycle, withHandlers } from 'recompose';
 import { bindActionCreators, Dispatch } from 'redux';
 
-import Item, { ItemProps } from '~/components/Editor/Item';
 import { NodeEntity } from '~/models/node';
 import { nodeActions } from '~/modules/nodes';
 import { State } from '~/modules/store';
+
+import Input from '~/components/Node/Item/Editor/Input';
 
 interface OuterProps {
   node: NodeEntity;
 }
 
-interface StateFromProps {
-  focus: State['nodes']['focus'];
-}
-
-interface DispatchFromProps {
+interface ConnectedProps {
+  id: number;
+  focus: any;
   addNode: (node: NodeEntity, left: string, right: string) => void;
   editNode: (node: NodeEntity, start: number, end: number) => void;
   removeNode: (node: NodeEntity, left: string, right: string) => void;
@@ -31,31 +25,21 @@ interface DispatchFromProps {
   goForward: (node: NodeEntity) => void;
 }
 
-interface WithStateProps {
-  isComposing: boolean;
-  setComposing: (isComposing: boolean) => boolean;
+interface KeyHandlersProp {
+  onInput: (e: any) => void;
+  onKeyDown: (e: any) => void;
+  onKeyUp: (e: any) => void;
 }
 
-export interface RefProps {
+interface CaretHandlersProps {
   setRef: (e: any) => void;
   getRef: () => HTMLDivElement;
 }
 
-type WithHandlersProp = OuterProps &
-  StateFromProps &
-  DispatchFromProps &
-  WithStateProps &
-  RefProps;
-
-interface HandlerProps {
-  onInput: (e: any) => void;
-  onKeyDown: (e: any) => void;
-  onKeyUp: (e: any) => void;
-  onPaste: (e: any) => void;
-  moveCaret: (props: any) => void;
-}
-
-type EnhancedProps = WithHandlersProp & HandlerProps;
+type EnhancedProps = OuterProps &
+  ConnectedProps &
+  KeyHandlersProp &
+  CaretHandlersProps;
 
 type ItemKeyEvent = KeyboardEvent & HTMLElementEvent<HTMLDivElement>;
 
@@ -112,13 +96,44 @@ const mapDispatchToProps = (dispatch: Dispatch) =>
     dispatch,
   );
 
-export default compose<EnhancedProps, OuterProps>(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
-  withState('isComposing', 'setComposing', false),
-  withHandlers<{}, RefProps>(() => {
+const keyHandlers = withHandlers<EnhancedProps, KeyHandlersProp>({
+  onInput: props => (e: ItemKeyEvent) => {
+    update(props, e.target);
+  },
+  onKeyDown: props => (e: ItemKeyEvent) => {
+    switch (e.keyCode) {
+      case 8:
+        onKeyDownDelete(props, e);
+        break;
+      case 9:
+        e.shiftKey ? onKeyDownShiftTab(props, e) : onKeyDownTab(props, e);
+        break;
+      case 13:
+        onKeyDownEnter(props, e);
+        break;
+      case 37:
+        onKeyDownLeft(props, e);
+        break;
+      case 38:
+        onKeyDownUp(props, e);
+        break;
+      case 39:
+        onKeyDownRight(props, e);
+        break;
+      case 40:
+        onKeyDownDown(props, e);
+        break;
+      default:
+        break;
+    }
+  },
+  onKeyUp: props => (e: ItemKeyEvent) => {
+    update(props, e.target);
+  },
+});
+
+const caretHandlers = compose<CaretHandlersProps, ConnectedProps>(
+  withHandlers<{}, CaretHandlersProps>(() => {
     const refs: any = {};
 
     return {
@@ -126,53 +141,10 @@ export default compose<EnhancedProps, OuterProps>(
       getRef: props => () => refs.content,
     };
   }),
-  withHandlers<WithHandlersProp, HandlerProps>({
-    onInput: props => (e: HTMLElementEvent<HTMLDivElement>) => {
-      if (props.isComposing) {
-        return;
-      }
-      update(props, e.target);
-    },
-    onKeyDown: props => (e: ItemKeyEvent) => {
-      props.setComposing(e.keyCode === 229);
-      switch (e.keyCode) {
-        case 8:
-          onKeyDownDelete(props, e);
-          break;
-        case 9:
-          e.shiftKey ? onKeyDownShiftTab(props, e) : onKeyDownTab(props, e);
-          break;
-        case 13:
-          onKeyDownEnter(props, e);
-          break;
-        case 37:
-          onKeyDownLeft(props, e);
-          break;
-        case 38:
-          onKeyDownUp(props, e);
-          break;
-        case 39:
-          onKeyDownRight(props, e);
-          break;
-        case 40:
-          onKeyDownDown(props, e);
-          break;
-        default:
-          break;
-      }
-    },
-    onKeyUp: props => (e: ItemKeyEvent) => {
-      if (props.isComposing && e.keyCode === 13) {
-        update(props, e.target);
-      }
-    },
-    onPaste: props => (e: ClipboardEvent) => {
-      e.preventDefault();
-      const value: string = e.clipboardData.getData('text/plain');
-      document.execCommand('insertHTML', false, value);
-    },
-    moveCaret: props => (prevProps: WithHandlersProp) => {
-      const { focus, node } = props;
+  lifecycle<EnhancedProps, {}, {}>({
+    componentDidUpdate(prevProps: EnhancedProps) {
+      const { focus, node, getRef } = this.props;
+
       // focusに変更がない時は何もしない
       if (prevProps.focus.timestamp === focus.timestamp) {
         return;
@@ -182,47 +154,51 @@ export default compose<EnhancedProps, OuterProps>(
         return;
       }
 
-      const ref = props.getRef();
-      const firstChild = ref.firstChild;
+      const inputRef = getRef();
+      const firstChild = inputRef.firstChild;
       const selection = window.getSelection();
       const range = selection.getRangeAt(0);
       // innerTextが空だとfirstChildがnullなのでフォーカス変更のみ
       if (!firstChild) {
-        ref.focus();
-
+        inputRef.focus();
         return;
       }
+
       range.setStart(firstChild, focus.start);
       range.setEnd(firstChild, focus.end);
       selection.removeAllRanges();
       selection.addRange(range);
     },
   }),
-  lifecycle<EnhancedProps, {}, {}>({
-    componentDidUpdate(prevProps: EnhancedProps) {
-      prevProps.moveCaret(prevProps);
-    },
-  }),
-  mapProps<ItemProps, EnhancedProps>(
-    ({ node, onInput, onPaste, onKeyDown, onKeyUp, setRef }) => ({
-      node,
-      onInput,
-      onPaste,
-      onKeyDown,
-      onKeyUp,
-      setRef,
-    }),
-  ),
-)(Item);
+);
 
-const update = (props: WithHandlersProp, target: HTMLDivElement) => {
+export default compose<EnhancedProps, OuterProps>(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps,
+  ),
+  keyHandlers,
+  caretHandlers,
+)(({ node, onInput, onKeyDown, onKeyUp, setRef }) => {
+  return (
+    <Input
+      inputRef={setRef}
+      initialValue={node.title}
+      onInput={onInput}
+      onKeyDown={onKeyDown}
+      onKeyUp={onKeyUp}
+    />
+  );
+});
+
+const update = (props: EnhancedProps, target: HTMLDivElement) => {
   const title = target.innerText;
   const { startOffset, endOffset } = getSelectionRange();
 
   props.editNode({ ...props.node, title }, startOffset, endOffset);
 };
 
-const onKeyDownEnter = (props: WithHandlersProp, e: ItemKeyEvent) => {
+const onKeyDownEnter = (props: EnhancedProps, e: ItemKeyEvent) => {
   e.preventDefault();
   const text = e.target.innerText;
   const { startOffset, endOffset } = getSelectionRange();
@@ -232,7 +208,7 @@ const onKeyDownEnter = (props: WithHandlersProp, e: ItemKeyEvent) => {
   props.addNode(props.node, left, right);
 };
 
-const onKeyDownDelete = (props: WithHandlersProp, e: ItemKeyEvent) => {
+const onKeyDownDelete = (props: EnhancedProps, e: ItemKeyEvent) => {
   const text = e.target.innerText;
   const { startOffset, endOffset } = getSelectionRange();
   const left = text.slice(0, startOffset);
@@ -253,13 +229,13 @@ const onKeyDownDelete = (props: WithHandlersProp, e: ItemKeyEvent) => {
   props.removeNode(props.node, left, right);
 };
 
-const onKeyDownTab = (props: WithHandlersProp, e: KeyboardEvent) => {
+const onKeyDownTab = (props: EnhancedProps, e: KeyboardEvent) => {
   e.preventDefault();
   const { startOffset, endOffset } = getSelectionRange();
   props.relegateNode(props.node, startOffset, endOffset);
 };
 
-const onKeyDownShiftTab = (props: WithHandlersProp, e: KeyboardEvent) => {
+const onKeyDownShiftTab = (props: EnhancedProps, e: KeyboardEvent) => {
   e.preventDefault();
   const { startOffset, endOffset } = getSelectionRange();
   props.promoteNode(props.node, startOffset, endOffset);
@@ -270,7 +246,7 @@ const onKeyDownUp = onKeyUpOrLeft;
 const onKeyDownRight = onKeyDownOrRight;
 const onKeyDownDown = onKeyDownOrRight;
 
-function onKeyDownOrRight(props: WithHandlersProp, e: KeyboardEvent) {
+function onKeyDownOrRight(props: EnhancedProps, e: KeyboardEvent) {
   const { startOffset, endOffset } = getSelectionRange();
   const len = props.node.title.length;
   if (startOffset === len && endOffset === len) {
@@ -279,7 +255,7 @@ function onKeyDownOrRight(props: WithHandlersProp, e: KeyboardEvent) {
   }
 }
 
-function onKeyUpOrLeft(props: WithHandlersProp, e: KeyboardEvent) {
+function onKeyUpOrLeft(props: EnhancedProps, e: KeyboardEvent) {
   const { startOffset, endOffset } = getSelectionRange();
   if (startOffset === 0 && endOffset === 0) {
     e.preventDefault();
