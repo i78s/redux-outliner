@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { pure } from 'recompose';
 import styled from 'styled-components';
 
 import { NodeEntity } from '~/models/node';
@@ -16,7 +17,7 @@ const Item: React.SFC<OuterProps> = ({ node }) => (
   </Node>
 );
 
-export default Item;
+export default pure(Item);
 
 const Node = styled.div`
   position: relative;

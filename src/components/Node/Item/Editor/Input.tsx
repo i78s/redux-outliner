@@ -14,7 +14,7 @@ interface State {
   isComposing: boolean;
 }
 
-export default class Input extends React.Component<OuterProps, State> {
+export default class Input extends React.PureComponent<OuterProps, State> {
   constructor(props: any) {
     super(props);
     this.state = {
